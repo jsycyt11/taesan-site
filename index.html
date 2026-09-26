@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>태산 — 빈티지 아카이브</title>
+<link rel="icon" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Nanum+Pen+Script&family=Noto+Serif+KR:wght@700;900&family=Cormorant+Garamond:ital,wght@1,500;1,600&family=Baloo+2:wght@600;700&family=Cafe24+Ssurround&family=Inter:wght@400;500;600;700&family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0708;
+    --surface:#170c0d;
+    --surface-2:#201112;
+    --line:#5c2226;
+    --line-soft:#421a1d;
+    --text:#f5efec;
+    --text-dim:#b89b96;
+    --accent:#c22c37;
+    --accent-dim:#7a1219;
+    --tag-navy:#5a1418;
+    --navy:#1c2740;
+    --navy-dim:#0c1220;
+    --radius-sm:10px;
+    --radius-md:18px;
+    --radius-lg:28px;
+    --font-display:'Baloo 2', 'Cafe24 Ssurround', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'Comfortaa', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer; border:none; background:none; color:inherit;}
+  ::selection{background:var(--accent); color:#0b0b0c;}
+  img{max-width:100%; display:block;}
+  [class*="mono"], .cart-btn, .eyebrow, .hero-stats, .grade-badge, .lot-no, .chip,
+  .sold-flag, .item-meta, .price, .add-btn, .about-list-item .idx, .footer-links,
+  .drawer-item .thumb, .drawer-item-info .b, .drawer-item-info .p, .drawer-item-remove,
+  .drawer-sub, .checkout-btn, .brand-name{
+    font-weight:500;
+  }
+
+  /* ---------- layout helpers ---------- */
+  .wrap{max-width:1240px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 18px;} }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,11,12,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    height:72px;
+  }
+  .logo{
+    font-family:'Nanum Pen Script', cursive;
+    font-weight:400;
+    display:inline-flex; align-items:center; gap:10px;
+    transform:skewX(-18deg);
+    transform-origin:left bottom;
+    font-size:32px;
+    letter-spacing:0.5px;
+  }
+  .logo-mark{
+    width:24px; height:24px;
+    flex-shrink:0;
+  }
+  .seal-mark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:30px; height:30px;
+    background:var(--accent);
+    color:var(--bg);
+    font-family:'Noto Serif KR', serif;
+    font-size:19px;
+    font-weight:900;
+    border-radius:4px;
+    flex-shrink:0;
+    transform:skewX(18deg) rotate(-4deg);
+    box-shadow:0 2px 6px rgba(0,0,0,0.5);
+  }
+  .logo span{color:var(--text);}
+  .logo .seal-mark{color:var(--bg);}
+  .nav-links{
+    display:flex; gap:28px; align-items:center;
+    font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .nav-links a:hover{color:var(--text);}
+  .nav-actions{ display:flex; align-items:center; gap:10px; }
+  .account-btn{
+    font-family:var(--font-mono); font-size:12.5px;
+    color:var(--text-dim); border:1px solid transparent;
+    padding:8px 12px; border-radius:999px;
+    transition:all .2s;
+  }
+  .account-btn:hover{ color:var(--text); border-color:var(--line); }
+  .account-btn.logged-in{ color:var(--accent); }
+  .cart-btn{
+    display:flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:13px;
+    border:1px solid var(--line); padding:8px 16px;
+    border-radius:999px;
+    transition:border-color .2s;
+  }
+  .cart-btn:hover{border-color:var(--accent);}
+  .cart-count{
+    background:var(--accent); color:#0b0b0c;
+    border-radius:999px; min-width:18px; height:18px;
+    font-size:11px; display:flex; align-items:center; justify-content:center;
+    padding:0 5px; font-weight:700;
+  }
+  @media (max-width:800px){ .nav-links{display:none;} }
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:110px 0 70px;
+    border-bottom:1px solid var(--line-soft);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute; inset:-20%;
+    background:
+      radial-gradient(ellipse 55% 55% at 82% 30%, rgba(150,30,38,0.5), transparent 62%),
+      radial-gradient(ellipse 50% 50% at 12% 70%, rgba(122,18,25,0.3), transparent 62%),
+      radial-gradient(ellipse 60% 60% at 50% 50%, rgba(0,0,0,0.5), transparent 75%);
+    filter:blur(38px);
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:'Nanum Pen Script', cursive; font-weight:400;
+    font-size:24px; letter-spacing:0.03em;
+    transform:skewX(-10deg); transform-origin:left bottom;
+    color:var(--accent); margin-bottom:18px;
+    display:inline-flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:'●'; font-size:7px;}
+  .hero h1{
+    font-family:'Nanum Brush Script', cursive;
+    font-weight:400;
+    font-size:clamp(72px, 13vw, 170px);
+    line-height:0.98;
+    letter-spacing:0.01em;
+    max-width:1000px;
+    -webkit-text-stroke:3.5px var(--text);
+    text-shadow:
+      1.5px 0 0 var(--text), -1.5px 0 0 var(--text),
+      0 1.5px 0 var(--text), 0 -1.5px 0 var(--text),
+      0 4px 30px rgba(0,0,0,0.6);
+  }
+  .hero h1 .outline{
+    color:var(--accent);
+    -webkit-text-stroke:3.5px var(--accent);
+    text-shadow:
+      1.5px 0 0 var(--accent), -1.5px 0 0 var(--accent),
+      0 1.5px 0 var(--accent), 0 -1.5px 0 var(--accent),
+      0 4px 30px rgba(0,0,0,0.6);
+  }
+  .hero-sub{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:40px; margin-top:36px; flex-wrap:wrap;
+  }
+  .hero-desc{
+    max-width:420px; color:var(--text-dim); font-size:15px;
+  }
+  .hero-stats{
+    display:flex; gap:32px; font-family:var(--font-mono);
+  }
+  .hero-stats div{text-align:right;}
+  .hero-stats .num{font-size:26px; color:var(--text); display:block;}
+  .hero-stats .label{font-size:11px; color:var(--text-dim); letter-spacing:0.08em; text-transform:uppercase;}
+
+  /* ---------- grading legend ---------- */
+  .legend{
+    border-bottom:1px solid var(--line-soft);
+    background:var(--surface);
+  }
+  .legend-inner{
+    display:flex; gap:0; padding:20px 0; flex-wrap:wrap;
+  }
+  .legend-item{
+    flex:1; min-width:150px;
+    display:flex; align-items:center; gap:12px;
+    padding:6px 20px; border-left:1px solid var(--line-soft);
+  }
+  .legend-item:first-child{border-left:none;}
+  .grade-badge{
+    font-family:var(--font-mono); font-weight:700; font-size:13px;
+    width:30px; height:30px; border-radius:50%;
+    border:1px solid var(--text-dim);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text);
+  }
+  .legend-item span.desc{font-size:12px; color:var(--text-dim);}
+  @media (max-width:800px){ .legend-item{border-left:none; border-top:1px solid var(--line-soft); flex:1 1 45%;} }
+
+  /* ---------- filter ---------- */
+  .filter-bar{
+    padding:36px 0 20px;
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  }
+  .filter-label{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+    margin-right:8px; text-transform:uppercase; letter-spacing:0.08em;
+  }
+  .chip{
+    font-family:var(--font-mono); font-size:12px;
+    border:1px solid var(--line); padding:8px 16px;
+    border-radius:999px;
+    color:var(--text-dim); transition:all .15s;
+  }
+  .chip:hover{color:var(--text); border-color:var(--text-dim);}
+  .chip.active{background:var(--text); color:var(--bg); border-color:var(--text);}
+
+  /* ---------- product grid ---------- */
+  .grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:22px;
+    padding:20px 0 100px;
+  }
+  @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:560px){ .grid{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-md);
+    overflow:hidden;
+    position:relative;
+    transition:transform .18s ease, border-color .18s ease;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px); border-color:var(--accent-dim);}
+  .card-visual{
+    aspect-ratio:4/5;
+    background:
+      linear-gradient(160deg, var(--surface-2), var(--surface) 60%);
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden;
+    border-bottom:1px dashed var(--line);
+  }
+  .card-visual::after{
+    content:'';
+    position:absolute; inset:0;
+    background:repeating-linear-gradient(45deg, transparent 0 3px, rgba(255,255,255,0.015) 3px 4px);
+  }
+  .brand-mark{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:16px; letter-spacing:0.03em;
+    color:var(--text-dim);
+    opacity:0.55;
+    text-align:center;
+    padding:0 20px;
+    text-transform:uppercase;
+  }
+  .sold-flag{
+    position:absolute; top:12px; left:12px;
+    font-family:var(--font-mono); font-size:10px; letter-spacing:0.1em;
+    color:var(--text); background:var(--tag-navy); border:1px solid var(--tag-navy);
+    border-radius:999px;
+    padding:4px 10px; text-transform:uppercase;
+  }
+  .lot-no{
+    position:absolute; bottom:10px; right:12px;
+    font-family:var(--font-mono); font-size:11px; color:var(--text-dim);
+  }
+  .card-tag{
+    padding:16px 16px 18px;
+    display:flex; flex-direction:column; gap:8px; flex:1;
+  }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .brand-name{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.1em;
+    color:var(--accent); text-transform:uppercase;
+  }
+  .grade-badge.small{width:24px; height:24px; font-size:11px;}
+  .item-name{ font-size:15px; font-weight:600; }
+  .item-meta{
+    font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim);
+    display:flex; gap:10px;
+  }
+  .card-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:auto; padding-top:10px; border-top:1px dashed var(--line-soft);
+  }
+  .price{ font-family:var(--font-mono); font-size:16px; font-weight:700; }
+  .add-btn{
+    font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em;
+    border:1px solid var(--text); padding:8px 14px;
+    border-radius:999px;
+    text-transform:uppercase;
+    transition:all .15s;
+  }
+  .add-btn:hover{ background:var(--text); color:var(--bg); }
+  .add-btn:disabled{
+    opacity:0.35; border-color:var(--line); cursor:not-allowed;
+  }
+  .add-btn:disabled:hover{background:none; color:var(--text);}
+
+  /* perforation notch */
+  .card-visual .notch{
+    position:absolute; top:-1px; left:50%; transform:translate(-50%,-50%);
+    width:26px; height:26px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--line-soft);
+  }
+
+  /* ---------- about strip ---------- */
+  .about{
+    border-top:1px solid var(--line-soft);
+    border-bottom:1px solid var(--line-soft);
+    background:var(--surface);
+    padding:70px 0;
+  }
+  .about-inner{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;
+  }
+  @media (max-width:800px){ .about-inner{grid-template-columns:1fr; gap:30px;} }
+  .about h2{
+    font-family:'Nanum Brush Script', cursive; font-weight:400;
+    font-size:clamp(36px,5.5vw,56px);
+    line-height:1.15; letter-spacing:0.005em;
+    -webkit-text-stroke:2px var(--text);
+    text-shadow:
+      1px 0 0 var(--text), -1px 0 0 var(--text),
+      0 1px 0 var(--text), 0 -1px 0 var(--text);
+  }
+  .about p{ color:var(--text-dim); font-size:14.5px; margin-top:16px; max-width:480px; }
+  .about-list{ display:flex; flex-direction:column; gap:22px; }
+  .about-list-item{ display:flex; gap:16px; border-top:1px solid var(--line-soft); padding-top:16px; }
+  .about-list-item:first-child{border-top:none; padding-top:0;}
+  .about-list-item .idx{ font-family:var(--font-mono); color:var(--accent); font-size:13px; }
+  .about-list-item h3{ font-size:14.5px; margin-bottom:4px; }
+  .about-list-item p{ font-size:13px; color:var(--text-dim); margin:0; }
+
+  /* ---------- footer ---------- */
+  footer{ padding:50px 0 40px; }
+  .footer-inner{
+    display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;
+  }
+  .footer-inner .logo{ margin-bottom:10px; }
+  footer .fine{ font-size:12.5px; color:var(--text-dim); max-width:360px; }
+  .footer-links{ display:flex; gap:22px; font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+  .footer-links a:hover{ color:var(--text); }
+
+  /* ---------- cart drawer ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55);
+    opacity:0; pointer-events:none; transition:opacity .25s; z-index:90;
+  }
+  .overlay.open{ opacity:1; pointer-events:auto; }
+  .drawer{
+    position:fixed; top:0; right:0; height:100%; width:380px; max-width:90vw;
+    background:var(--surface); border-left:1px solid var(--line);
+    transform:translateX(100%); transition:transform .3s ease;
+    z-index:95; display:flex; flex-direction:column;
+  }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{
+    padding:22px 22px 18px; border-bottom:1px solid var(--line-soft);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .drawer-head h3{ font-family:var(--font-display); font-size:16px; letter-spacing:0.03em; }
+  .drawer-close{ font-size:20px; color:var(--text-dim); }
+  .drawer-close:hover{ color:var(--text); }
+  .drawer-items{ flex:1; overflow-y:auto; padding:10px 22px; }
+  .drawer-item{
+    display:flex; gap:12px; padding:16px 0; border-bottom:1px solid var(--line-soft);
+  }
+  .drawer-item .thumb{
+    width:54px; height:64px; background:var(--surface-2); flex-shrink:0;
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:9px; color:var(--text-dim); text-align:center; padding:4px;
+  }
+  .drawer-item-info{ flex:1; }
+  .drawer-item-info .b{ font-family:var(--font-mono); font-size:10px; color:var(--accent); text-transform:uppercase; }
+  .drawer-item-info .n{ font-size:13.5px; margin:2px 0 4px; }
+  .drawer-item-info .p{ font-family:var(--font-mono); font-size:13px; }
+  .drawer-item-remove{ color:var(--text-dim); font-size:11px; font-family:var(--font-mono); text-decoration:underline; margin-top:6px; }
+  .drawer-item-remove:hover{ color:var(--tag-red); }
+  .drawer-empty{ color:var(--text-dim); font-size:13px; text-align:center; padding:60px 20px; }
+  .drawer-foot{ padding:20px 22px 26px; border-top:1px solid var(--line-soft); }
+  .drawer-sub{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:14px; margin-bottom:14px; }
+  .checkout-btn{
+    width:100%; padding:15px; background:var(--text); color:var(--bg);
+    border-radius:999px;
+    font-family:var(--font-mono); font-size:13px; letter-spacing:0.06em; text-transform:uppercase;
+    text-align:center;
+  }
+  .checkout-btn:hover{ background:var(--accent); }
+  .checkout-note{ font-size:11px; color:var(--text-dim); margin-top:10px; line-height:1.5; }
+
+  /* ---------- product modal ---------- */
+  .product-modal{
+    position:fixed; top:50%; left:50%;
+    transform:translate(-50%,-50%) scale(0.96);
+    opacity:0; pointer-events:none;
+    width:520px; max-width:90vw; max-height:85vh;
+    overflow-y:auto;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-md);
+    z-index:96;
+    transition:opacity .22s ease, transform .22s ease;
+    display:flex; flex-direction:column;
+  }
+  .product-modal.open{ opacity:1; pointer-events:auto; transform:translate(-50%,-50%) scale(1); }
+  .modal-close{
+    position:absolute; top:14px; right:14px; z-index:2;
+    width:32px; height:32px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--line-soft);
+    color:var(--text-dim); font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-close:hover{ color:var(--text); }
+  .modal-visual{
+    aspect-ratio:16/9; position:relative;
+    background:linear-gradient(160deg, var(--surface-2), var(--surface) 60%);
+    border-bottom:1px dashed var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal-visual .brand-mark{ font-size:26px; }
+  .modal-info{ padding:26px; }
+  .modal-info .brand-name{ font-size:12px; }
+  .modal-info h3{ font-size:20px; font-weight:600; margin:6px 0 10px; }
+  .modal-desc{ color:var(--text-dim); font-size:13.5px; line-height:1.65; margin:16px 0; }
+  .measure-table{
+    display:grid; grid-template-columns:repeat(4, 1fr); gap:1px;
+    background:var(--line-soft);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-sm);
+    overflow:hidden;
+    margin-bottom:8px;
+  }
+  .measure-cell{
+    background:var(--surface-2);
+    padding:12px 8px;
+    text-align:center;
+  }
+  .measure-cell .label{
+    font-family:var(--font-mono); font-size:10px; color:var(--text-dim);
+    text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px;
+  }
+  .measure-cell .value{
+    font-family:var(--font-mono); font-size:15px; font-weight:700; color:var(--text);
+  }
+  .measure-note{ font-size:11px; color:var(--text-dim); margin:8px 0 0; }
+
+  /* ---------- checkout view ---------- */
+  .checkout-view{
+    position:fixed; inset:0; z-index:98;
+    background:var(--bg);
+    display:flex; flex-direction:column;
+    transform:translateY(100%);
+    transition:transform .28s ease;
+  }
+  .checkout-view.open{ transform:translateY(0); }
+  .checkout-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 20px; border-bottom:1px solid var(--line-soft);
+    flex-shrink:0;
+  }
+  .checkout-head h3{ font-family:var(--font-display); font-size:16px; }
+  .checkout-back{
+    font-family:var(--font-mono); font-size:12px; color:var(--text-dim);
+  }
+  .checkout-back:hover{ color:var(--text); }
+  .checkout-body{
+    flex:1; overflow-y:auto; padding:20px;
+    max-width:560px; width:100%; margin:0 auto;
+  }
+  .co-section{ margin-bottom:30px; }
+  .co-section h4{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.08em;
+    text-transform:uppercase; color:var(--text-dim); margin-bottom:14px;
+  }
+  #coOrderItems .co-order-item{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid var(--line-soft);
+    font-size:13.5px;
+  }
+  #coOrderItems .co-order-item .n{ flex:1; padding-right:10px; }
+  #coOrderItems .co-order-item .p{ font-family:var(--font-mono); font-size:13px; color:var(--text-dim); }
+  .co-field{ margin-bottom:14px; }
+  .co-field label{
+    display:block; font-size:12.5px; color:var(--text-dim); margin-bottom:6px;
+  }
+  .co-field input{
+    width:100%; background:var(--surface);
+    border:1px solid var(--line-soft); border-radius:var(--radius-sm);
+    padding:12px 14px; color:var(--text); font-family:var(--font-body); font-size:14px;
+  }
+  .co-field input:focus{ outline:none; border-color:var(--accent); }
+  .co-field input::placeholder{ color:var(--text-dim); opacity:0.6; }
+  .co-pay-options{ display:flex; flex-direction:column; gap:10px; }
+  .co-pay-option{
+    display:flex; align-items:center; gap:12px;
+    background:var(--surface); border:1px solid var(--line-soft);
+    border-radius:var(--radius-sm); padding:14px;
+    font-size:14px; cursor:pointer;
+  }
+  .co-pay-option input{ accent-color:var(--accent); width:16px; height:16px; }
+  .toss-notice{ font-size:11px; color:var(--text-dim); margin-top:10px; line-height:1.5; }
+  .co-summary{
+    background:var(--surface); border-radius:var(--radius-sm);
+    padding:16px 18px; border:1px solid var(--line-soft);
+  }
+  .co-summary-row{
+    display:flex; justify-content:space-between; font-size:13.5px;
+    color:var(--text-dim); padding:6px 0;
+  }
+  .co-total{
+    border-top:1px dashed var(--line-soft); margin-top:8px; padding-top:12px;
+    font-family:var(--font-mono); font-size:16px; font-weight:700; color:var(--text);
+  }
+  .checkout-foot{
+    flex-shrink:0; padding:16px 20px 24px;
+    border-top:1px solid var(--line-soft);
+    max-width:560px; width:100%; margin:0 auto;
+  }
+  .co-done-inner{
+    margin:auto; text-align:center; max-width:360px; padding:40px 24px;
+  }
+  .co-done-mark{
+    width:60px; height:60px; margin:0 auto 22px;
+    background:var(--accent); color:var(--bg);
+    font-family:'Noto Serif KR', serif; font-weight:900; font-size:32px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .co-done-inner h3{ font-family:var(--font-display); font-size:22px; margin-bottom:12px; }
+  .co-done-inner p{ color:var(--text-dim); font-size:13.5px; line-height:1.6; margin-bottom:26px; }
+  .auth-tabs{
+    display:flex; gap:6px; margin-bottom:24px;
+    background:var(--surface-2); border-radius:999px; padding:4px;
+  }
+  .auth-tab{
+    flex:1; text-align:center; padding:10px; border-radius:999px;
+    font-family:var(--font-mono); font-size:12.5px; color:var(--text-dim);
+    transition:all .2s;
+  }
+  .auth-tab.active{ background:var(--accent); color:var(--bg); }
+  .auth-msg{ font-size:12px; color:var(--tag-navy); min-height:16px; margin-top:4px; }
+  .auth-msg.error{ color:#e0625f; }
+  .auth-msg.success{ color:#6fae7a; }
+  .auth-divider{
+    display:flex; align-items:center; gap:12px;
+    margin:22px 0 16px; color:var(--text-dim); font-size:12px;
+  }
+  .auth-divider::before, .auth-divider::after{
+    content:''; flex:1; height:1px; background:var(--line-soft);
+  }
+  .social-auth-list{ display:flex; flex-direction:column; gap:10px; }
+  .social-btn{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    width:100%; padding:13px; border-radius:var(--radius-sm);
+    font-family:var(--font-body); font-size:13.5px; font-weight:600;
+    border:1px solid var(--line-soft);
+    transition:opacity .15s;
+  }
+  .social-btn:hover{ opacity:0.88; }
+  .social-icon{ font-size:15px; width:18px; text-align:center; display:inline-flex; align-items:center; justify-content:center; }
+  .social-kakao{ background:#FEE500; color:#191600; border-color:#FEE500; }
+  .social-google{ background:var(--text); color:#1a1a1a; }
+  .social-google .social-icon{ font-weight:700; color:#4285F4; }
+  .admin-order-card{
+    background:var(--surface); border:1px solid var(--line-soft);
+    border-radius:var(--radius-sm); padding:16px; margin-bottom:12px;
+  }
+  .admin-order-card .aoc-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--font-mono); font-size:12px; color:var(--accent);
+    margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed var(--line-soft);
+  }
+  .admin-order-card .aoc-row{
+    display:flex; justify-content:space-between; font-size:13px;
+    padding:3px 0; color:var(--text-dim);
+  }
+  .admin-order-card .aoc-row b{ color:var(--text); font-weight:500; }
+  .admin-order-card .aoc-items{ margin-top:8px; font-size:12.5px; color:var(--text-dim); }
+  .admin-empty{ color:var(--text-dim); font-size:13px; text-align:center; padding:60px 20px; }
+  .modal-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:16px; padding-top:18px; border-top:1px dashed var(--line-soft);
+  }
+  .modal-bottom .price{ font-size:20px; }
+</style>
+</head>
+<script src="https://js.tosspayments.com/v2/standard"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo">
+      <span class="seal-mark">太</span>
+      <span class="logo-text">태<span>산</span></span>
+    </a>
+    <nav class="nav-links">
+      <a href="#shop">SHOP</a>
+      <a href="#grading">등급 안내</a>
+      <a href="#about">ABOUT</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="account-btn" id="accountToggle">로그인</button>
+      <button class="cart-btn" id="cartToggle">
+        CART <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">ARCHIVE NO. 004 · SEOUL</div>
+    <h1>단 하나의<br><span class="outline">아카이브</span></h1>
+    <div class="hero-sub">
+      <p class="hero-desc">폴로, 꼼데가르송, 스톤아일랜드, 톰브라운, 아미. 한 시즌에 다시 나오지 않는 빈티지 조각들을 직접 검수하고 등급을 매겨 판매합니다.</p>
+      <div class="hero-stats">
+        <div><span class="num">128</span><span class="label">Pieces Live</span></div>
+        <div><span class="num">5</span><span class="label">Brands</span></div>
+        <div><span class="num">1</span><span class="label">of Each</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="legend" id="grading">
+  <div class="wrap legend-inner">
+    <div class="legend-item">
+      <div class="grade-badge">S</div>
+      <span class="desc">미착용급 · 태그 포함</span>
+    </div>
+    <div class="legend-item">
+      <div class="grade-badge">A</div>
+      <span class="desc">사용감 거의 없음</span>
+    </div>
+    <div class="legend-item">
+      <div class="grade-badge">B</div>
+      <span class="desc">경미한 사용감 있음</span>
+    </div>
+    <div class="legend-item">
+      <div class="grade-badge">C</div>
+      <span class="desc">사용감 뚜렷, 빈티지 무드</span>
+    </div>
+  </div>
+</section>
+
+<main class="wrap" id="shop">
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">Filter</span>
+    <button class="chip active" data-brand="all">ALL</button>
+    <button class="chip" data-brand="POLO">POLO</button>
+    <button class="chip" data-brand="CDG">꼼데가르송</button>
+    <button class="chip" data-brand="STONE ISLAND">STONE ISLAND</button>
+    <button class="chip" data-brand="THOM BROWNE">THOM BROWNE</button>
+    <button class="chip" data-brand="AMI">AMI</button>
+  </div>
+
+  <div class="grid" id="productGrid"></div>
+</main>
+
+<section class="about" id="about">
+  <div class="wrap about-inner">
+    <div>
+      <h2>묻지 마세요,<br>이미 검수했으니까</h2>
+      <p>그레이마켓은 리셀이 아니라 아카이빙입니다. 모든 제품은 정품 검수를 거치고, 상태를 4단계 등급으로 기록한 뒤 개별 랏 넘버를 부여합니다. 같은 제품이라도 두 벌은 없습니다 — 그게 빈티지니까요.</p>
+    </div>
+    <div class="about-list">
+      <div class="about-list-item">
+        <span class="idx">01</span>
+        <div>
+          <h3>정품 검수</h3>
+          <p>브랜드별 시즌 택, 봉제, 자재를 대조해 확인합니다.</p>
+        </div>
+      </div>
+      <div class="about-list-item">
+        <span class="idx">02</span>
+        <div>
+          <h3>상태 등급화</h3>
+          <p>S/A/B/C 4단계로 나눠 사진과 함께 명확히 고지합니다.</p>
+        </div>
+      </div>
+      <div class="about-list-item">
+        <span class="idx">03</span>
+        <div>
+          <h3>단일 재고</h3>
+          <p>모든 아이템은 1점 한정. 품절 시 재입고되지 않습니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div>
+      <div class="logo"><span class="seal-mark">太</span><span class="logo-text">태<span>산</span></span></div>
+      <p class="fine">서울 기반 빈티지 스트리트 아카이브.<br>© 2026 태산. All rights reserved.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#">배송/교환</a>
+      <a href="#">문의</a>
+      <a href="#">Instagram</a>
+      <a href="#" id="adminLink" style="opacity:0.5;">관리자</a>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>CART</h3>
+    <button class="drawer-close" id="drawerClose">✕</button>
+  </div>
+  <div class="drawer-items" id="drawerItems"></div>
+  <div class="drawer-foot">
+    <div class="drawer-sub"><span>SUBTOTAL</span><span id="subtotal">₩0</span></div>
+    <button class="checkout-btn" id="checkoutBtn">결제하기</button>
+    <p class="checkout-note">※ 프로토타입 단계입니다. 실 결제 연동(토스페이먼츠 등)은 추후 진행 예정이에요.</p>
+  </div>
+</aside>
+
+<div class="overlay" id="modalOverlay"></div>
+<div class="product-modal" id="productModal">
+  <button class="modal-close" id="modalClose">✕</button>
+  <div class="modal-visual">
+    <div class="notch"></div>
+    <div class="brand-mark" id="modalBrandMark"></div>
+    <div class="lot-no" id="modalLot"></div>
+  </div>
+  <div class="modal-info">
+    <div class="brand-name" id="modalBrand"></div>
+    <h3 id="modalName"></h3>
+    <div class="item-meta" id="modalMeta"></div>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div class="measure-table" id="modalMeasure"></div>
+    <p class="measure-note" id="modalMeasureNote"></p>
+    <div class="modal-bottom">
+      <span class="price" id="modalPrice"></span>
+      <button class="add-btn" id="modalAddBtn">담기</button>
+    </div>
+  </div>
+</div>
+
+<div class="checkout-view" id="checkoutView">
+  <div class="checkout-head">
+    <button class="checkout-back" id="checkoutBack">← 뒤로</button>
+    <h3>주문/결제</h3>
+    <span></span>
+  </div>
+  <div class="checkout-body" id="checkoutBody">
+
+    <section class="co-section">
+      <h4>주문 상품</h4>
+      <div id="coOrderItems"></div>
+    </section>
+
+    <section class="co-section">
+      <h4>배송 정보</h4>
+      <div class="co-field">
+        <label>받는 사람</label>
+        <input type="text" id="coName" placeholder="이름">
+      </div>
+      <div class="co-field">
+        <label>연락처</label>
+        <input type="tel" id="coPhone" placeholder="010-0000-0000">
+      </div>
+      <div class="co-field">
+        <label>배송 주소</label>
+        <input type="text" id="coAddress" placeholder="주소를 입력해주세요">
+      </div>
+      <div class="co-field">
+        <label>배송 메시지 (선택)</label>
+        <input type="text" id="coMemo" placeholder="예: 부재 시 경비실에 맡겨주세요">
+      </div>
+    </section>
+
+    <section class="co-section">
+      <h4>결제 수단</h4>
+      <div id="payment-method"></div>
+      <div id="agreement"></div>
+      <p class="toss-notice" id="tossNotice"></p>
+    </section>
+
+    <section class="co-section co-summary">
+      <div class="co-summary-row"><span>상품 금액</span><span id="coItemTotal">₩0</span></div>
+      <div class="co-summary-row"><span>배송비</span><span id="coShipping">₩0</span></div>
+      <div class="co-summary-row co-total"><span>총 결제금액</span><span id="coGrandTotal">₩0</span></div>
+    </section>
+
+  </div>
+  <div class="checkout-foot">
+    <button class="checkout-btn" id="coSubmitBtn">₩0 결제하기</button>
+    <p class="checkout-note">※ 프로토타입 단계입니다. 실 결제 연동(토스페이먼츠 등)은 추후 진행 예정이에요.</p>
+  </div>
+</div>
+
+<div class="checkout-view" id="checkoutDone" style="display:none;">
+  <div class="co-done-inner">
+    <div class="co-done-mark">太</div>
+    <h3>주문이 접수되었어요</h3>
+    <p id="coDoneOrderId" style="font-family:var(--font-mono); color:var(--accent); font-size:13px; margin-bottom:14px;"></p>
+    <p>입력하신 배송 정보로 상품을 준비할게요.<br>실제 결제는 다음 단계에서 연동될 예정이에요.</p>
+    <button class="checkout-btn" id="coDoneClose">확인</button>
+  </div>
+</div>
+
+<div class="checkout-view" id="adminView">
+  <div class="checkout-head">
+    <button class="checkout-back" id="adminBack">← 뒤로</button>
+    <h3>주문 내역 (관리자)</h3>
+    <span></span>
+  </div>
+  <div class="checkout-body" id="adminBody">
+    <p style="color:var(--text-dim); font-size:12.5px; margin-bottom:20px;">
+      ※ 관리자 계정으로 로그인한 경우에만 전체 주문이 조회돼요.
+    </p>
+    <div id="adminOrderList"></div>
+  </div>
+</div>
+
+<div class="overlay" id="authOverlay"></div>
+<div class="product-modal" id="authModal">
+  <button class="modal-close" id="authClose">✕</button>
+  <div class="modal-info" style="padding:30px 26px;">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogin">로그인</button>
+      <button class="auth-tab" id="tabSignup">회원가입</button>
+    </div>
+
+    <div id="loginForm">
+      <div class="co-field">
+        <label>이메일</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com">
+      </div>
+      <div class="co-field">
+        <label>비밀번호</label>
+        <input type="password" id="loginPassword" placeholder="비밀번호">
+      </div>
+      <p class="auth-msg" id="loginMsg"></p>
+      <button class="checkout-btn" id="loginSubmit" style="margin-top:6px;">로그인</button>
+
+      <div class="auth-divider"><span>또는</span></div>
+      <div class="social-auth-list">
+        <button class="social-btn social-kakao" data-provider="kakao">
+          <span class="social-icon">💬</span> 카카오로 계속하기
+        </button>
+        <button class="social-btn social-google" data-provider="google">
+          <span class="social-icon">G</span> Google로 계속하기
+        </button>
+      </div>
+    </div>
+
+    <div id="signupForm" style="display:none;">
+      <div class="co-field">
+        <label>이메일</label>
+        <input type="email" id="signupEmail" placeholder="you@example.com">
+      </div>
+      <div class="co-field">
+        <label>비밀번호</label>
+        <input type="password" id="signupPassword" placeholder="6자 이상">
+      </div>
+      <div class="co-field">
+        <label>비밀번호 확인</label>
+        <input type="password" id="signupPasswordConfirm" placeholder="비밀번호 재입력">
+      </div>
+      <p class="auth-msg" id="signupMsg"></p>
+      <button class="checkout-btn" id="signupSubmit" style="margin-top:6px;">회원가입</button>
+
+      <div class="auth-divider"><span>또는</span></div>
+      <div class="social-auth-list">
+        <button class="social-btn social-kakao" data-provider="kakao">
+          <span class="social-icon">💬</span> 카카오로 계속하기
+        </button>
+        <button class="social-btn social-google" data-provider="google">
+          <span class="social-icon">G</span> Google로 계속하기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  ⚠️ Supabase 연동 안내
+  1) supabase.com 가입 → 새 프로젝트 생성 (무료)
+  2) 프로젝트 Settings > API 에서 Project URL과 anon public key 복사
+  3) 아래 두 값에 붙여넣기
+  4) 함께 드린 SQL 파일(supabase_schema.sql)을 Supabase SQL Editor에서 실행해 테이블을 만들어주세요
+  ※ anon key는 공개되어도 되는 키예요 (RLS 정책으로 보호됨). service_role 키는 절대 여기 넣지 마세요.
+*/
+const SUPABASE_URL = 'https://kksjkxlpmhiutpayjovt.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrc2preGxwbWhpdXRwYXlqb3Z0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2Mzk3MDUsImV4cCI6MjEwMzIxNTcwNX0.N9ZhMfyMzjHWAQsf-U5YZ5UrQyoGn8GccqAJE_Zyheo';
+const ADMIN_EMAIL = 'yutaechoe02@gmail.com'; // SQL 파일의 admin 정책과 동일한 이메일로 맞춰주세요
+
+let sbClient = null;
+let currentUser = null;
+
+// Claude 아티팩트 미리보기 등 localStorage가 막힌 환경에서도 동작하도록
+// 메모리 기반 임시 저장소를 사용합니다. (실 배포 사이트에서도 정상 작동해요)
+const memoryAuthStorage = (() => {
+  const store = {};
+  const mem = {
+    getItem: (key) => (key in store ? store[key] : null),
+    setItem: (key, value) => { store[key] = value; },
+    removeItem: (key) => { delete store[key]; },
+  };
+  // 실제 배포 사이트에서는 브라우저 저장소를 써서 새로고침해도 로그인이 유지되게 하고,
+  // 저장소가 막힌 환경(미리보기 등)에서만 메모리로 대체해요.
+  try {
+    const t = '__taesan_test__';
+    window.localStorage.setItem(t, '1');
+    window.localStorage.removeItem(t);
+    return window.localStorage;
+  } catch (e) {
+    return mem;
+  }
+})();
+
+if(!SUPABASE_URL.includes('여기에') && !SUPABASE_ANON_KEY.includes('여기에')){
+  sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+      storage: memoryAuthStorage,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+}
+
+const products = [
+  {id:1, brand:'POLO', name:'랄프로렌 코튼 트윌 워크 재킷', size:'L', grade:'A', price:189000, lot:'TS-014', desc:'80년대 후반 생산분으로 추정되는 코튼 트윌 워크 재킷. 워싱감이 자연스럽게 남아있고, 단추와 스티치 상태 모두 양호합니다.', measure:{total:74, shoulder:49, chest:58, sleeve:64}},
+  {id:2, brand:'CDG', name:'꼼데가르송 플레이 니트 가디건', size:'M', grade:'S', price:342000, lot:'TS-021', desc:'택 포함, 실착 흔적 거의 없는 최상급 컨디션. 하트 로고 자수 선명합니다.', measure:{total:66, shoulder:44, chest:52, sleeve:60}},
+  {id:3, brand:'STONE ISLAND', name:'스톤아일랜드 컴퍼스 패치 아노락', size:'L', grade:'B', price:415000, lot:'TS-007', sold:true, desc:'컴퍼스 패치 시리얼 코드 검수 완료. 소매 끝단에 경미한 마모가 있습니다.', measure:{total:76, shoulder:50, chest:60, sleeve:66}},
+  {id:4, brand:'THOM BROWNE', name:'톰브라운 스트라이프 옥스포드 셔츠', size:'2', grade:'S', price:298000, lot:'TS-033', desc:'그로그랭 리본 태그 선명, 실착 거의 없는 상태입니다.', measure:{total:72, shoulder:45, chest:54, sleeve:62}},
+  {id:5, brand:'AMI', name:'아미 드 쾨르 로고 스웨트셔츠', size:'M', grade:'A', price:156000, lot:'TS-045', desc:'데일리로 무리없는 컨디션. 로고 자수 탄탄합니다.', measure:{total:68, shoulder:46, chest:53, sleeve:59}},
+  {id:6, brand:'POLO', name:'폴로 스포츠 나일론 풀오버', size:'XL', grade:'C', price:98000, lot:'TS-052', desc:'빈티지 특유의 색바램이 있는 90년대 폴로 스포츠 라인.', measure:{total:78, shoulder:52, chest:62, sleeve:65}},
+  {id:7, brand:'STONE ISLAND', name:'스톤아일랜드 크루넥 스웨트', size:'M', grade:'A', price:227000, lot:'TS-061', desc:'컴퍼스 패치 온전, 보풀 약간 있으나 착용감 좋습니다.', measure:{total:70, shoulder:47, chest:55, sleeve:61}},
+  {id:8, brand:'CDG', name:'꼼데가르송 셔츠 스트라이프 셔츠', size:'S', grade:'B', price:184000, lot:'TS-068', desc:'스트라이프 패턴 변색 없음, 목깃 부분 약한 사용감 있습니다.', measure:{total:71, shoulder:43, chest:51, sleeve:58}},
+  {id:9, brand:'AMI', name:'아미 울 하프코트', size:'L', grade:'S', price:389000, lot:'TS-072', desc:'울 혼방 하프코트, 실착 1~2회 수준의 최상급 컨디션.', measure:{total:92, shoulder:49, chest:58, sleeve:63}},
+];
+
+let cart = [];
+let activeFilter = 'all';
+
+const grid = document.getElementById('productGrid');
+const filterBar = document.getElementById('filterBar');
+
+function renderGrid(){
+  const list = activeFilter === 'all' ? products : products.filter(p => p.brand === activeFilter);
+  grid.innerHTML = list.map(p => `
+    <div class="card" data-id="${p.id}">
+      <div class="card-visual">
+        <div class="notch"></div>
+        ${p.sold ? '<div class="sold-flag">SOLD OUT</div>' : ''}
+        <div class="brand-mark">${p.brand}</div>
+        <div class="lot-no">${p.lot}</div>
+      </div>
+      <div class="card-tag">
+        <div class="card-top">
+          <div>
+            <div class="brand-name">${p.brand}</div>
+            <div class="item-name">${p.name}</div>
+          </div>
+          <div class="grade-badge small">${p.grade}</div>
+        </div>
+        <div class="item-meta"><span>SIZE ${p.size}</span><span>GRADE ${p.grade}</span></div>
+        <div class="card-bottom">
+          <span class="price">₩${p.price.toLocaleString()}</span>
+          <button class="add-btn" data-id="${p.id}" ${p.sold ? 'disabled' : ''}>
+            ${p.sold ? '품절' : '담기'}
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  grid.querySelectorAll('.add-btn:not(:disabled)').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      addToCart(parseInt(btn.dataset.id));
+    });
+  });
+
+  grid.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('click', ()=> openProductModal(parseInt(card.dataset.id)));
+    card.style.cursor = 'pointer';
+  });
+}
+
+filterBar.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click', ()=>{
+    filterBar.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.brand;
+    renderGrid();
+  });
+});
+
+function addToCart(id){
+  const product = products.find(p=>p.id===id);
+  if(!product) return;
+  cart.push(product);
+  renderCart();
+  openDrawer();
+}
+
+function removeFromCart(idx){
+  cart.splice(idx,1);
+  renderCart();
+}
+
+function renderCart(){
+  const drawerItems = document.getElementById('drawerItems');
+  const cartCount = document.getElementById('cartCount');
+  const subtotal = document.getElementById('subtotal');
+
+  cartCount.textContent = cart.length;
+
+  if(cart.length === 0){
+    drawerItems.innerHTML = '<div class="drawer-empty">카트가 비어있어요.<br>마음에 드는 아카이브 피스를 담아보세요.</div>';
+  } else {
+    drawerItems.innerHTML = cart.map((p, idx)=>`
+      <div class="drawer-item">
+        <div class="thumb">${p.brand}</div>
+        <div class="drawer-item-info">
+          <div class="b">${p.brand}</div>
+          <div class="n">${p.name}</div>
+          <div class="p">₩${p.price.toLocaleString()}</div>
+          <button class="drawer-item-remove" data-idx="${idx}">삭제</button>
+        </div>
+      </div>
+    `).join('');
+    drawerItems.querySelectorAll('.drawer-item-remove').forEach(btn=>{
+      btn.addEventListener('click', ()=> removeFromCart(parseInt(btn.dataset.idx)));
+    });
+  }
+
+  const total = cart.reduce((sum,p)=>sum+p.price, 0);
+  subtotal.textContent = '₩' + total.toLocaleString();
+}
+
+const overlay = document.getElementById('overlay');
+const drawer = document.getElementById('drawer');
+
+function openDrawer(){
+  overlay.classList.add('open');
+  drawer.classList.add('open');
+}
+function closeDrawer(){
+  overlay.classList.remove('open');
+  drawer.classList.remove('open');
+}
+
+document.getElementById('cartToggle').addEventListener('click', openDrawer);
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+overlay.addEventListener('click', closeDrawer);
+document.getElementById('checkoutBtn').addEventListener('click', ()=>{
+  if(cart.length === 0) return;
+  closeDrawer();
+  openCheckout();
+});
+
+const modalOverlay = document.getElementById('modalOverlay');
+const productModal = document.getElementById('productModal');
+
+function openProductModal(id){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('modalBrandMark').textContent = p.brand;
+  document.getElementById('modalLot').textContent = p.lot;
+  document.getElementById('modalBrand').textContent = p.brand;
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalMeta').innerHTML = `<span>SIZE ${p.size}</span><span>GRADE ${p.grade}</span><span>${p.lot}</span>`;
+  document.getElementById('modalDesc').textContent = p.desc || '';
+
+  const measureEl = document.getElementById('modalMeasure');
+  const measureNote = document.getElementById('modalMeasureNote');
+  if(p.measure){
+    measureEl.innerHTML = `
+      <div class="measure-cell"><div class="label">총장</div><div class="value">${p.measure.total}cm</div></div>
+      <div class="measure-cell"><div class="label">어깨너비</div><div class="value">${p.measure.shoulder}cm</div></div>
+      <div class="measure-cell"><div class="label">가슴단면</div><div class="value">${p.measure.chest}cm</div></div>
+      <div class="measure-cell"><div class="label">소매길이</div><div class="value">${p.measure.sleeve}cm</div></div>
+    `;
+    measureNote.textContent = '※ 실측 사이즈이며 측정 방식에 따라 1~2cm 오차가 있을 수 있습니다.';
+    measureEl.style.display = '';
+    measureNote.style.display = '';
+  } else {
+    measureEl.innerHTML = '';
+    measureEl.style.display = 'none';
+    measureNote.style.display = 'none';
+  }
+  document.getElementById('modalPrice').textContent = '₩' + p.price.toLocaleString();
+
+  const modalVisual = document.querySelector('.modal-visual');
+  const existingFlag = modalVisual.querySelector('.sold-flag');
+  if(existingFlag) existingFlag.remove();
+  if(p.sold){
+    const flag = document.createElement('div');
+    flag.className = 'sold-flag';
+    flag.textContent = 'SOLD OUT';
+    modalVisual.appendChild(flag);
+  }
+
+  const addBtn = document.getElementById('modalAddBtn');
+  addBtn.disabled = !!p.sold;
+  addBtn.textContent = p.sold ? '품절' : '담기';
+  addBtn.onclick = ()=>{
+    addToCart(p.id);
+    closeProductModal();
+  };
+
+  modalOverlay.classList.add('open');
+  productModal.classList.add('open');
+}
+
+function closeProductModal(){
+  modalOverlay.classList.remove('open');
+  productModal.classList.remove('open');
+}
+
+document.getElementById('modalClose').addEventListener('click', closeProductModal);
+modalOverlay.addEventListener('click', closeProductModal);
+
+/* ---------- checkout flow ---------- */
+const checkoutView = document.getElementById('checkoutView');
+const checkoutDone = document.getElementById('checkoutDone');
+const SHIPPING_FEE = 3500;
+
+/*
+  ⚠️ 결제 연동 안내
+  아래 TOSS_CLIENT_KEY는 반드시 본인의 "결제위젯 연동 키(클라이언트 키)"로 교체해야 실제로 작동해요.
+  1) developers.tosspayments.com 가입 (또는 비회원 테스트 키 문서 참고)
+  2) 개발자센터 > API 키 > 결제위젯 연동 키 > 클라이언트 키(test_ck_로 시작) 복사
+  3) 아래 값에 붙여넣기
+  ※ 시크릿 키(test_sk_)는 절대 이 파일(프론트엔드)에 넣지 마세요. 시크릿 키는 결제 승인 단계에서
+     별도로 만드는 백엔드 서버에서만 사용해야 안전해요.
+*/
+const TOSS_CLIENT_KEY = 'test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm';
+const customerKey = 'customer_' + Math.random().toString(36).slice(2);
+
+let tossWidgets = null;
+let widgetsReady = false;
+
+async function initTossWidgets(){
+  const notice = document.getElementById('tossNotice');
+  if(TOSS_CLIENT_KEY.includes('여기에_붙여넣기')){
+    notice.textContent = '⚠️ 결제위젯 테스트 키가 아직 설정되지 않았어요. 토스페이먼츠에서 발급받은 클라이언트 키를 코드에 넣어주세요.';
+    widgetsReady = false;
+    return;
+  }
+  try{
+    const tossPayments = TossPayments(TOSS_CLIENT_KEY);
+    tossWidgets = tossPayments.widgets({ customerKey });
+    widgetsReady = true;
+    notice.textContent = '';
+  } catch(err){
+    console.error('토스페이먼츠 위젯 초기화 실패:', err);
+    notice.textContent = '결제위젯을 불러오지 못했어요. 클라이언트 키를 확인해주세요.';
+    widgetsReady = false;
+  }
+}
+
+async function renderTossWidgets(amount){
+  if(!widgetsReady || !tossWidgets) return;
+  try{
+    await tossWidgets.setAmount({ currency:'KRW', value: amount });
+    await Promise.all([
+      tossWidgets.renderPaymentMethods({ selector:'#payment-method', variantKey:'DEFAULT' }),
+      tossWidgets.renderAgreement({ selector:'#agreement', variantKey:'AGREEMENT' }),
+    ]);
+  } catch(err){
+    console.error('결제위젯 렌더링 실패:', err);
+  }
+}
+
+function openCheckout(){
+  renderCheckoutSummary();
+  checkoutView.classList.add('open');
+  initTossWidgets().then(()=>{
+    const grandTotal = cart.reduce((sum,p)=>sum+p.price, 0) + (cart.length > 0 ? SHIPPING_FEE : 0);
+    renderTossWidgets(grandTotal);
+  });
+}
+function closeCheckout(){
+  checkoutView.classList.remove('open');
+}
+
+function renderCheckoutSummary(){
+  const orderItemsEl = document.getElementById('coOrderItems');
+  if(cart.length === 0){
+    orderItemsEl.innerHTML = '<p style="color:var(--text-dim); font-size:13px;">담긴 상품이 없어요.</p>';
+  } else {
+    orderItemsEl.innerHTML = cart.map(p => `
+      <div class="co-order-item">
+        <span class="n">${p.brand} · ${p.name}</span>
+        <span class="p">₩${p.price.toLocaleString()}</span>
+      </div>
+    `).join('');
+  }
+
+  const itemTotal = cart.reduce((sum,p)=>sum+p.price, 0);
+  const shipping = cart.length > 0 ? SHIPPING_FEE : 0;
+  const grandTotal = itemTotal + shipping;
+
+  document.getElementById('coItemTotal').textContent = '₩' + itemTotal.toLocaleString();
+  document.getElementById('coShipping').textContent = '₩' + shipping.toLocaleString();
+  document.getElementById('coGrandTotal').textContent = '₩' + grandTotal.toLocaleString();
+  document.getElementById('coSubmitBtn').textContent = `₩${grandTotal.toLocaleString()} 결제하기`;
+}
+
+document.getElementById('checkoutBack').addEventListener('click', closeCheckout);
+
+document.getElementById('coSubmitBtn').addEventListener('click', async ()=>{
+  if(!currentUser){
+    alert('주문하려면 먼저 로그인해주세요.');
+    closeCheckout();
+    openAuthModal();
+    return;
+  }
+
+  const name = document.getElementById('coName').value.trim();
+  const phone = document.getElementById('coPhone').value.trim();
+  const address = document.getElementById('coAddress').value.trim();
+  const memo = document.getElementById('coMemo').value.trim();
+
+  if(cart.length === 0){
+    alert('담긴 상품이 없어요.');
+    return;
+  }
+  if(!name || !phone || !address){
+    alert('받는 사람, 연락처, 배송 주소를 모두 입력해주세요.');
+    return;
+  }
+  if(!widgetsReady){
+    alert('결제위젯이 아직 준비되지 않았어요. 토스페이먼츠 클라이언트 키를 먼저 설정해주세요.');
+    return;
+  }
+
+  const itemTotal = cart.reduce((sum,p)=>sum+p.price, 0);
+  const grandTotal = itemTotal + SHIPPING_FEE;
+  const orderId = 'TS' + Date.now().toString().slice(-8);
+
+  const order = {
+    order_id: orderId, user_id: currentUser.id,
+    name, phone, address, memo,
+    items: cart.map(p => ({ brand:p.brand, name:p.name, lot:p.lot, price:p.price })),
+    item_total: itemTotal, shipping: SHIPPING_FEE, grand_total: grandTotal,
+    status: 'pending_payment',
+  };
+
+  const submitBtn = document.getElementById('coSubmitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '결제창 여는 중...';
+
+  try{
+    const { error } = await sbClient.from('orders').insert(order);
+    if(error) throw error;
+  } catch(err){
+    console.error('주문 저장 실패:', err);
+  }
+
+  try{
+    /*
+      requestPayment 호출 시 브라우저가 토스 결제 페이지로 이동해요.
+      결제가 끝나면 successUrl / failUrl로 다시 돌아오는데,
+      이 사이트가 실제 도메인에 배포된 상태여야 정상적으로 동작해요.
+      돌아온 뒤에는 paymentKey・orderId・amount 값을 백엔드로 보내
+      "결제 승인 API"를 호출해야 최종 결제가 완료돼요 (시크릿 키 필요, 서버 전용).
+    */
+    await tossWidgets.requestPayment({
+      orderId,
+      orderName: order.items.length > 1
+        ? `${order.items[0].name} 외 ${order.items.length - 1}건`
+        : order.items[0].name,
+      customerName: name,
+      customerMobilePhone: phone.replace(/-/g, ''),
+      successUrl: window.location.origin + window.location.pathname + '?payResult=success&orderId=' + orderId,
+      failUrl: window.location.origin + window.location.pathname + '?payResult=fail&orderId=' + orderId,
+    });
+  } catch(err){
+    console.error('결제 요청 실패:', err);
+    submitBtn.disabled = false;
+    submitBtn.textContent = `₩${grandTotal.toLocaleString()} 결제하기`;
+    if(err.code !== 'USER_CANCEL'){
+      alert('결제 요청 중 문제가 발생했어요: ' + (err.message || err.code || '알 수 없는 오류'));
+    }
+  }
+});
+
+document.getElementById('coDoneClose').addEventListener('click', ()=>{
+  checkoutDone.classList.remove('open');
+  setTimeout(()=>{ checkoutDone.style.display = 'none'; }, 280);
+});
+
+/* 결제 후 successUrl/failUrl로 돌아왔을 때 처리 (실 배포 환경에서 동작) */
+(function handlePaymentRedirect(){
+  const params = new URLSearchParams(window.location.search);
+  const payResult = params.get('payResult');
+  if(!payResult) return;
+
+  if(payResult === 'success'){
+    const orderId = params.get('orderId');
+    document.getElementById('coDoneOrderId').textContent = `주문번호 ${orderId} · 백엔드 승인 대기중`;
+    checkoutDone.style.display = 'flex';
+    requestAnimationFrame(()=> checkoutDone.classList.add('open'));
+    cart = [];
+    renderCart();
+    const paymentKey = params.get('paymentKey');
+    const amount = Number(params.get('amount'));
+    if(paymentKey && amount){
+      fetch('/api/confirm-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paymentKey, orderId, amount }),
+      })
+        .then(r => r.json().then(d => ({ ok: r.ok, d })))
+        .then(({ ok, d }) => {
+          document.getElementById('coDoneOrderId').textContent = ok
+            ? `주문번호 ${orderId} · 결제 완료`
+            : `주문번호 ${orderId} · 결제 승인 실패 (${d.message || '다시 시도해주세요'})`;
+        })
+        .catch(() => {
+          document.getElementById('coDoneOrderId').textContent = `주문번호 ${orderId} · 승인 확인 중 오류`;
+        });
+    }
+  } else {
+    alert('결제가 취소되었거나 실패했어요.');
+  }
+  window.history.replaceState({}, '', window.location.pathname);
+})();
+
+
+/* ---------- admin panel ---------- */
+const adminView = document.getElementById('adminView');
+
+document.getElementById('adminLink').addEventListener('click', async (e)=>{
+  e.preventDefault();
+
+  if(!currentUser){
+    alert('관리자 계정으로 로그인 후 이용해주세요.');
+    openAuthModal();
+    return;
+  }
+
+  adminView.classList.add('open');
+  const listEl = document.getElementById('adminOrderList');
+  listEl.innerHTML = '<p class="admin-empty">불러오는 중...</p>';
+
+  try{
+    const { data: orders, error } = await sbClient
+      .from('orders')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if(error) throw error;
+
+    if(!orders || orders.length === 0){
+      listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요. (관리자 계정이 아니면 본인 주문만 보여요)</p>';
+      return;
+    }
+
+    listEl.innerHTML = orders.map(o => `
+      <div class="admin-order-card">
+        <div class="aoc-head">
+          <span>${o.order_id}</span>
+          <span>${new Date(o.created_at).toLocaleString('ko-KR')}</span>
+        </div>
+        <div class="aoc-row"><span>받는 사람</span><b>${o.name}</b></div>
+        <div class="aoc-row"><span>연락처</span><b>${o.phone}</b></div>
+        <div class="aoc-row"><span>주소</span><b>${o.address}</b></div>
+        ${o.memo ? `<div class="aoc-row"><span>배송 메시지</span><b>${o.memo}</b></div>` : ''}
+        <div class="aoc-row"><span>주문 상태</span><b>${o.status === 'pending_payment' ? '결제 대기' : o.status}</b></div>
+        <div class="aoc-items">${o.items.map(i=>`${i.brand} · ${i.name} (${i.lot})`).join('<br>')}</div>
+        <div class="aoc-row" style="margin-top:8px; border-top:1px dashed var(--line-soft); padding-top:8px;">
+          <span>총 결제금액</span><b>₩${o.grand_total.toLocaleString()}</b>
+        </div>
+      </div>
+    `).join('');
+  } catch(err){
+    console.error('주문 목록 조회 실패:', err);
+    listEl.innerHTML = '<p class="admin-empty">주문 내역을 불러오지 못했어요. Supabase 설정을 확인해주세요.</p>';
+  }
+});
+
+document.getElementById('adminBack').addEventListener('click', ()=>{
+  adminView.classList.remove('open');
+});
+
+/* ---------- auth (login / signup) ---------- */
+const authOverlay = document.getElementById('authOverlay');
+const authModal = document.getElementById('authModal');
+const accountToggle = document.getElementById('accountToggle');
+
+function openAuthModal(){
+  authOverlay.classList.add('open');
+  authModal.classList.add('open');
+}
+function closeAuthModal(){
+  authOverlay.classList.remove('open');
+  authModal.classList.remove('open');
+}
+
+document.getElementById('authClose').addEventListener('click', closeAuthModal);
+authOverlay.addEventListener('click', closeAuthModal);
+
+document.getElementById('tabLogin').addEventListener('click', ()=>{
+  document.getElementById('tabLogin').classList.add('active');
+  document.getElementById('tabSignup').classList.remove('active');
+  document.getElementById('loginForm').style.display = '';
+  document.getElementById('signupForm').style.display = 'none';
+});
+document.getElementById('tabSignup').addEventListener('click', ()=>{
+  document.getElementById('tabSignup').classList.add('active');
+  document.getElementById('tabLogin').classList.remove('active');
+  document.getElementById('signupForm').style.display = '';
+  document.getElementById('loginForm').style.display = 'none';
+});
+
+function setAuthMsg(id, text, type){
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'auth-msg' + (type ? ' ' + type : '');
+}
+
+function checkSupabaseReady(){
+  if(!sbClient){
+    alert('아직 Supabase 연동 키가 설정되지 않았어요. SUPABASE_URL / SUPABASE_ANON_KEY를 먼저 입력해주세요.');
+    return false;
+  }
+  return true;
+}
+
+document.getElementById('loginSubmit').addEventListener('click', async ()=>{
+  if(!checkSupabaseReady()) return;
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  if(!email || !password){
+    setAuthMsg('loginMsg', '이메일과 비밀번호를 입력해주세요.', 'error');
+    return;
+  }
+
+  setAuthMsg('loginMsg', '로그인 중...', '');
+  const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+
+  if(error){
+    setAuthMsg('loginMsg', '로그인 실패: ' + error.message, 'error');
+    return;
+  }
+
+  setAuthMsg('loginMsg', '로그인 성공!', 'success');
+  setTimeout(closeAuthModal, 600);
+});
+
+document.getElementById('signupSubmit').addEventListener('click', async ()=>{
+  if(!checkSupabaseReady()) return;
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const confirm = document.getElementById('signupPasswordConfirm').value;
+
+  if(!email || !password){
+    setAuthMsg('signupMsg', '이메일과 비밀번호를 입력해주세요.', 'error');
+    return;
+  }
+  if(password.length < 6){
+    setAuthMsg('signupMsg', '비밀번호는 6자 이상이어야 해요.', 'error');
+    return;
+  }
+  if(password !== confirm){
+    setAuthMsg('signupMsg', '비밀번호가 일치하지 않아요.', 'error');
+    return;
+  }
+
+  setAuthMsg('signupMsg', '가입 처리 중...', '');
+  const { data, error } = await sbClient.auth.signUp({ email, password });
+
+  if(error){
+    setAuthMsg('signupMsg', '회원가입 실패: ' + error.message, 'error');
+    return;
+  }
+
+  setAuthMsg('signupMsg', '가입 완료! 이메일 인증 후 로그인해주세요.', 'success');
+});
+
+/* ---------- 소셜 로그인 (Google / Kakao / Apple) ---------- */
+document.querySelectorAll('.social-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if(!checkSupabaseReady()) return;
+    const provider = btn.dataset.provider;
+    const { error } = await sbClient.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: window.location.href },
+    });
+    if(error){
+      alert(`${provider} 로그인 연동이 아직 설정되지 않았어요: ${error.message}`);
+    }
+    // 성공 시 브라우저가 해당 서비스 로그인 페이지로 이동하고,
+    // 완료 후 이 사이트로 다시 돌아와요. (실제 도메인 배포 후 정상 동작)
+  });
+});
+
+
+function updateAccountUI(){
+  if(currentUser){
+    accountToggle.textContent = currentUser.email.split('@')[0];
+    accountToggle.classList.add('logged-in');
+  } else {
+    accountToggle.textContent = '로그인';
+    accountToggle.classList.remove('logged-in');
+  }
+}
+
+accountToggle.addEventListener('click', async ()=>{
+  if(currentUser){
+    if(confirm('로그아웃 하시겠어요?')){
+      await sbClient.auth.signOut();
+      currentUser = null;
+      updateAccountUI();
+    }
+  } else {
+    openAuthModal();
+  }
+});
+
+if(sbClient){
+  sbClient.auth.getSession().then(({ data }) => {
+    currentUser = data.session ? data.session.user : null;
+    updateAccountUI();
+  });
+  sbClient.auth.onAuthStateChange((event, session) => {
+    currentUser = session ? session.user : null;
+    updateAccountUI();
+  });
+}
+
+
+renderGrid();
+renderCart();
+</script>
+</body>
+</html>
