@@ -734,7 +734,7 @@
   <div class="wrap about-inner">
     <div>
       <h2>묻지 마세요,<br>이미 검수했으니까</h2>
-      <p>그레이마켓은 리셀이 아니라 아카이빙입니다. 모든 제품은 정품 검수를 거치고, 상태를 4단계 등급으로 기록한 뒤 개별 랏 넘버를 부여합니다. 같은 제품이라도 두 벌은 없습니다 — 그게 빈티지니까요.</p>
+      <p id="aboutText">태산은 리셀이 아니라 아카이빙입니다. 모든 제품은 정품 검수를 거치고, 상태를 4단계 등급으로 기록한 뒤 개별 랏 넘버를 부여합니다. 같은 제품이라도 두 벌은 없습니다 — 그게 빈티지니까요.</p>
     </div>
     <div class="about-list">
       <div class="about-list-item">
@@ -958,6 +958,11 @@
     </div>
 
     <div class="admin-panel" data-panel="settings" style="display:none;">
+      <div class="admin-form">
+        <h4>소개 문구 ("묻지 마세요, 이미 검수했으니까" 아래 글)</h4>
+        <p class="help">비워두면 기본 문구가 나와요.</p>
+        <div class="co-field"><textarea id="st_about_text" style="min-height:90px;"></textarea></div>
+      </div>
       <div class="admin-form">
         <h4>상단 공지 배너 (이벤트)</h4>
         <label class="check"><input type="checkbox" id="st_banner_on"> 배너 보이기</label>
@@ -1188,6 +1193,7 @@ function applySettings(){
       return `<a href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`;
     }).join('');
   document.getElementById('bizInfo').textContent = setting('biz_info');
+  if(setting('about_text')) document.getElementById('aboutText').textContent = setting('about_text');
   document.getElementById('policyBody').textContent = setting('shipping_policy', '배송/교환 안내를 준비 중이에요.');
   renderCart();
 }
@@ -1860,7 +1866,7 @@ document.getElementById('cfSubmit').addEventListener('click', async ()=>{
 });
 
 /* --- 사이트 설정 --- */
-const SETTING_FIELDS = ['banner_text','shipping_fee','free_ship_over','link_contact','link_instagram','link_tiktok','link_fruits','link_bunjang','link_daangn','biz_info','shipping_policy'];
+const SETTING_FIELDS = ['about_text','banner_text','shipping_fee','free_ship_over','link_contact','link_instagram','link_tiktok','link_fruits','link_bunjang','link_daangn','biz_info','shipping_policy'];
 function fillSettingsForm(){
   SETTING_FIELDS.forEach(k => { const el = document.getElementById('st_' + k); if(el) el.value = settings[k] ?? ''; });
   document.getElementById('st_banner_on').checked = setting('banner_on','0') === '1';
