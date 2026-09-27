@@ -624,6 +624,10 @@
   .footer-links button:hover{ color:var(--text); }
   .footer-social{ display:contents; }
   .biz-info{ font-size:11px; color:var(--text-dim); opacity:0.75; margin-top:8px; max-width:420px; line-height:1.6; }
+  .contact-email{ font-family:var(--font-mono); font-size:17px; color:var(--text); background:var(--surface-2); border:1px solid var(--line-soft); border-radius:var(--radius-sm); padding:14px; text-align:center; user-select:all; word-break:break-all; }
+  .contact-actions{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+  .contact-alt{ display:block; text-align:center; padding:12px; border:1px solid var(--line-soft); border-radius:999px; font-size:13.5px; color:var(--text-dim); }
+  .contact-alt:hover{ color:var(--text); border-color:var(--line); }
   .policy-body{ white-space:pre-line; color:var(--text-dim); font-size:13.5px; line-height:1.75; }
   .coupon-row{ display:flex; gap:8px; }
   .coupon-row input{ flex:1; background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text); font-size:14px; text-transform:uppercase; }
@@ -997,6 +1001,22 @@
   </div>
 </div>
 
+<div class="overlay" id="contactOverlay"></div>
+<div class="product-modal" id="contactModal">
+  <button class="modal-close" id="contactClose">✕</button>
+  <div class="modal-info" style="padding:30px 26px;">
+    <h3 style="margin-bottom:8px;">문의하기</h3>
+    <p class="policy-body" style="margin-bottom:18px;">주문·배송·교환·반품 문의는 아래 이메일로 보내주세요.<br>주문번호를 함께 적어주시면 더 빨리 확인할 수 있어요.</p>
+    <div class="contact-email" id="contactEmail"></div>
+    <p class="auth-msg success" id="contactCopyMsg"></p>
+    <div class="contact-actions">
+      <button class="checkout-btn" id="contactCopy">이메일 주소 복사</button>
+      <a class="contact-alt" id="contactGmail" href="#" target="_blank" rel="noopener">Gmail로 보내기</a>
+      <a class="contact-alt" id="contactMailApp" href="#">메일 앱으로 보내기</a>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="policyOverlay"></div>
 <div class="product-modal" id="policyModal">
   <button class="modal-close" id="policyClose">✕</button>
@@ -1189,10 +1209,16 @@ function applySettings(){
     .filter(([k]) => setting(k))
     .map(([k, label]) => {
       let url = setting(k).trim();
+      const mail = url.replace(/^mailto:/i, '');
+      if(k === 'link_contact' && /^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(mail)){
+        return `<button type="button" id="contactBtn" data-email="${esc(mail)}">${label}</button>`;
+      }
       if(!/^(https?:|mailto:|tel:)/i.test(url)) url = 'https://' + url;
       return `<a href="${esc(url)}" target="_blank" rel="noopener">${label}</a>`;
     }).join('');
   document.getElementById('bizInfo').textContent = setting('biz_info');
+  const cBtn = document.getElementById('contactBtn');
+  if(cBtn) cBtn.addEventListener('click', ()=> openContact(cBtn.dataset.email));
   if(setting('about_text')) document.getElementById('aboutText').textContent = setting('about_text');
   document.getElementById('policyBody').textContent = setting('shipping_policy', '배송/교환 안내를 준비 중이에요.');
   renderCart();
@@ -1398,6 +1424,31 @@ function closePolicy(){ policyOverlay.classList.remove('open'); policyModal.clas
 document.getElementById('policyLink').addEventListener('click', (e)=>{ e.preventDefault(); openPolicy(); });
 document.getElementById('policyClose').addEventListener('click', closePolicy);
 policyOverlay.addEventListener('click', closePolicy);
+
+/* ================= 문의 ================= */
+const contactOverlay = document.getElementById('contactOverlay');
+const contactModal = document.getElementById('contactModal');
+function openContact(email){
+  document.getElementById('contactEmail').textContent = email;
+  const subject = encodeURIComponent('[태산 문의] ');
+  document.getElementById('contactMailApp').href = `mailto:${email}?subject=${subject}`;
+  document.getElementById('contactGmail').href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}`;
+  document.getElementById('contactCopyMsg').textContent = '';
+  contactOverlay.classList.add('open'); contactModal.classList.add('open');
+}
+function closeContact(){ contactOverlay.classList.remove('open'); contactModal.classList.remove('open'); }
+document.getElementById('contactClose').addEventListener('click', closeContact);
+contactOverlay.addEventListener('click', closeContact);
+document.getElementById('contactCopy').addEventListener('click', async ()=>{
+  const email = document.getElementById('contactEmail').textContent;
+  const msg = document.getElementById('contactCopyMsg');
+  try{ await navigator.clipboard.writeText(email); msg.textContent = '이메일 주소를 복사했어요.'; }
+  catch(e){
+    const r = document.createRange(); r.selectNodeContents(document.getElementById('contactEmail'));
+    const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    msg.textContent = '주소를 길게 눌러 복사해 주세요.';
+  }
+});
 
 /* ================= 주문 / 결제 ================= */
 const checkoutView = document.getElementById('checkoutView');
