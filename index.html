@@ -1446,7 +1446,7 @@ async function loadProducts(){
   if(!sbClient){ products = []; allProducts = []; renderGrid(); renderDrop(); return; }
   const { data, error } = await sbClient.from('products').select('*').order('created_at', { ascending:false });
   if(error){ console.error('상품 불러오기 실패:', error); products = []; }
-  else { allProducts = data || []; products = allProducts.filter(isBrand); }
+  else { allProducts = data || []; products = allProducts.filter(p => isBrand(p) && p.status !== 'hidden'); }
   renderFilterChips();
   renderGrid();
   renderStats();
