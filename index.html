@@ -831,6 +831,20 @@
   .b-size-table div{grid-template-columns:1.9fr repeat(4,1fr);}
   .b-size-table span em{display:block; font-style:normal; font-size:11.5px; color:var(--text-dim); margin-top:3px;}
   @media (max-width:560px){ .b-size-table{font-size:13px;} .b-size-table div{grid-template-columns:1.6fr repeat(4,1fr);} .b-size-table .h span{font-size:11px;} }
+  .b-pair{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:22px;}
+  .b-pair-item{display:block; border:1px solid #2a1416; background:#160d0e; transition:border-color .2s;}
+  .b-pair-item:hover{border-color:var(--accent);}
+  .b-pair-item .pic{aspect-ratio:4/5;}
+  .b-pair-item .pic img{width:100%; height:100%; object-fit:cover;}
+  .b-pair-item .cap{padding:14px 16px; display:flex; flex-direction:column; gap:4px;}
+  .b-pair-item .cap b{font-size:15px;}
+  .b-pair-item .cap span{font-size:12.5px; color:var(--text-dim);}
+  .b-spec2{margin-top:16px; border-top:1px solid var(--line); font-size:14px;}
+  .b-spec2 div{display:grid; grid-template-columns:84px 1fr 1fr; gap:12px; padding:15px 0; border-bottom:1px solid #2a1416; align-items:start;}
+  .b-spec2 div span:first-child{color:var(--text-dim);}
+  .b-spec2 .h span{font-size:12px; letter-spacing:.08em; color:var(--accent); font-weight:700;}
+  @media (max-width:560px){ .b-spec2{font-size:13px;} .b-spec2 div{grid-template-columns:64px 1fr 1fr; gap:8px;} .b-pair{gap:10px;} }
+  @media (max-width:560px){ .b-feats{grid-template-columns:1fr 1fr;} .b-feat{padding:18px;} .b-feat p{font-size:12.5px;} }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -913,25 +927,32 @@
   <div class="wrap b-detail">
     <div>
       <div class="b-kicker">DROP 01 · DETAIL</div>
-      <h2 class="b-h2">짧고 넉넉하게 떨어지는<br>크롭 후드 패딩</h2>
+      <h2 class="b-h2">가볍게 걸치는<br>후드 패딩 두 가지</h2>
       <div class="b-feats">
         <div class="b-feat"><div class="ic b-serif">泰山</div><h3>가슴 자수</h3><p>왼쪽 가슴에 泰山 한자 로고 하나</p></div>
         <div class="b-feat"><div class="ic">∩</div><h3>후드 일체형</h3><p>바람 부는 날엔 후드까지 덮어서</p></div>
         <div class="b-feat"><div class="ic">‖</div><h3>지퍼 포켓</h3><p>양쪽 주머니 모두 지퍼로 닫혀요</p></div>
-        <div class="b-feat"><div class="ic">◦ ◦</div><h3>밑단 스트링</h3><p>스토퍼로 밑단 폭을 조절해요</p></div>
+        <div class="b-feat"><div class="ic">61 · 67</div><h3>두 가지 기장</h3><p>짧은 크롭과 허리 아래로 내려오는 레귤러</p></div>
+      </div>
+      <div class="b-pair">
+        <a class="b-pair-item" href="#shop"><div class="pic"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" loading="lazy"></div><div class="cap"><b>크롭</b><span>총장 61cm · 아이보리 · 그레이 · 블랙</span></div></a>
+        <a class="b-pair-item" href="#shop"><div class="pic"><img src="img/drop02-black.jpg" alt="泰山 경량 패딩 레귤러 기장 블랙" width="960" height="1200" loading="lazy"></div><div class="cap"><b>레귤러</b><span>총장 67cm · 블랙 · 연그레이</span></div></a>
       </div>
     </div>
     <div>
       <div class="b-spec-t">SPEC</div>
-      <div class="b-spec">
-        <div><span>컬러</span><span>아이보리 · 그레이 · 블랙</span></div>
-        <div><span>사이즈</span><span>M (총장 61cm)</span></div>
-        <div><span>핏</span><span>크롭 기장(총장 61cm) · 넉넉한 어깨</span></div>
-        <div><span>소재</span><span>폴리</span></div>
-        <div><span>세탁</span><span>손세탁 · 물세탁 · 드라이클리닝</span></div>
-        <div><span>출시</span><span>아이보리·그레이 11월 5일<br>블랙 11월 10일</span></div>
-        <div><span>주문 수량</span><span>제한 없음</span></div>
+      <div class="b-spec2">
+        <div class="h"><span></span><span>크롭</span><span>레귤러</span></div>
+        <div><span>컬러</span><span>아이보리 · 그레이 · 블랙</span><span>블랙 · 연그레이</span></div>
+        <div><span>사이즈</span><span>M (총장 61cm)</span><span>M (총장 67cm)</span></div>
+        <div><span>핏</span><span>크롭 기장 · 넉넉한 드롭 숄더</span><span>기본 기장 · 어깨선 제자리</span></div>
+        <div><span>소재</span><span>폴리</span><span>나일론 12% · 폴리에스테르 88%</span></div>
+        <div><span>두께 · 안감</span><span>경량</span><span>보통 · 안감 없음</span></div>
+        <div><span>세탁</span><span>손세탁 · 물세탁 · 드라이클리닝</span><span>손세탁</span></div>
+        <div><span>출시</span><span>아이보리·그레이 11월 5일<br>블랙 11월 10일</span><span>11월 5일</span></div>
+        <div><span>가격</span><span>82,000원</span><span>82,000원</span></div>
       </div>
+      <p class="b-dim" style="font-size:12.5px; margin-top:10px;">두 상품 모두 예약 주문 · 주문 수량 제한 없음</p>
       <div class="b-spec-t" style="margin-top:36px;">SIZE</div>
       <div class="b-size-table">
         <div class="h"><span>상품 · 사이즈</span><span>어깨너비</span><span>가슴단면</span><span>소매길이</span><span>총장</span></div>
