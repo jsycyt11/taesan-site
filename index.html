@@ -1538,7 +1538,10 @@ function renderDrop(){
   const states = document.querySelectorAll('.drop-st');
   const insta = () => setting('link_instagram', 'https://www.instagram.com/taesan_vintage/');
   const pos = products.filter(p => p.preorder);
-  const p = pos.find(canBuy) || pos.find(x => pState(x) === 'soon') || pos[0];
+  // 첫 화면 색상 카드와 색이 가장 많이 겹치는 상품을 DROP 01 대표 상품으로 써요
+  const cardColors = [...states].map(e => e.dataset.color).filter(Boolean);
+  const score = x => (x.colors || []).filter(c => cardColors.includes(c)).length * 10 + (canBuy(x) ? 2 : pState(x) === 'soon' ? 1 : 0);
+  const p = [...pos].sort((a, b) => score(b) - score(a))[0];
   cta.removeAttribute('aria-disabled');
   cta.onclick = null;
   if(!p){
