@@ -53,24 +53,48 @@ export async function sendSms(text) {
   return { ok: r.ok, status: r.status };
 }
 
-// 주문번호로 주문서를 읽어 한 번만 알림을 보내요 (notified_at 으로 중복 방지)
+const SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrc2preGxwbWhpdXRwYXlqb3Z0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2Mzk3MDUsImV4cCI6MjEwMzIxNTcwNX0.N9ZhMfyMzjHWAQsf-U5YZ5UrQyoGn8GccqAJE_Zyheo';
+
+// 알림용 짧은 요약 (이름·연락처·주소는 넣지 않아요 — 자세한 건 관리자 화면에서)
+export function alertText(b) {
+  const items = (b.items || []).map((i) => {
+    const short = String(i.name || '').replace(/^泰山\s*/, '');
+    return `${short} · ${[i.color, i.size].filter(Boolean).join(' ')} x${i.qty || 1}`;
+  });
+  const pay = b.payment_method === 'bank' ? `입금 대기 · 입금자 ${b.depositor}` : '카드 결제 완료';
+  return [...items, `합계 ${won(b.grand_total)} (${pay})`, `주문번호 ${b.order_id}`].join('\n');
+}
+
+// 휴대폰 푸시 (ntfy 앱) — 가입·키 필요 없음
+export async function sendPush(topic, title, text) {
+  if (!topic) return { ok: false };
+  const r = await fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+    method: 'POST',
+    headers: {
+      Title: encodeURIComponent(title).length === title.length ? title : '=?UTF-8?B?' + Buffer.from(title).toString('base64') + '?=',
+      Priority: 'high',
+      Tags: 'package',
+      Click: 'https://www.teasan1.com/',
+    },
+    body: text,
+  });
+  if (!r.ok) console.error('푸시 실패', r.status, await r.text().catch(() => ''));
+  return { ok: r.ok };
+}
+
+// 주문번호로 한 번만 알림을 보내요 (DB 함수가 중복을 막아요)
 export async function notifyOrder(orderId) {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!key || !orderId) return { ok: false, reason: 'no key or order' };
-  const h = { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' };
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/orders?order_id=eq.${encodeURIComponent(orderId)}&select=*`, { headers: h });
-  const rows = r.ok ? await r.json() : [];
-  const o = rows[0];
-  if (!o) return { ok: false, reason: 'not found' };
-  if (o.notified_at) return { ok: true, skipped: true };
-  if (Date.now() - new Date(o.created_at).getTime() > 30 * 60 * 1000) return { ok: false, reason: 'too old' };
-  if (!['awaiting_deposit', 'paid'].includes(o.status)) return { ok: false, reason: 'status' };
-  // 먼저 기록해서 두 번 보내지 않게 해요
-  const lock = await fetch(
-    `${SUPABASE_URL}/rest/v1/orders?order_id=eq.${encodeURIComponent(orderId)}&notified_at=is.null`,
-    { method: 'PATCH', headers: { ...h, Prefer: 'return=representation' }, body: JSON.stringify({ notified_at: new Date().toISOString() }) }
-  );
-  const locked = lock.ok ? await lock.json() : [];
-  if (!locked.length) return { ok: true, skipped: true };
-  return sendSms(orderSmsText(o));
+  if (!orderId) return { ok: false };
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/claim_order_alert`, {
+    method: 'POST',
+    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_order_id: orderId }),
+  });
+  const b = r.ok ? await r.json() : null;
+  if (!b) return { ok: true, skipped: true };
+  const text = alertText(b);
+  const push = await sendPush(process.env.NTFY_TOPIC || b.topic, '泰山 새 주문', text);
+  if (process.env.SOLAPI_API_KEY) await sendSms(`[泰山] 새 주문\n${text}`).catch(() => {});
+  return push;
 }
