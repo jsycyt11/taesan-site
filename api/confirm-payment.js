@@ -9,6 +9,8 @@
 //   TOSS_SECRET_KEY            토스페이먼츠 시크릿 키 (필수)
 //   SUPABASE_SERVICE_ROLE_KEY  Supabase service_role 키 (필수 — 한정 수량·넘버링·주문 상태 처리용)
 
+import { notifyOrder } from './_sms.js';
+
 const SUPABASE_URL = 'https://kksjkxlpmhiutpayjovt.supabase.co';
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtrc2preGxwbWhpdXRwYXlqb3Z0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc2Mzk3MDUsImV4cCI6MjEwMzIxNTcwNX0.N9ZhMfyMzjHWAQsf-U5YZ5UrQyoGn8GccqAJE_Zyheo';
@@ -208,6 +210,8 @@ export default async function handler(req, res) {
         });
       }
     }
+
+    try { await notifyOrder(orderId); } catch (e) { console.error('주문 알림 오류', e); }
 
     const numbers = lines
       .filter((l) => l.numbers)

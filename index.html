@@ -845,6 +845,35 @@
   .b-spec2 .h span{font-size:12px; letter-spacing:.08em; color:var(--accent); font-weight:700;}
   @media (max-width:560px){ .b-spec2{font-size:13px;} .b-spec2 div{grid-template-columns:64px 1fr 1fr; gap:8px;} .b-pair{gap:10px;} }
   @media (max-width:560px){ .b-feats{grid-template-columns:1fr 1fr;} .b-feat{padding:18px;} .b-feat p{font-size:12.5px;} }
+  .ao-summary{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:14px;}
+  .ao-summary div{border:1px solid var(--line-soft); border-radius:var(--radius-sm); padding:12px 14px; display:flex; flex-direction:column; gap:4px;}
+  .ao-summary b{font-size:18px; color:var(--text);}
+  .ao-summary span{font-size:11.5px; color:var(--text-dim);}
+  .ao-chips{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;}
+  .ao-chip{font-size:12.5px; padding:6px 12px; border-radius:999px; border:1px solid var(--line-soft); color:var(--text-dim);}
+  .ao-chip.on{background:var(--text); color:var(--bg); border-color:var(--text);}
+  .ao-card{border:1px solid var(--line-soft); border-left:4px solid var(--st); border-radius:var(--radius-sm); padding:16px; margin-bottom:12px; background:var(--surface);}
+  .ao-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .ao-badge{background:var(--st); color:#fff; font-size:12px; font-weight:700; padding:4px 10px; border-radius:999px;}
+  .ao-meta{font-size:11.5px; color:var(--text-dim);}
+  .ao-items{margin-top:12px; display:flex; flex-direction:column; gap:8px;}
+  .ao-item{display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
+  .ao-item b{display:block; font-size:14.5px; color:var(--text);}
+  .ao-item span{font-size:12.5px; color:var(--text-dim);}
+  .ao-item em{font-style:normal; font-size:18px; font-weight:700; color:var(--text);}
+  .ao-money{margin-top:12px; padding-top:12px; border-top:1px dashed var(--line-soft); display:flex; flex-direction:column; gap:3px;}
+  .ao-money > b{font-size:20px; color:var(--text);}
+  .ao-money span{font-size:12px; color:var(--text-dim);}
+  .ao-pay b{color:var(--text);}
+  .ao-cust{margin-top:10px; font-size:13px; line-height:1.6; color:var(--text-dim);}
+  .ao-cust b{color:var(--text);}
+  .ao-cust a{color:var(--text); text-decoration:underline;}
+  .ao-memo{color:var(--accent);}
+  .ao-actions{margin-top:12px; display:flex; flex-wrap:wrap; gap:6px; align-items:center;}
+  .ao-btn{font-size:12.5px; padding:8px 14px; border-radius:999px; border:1px solid var(--line);}
+  .ao-btn.main{background:var(--st); border-color:var(--st); color:#fff; font-weight:700;}
+  .ao-btn.ghost{color:var(--text-dim); border-color:var(--line-soft);}
+  .ao-select{margin-left:auto; max-width:120px;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -2082,6 +2111,7 @@ async function submitBankOrder(f){
     alert((data && data.message) || ('주문을 접수하지 못했어요. ' + (error ? error.message : '잠시 후 다시 시도해주세요.')));
     return;
   }
+  fetch('/api/notify-order', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ orderId: data.order_id }) }).catch(()=>{});
   closeCheckout();
   cart = []; appliedCoupon = null; renderCart();
   document.getElementById('coDoneTitle').textContent = '주문이 접수되었어요';
@@ -2204,32 +2234,85 @@ function switchAdminTab(tab){
 }
 
 /* --- 주문 --- */
+let adminOrders = [];
+let orderFilter = 'all';
+const STATUS_COLOR = { awaiting_deposit:'#e0a33a', pending_payment:'#8a7470', paid:'#4fae6a', making:'#5b8fd6', shipped:'#9b7be0', done:'#8a8a8a', canceled:'#7a1219' };
+const NEXT_STEP = { awaiting_deposit:['paid','입금 확인'], paid:['making','제작 시작'], making:['shipped','발송 처리'], shipped:['done','배송 완료'] };
+function shortName(n){ return String(n || '').replace(/^泰山\s*/, ''); }
+function fmtWhen(iso){ const d = new Date(iso); const z = n => String(n).padStart(2,'0'); return `${d.getMonth()+1}/${d.getDate()} ${z(d.getHours())}:${z(d.getMinutes())}`; }
 async function loadAdminOrders(){
   const listEl = document.getElementById('adminOrderList');
   listEl.innerHTML = '<p class="admin-empty">불러오는 중...</p>';
   const { data: orders, error } = await sbClient.from('orders').select('*').order('created_at', { ascending:false });
   if(error){ listEl.innerHTML = '<p class="admin-empty">주문 내역을 불러오지 못했어요.</p>'; return; }
-  if(!orders || orders.length === 0){ listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요.</p>'; return; }
-  listEl.innerHTML = preorderTally(orders) + orders.map(o => `
-    <div class="admin-order-card">
-      <div class="aoc-head"><span>${esc(o.order_id)}</span><span>${new Date(o.created_at).toLocaleString('ko-KR')}</span></div>
-      <div class="aoc-row"><span>받는 사람</span><b>${esc(o.name)}</b></div>
-      <div class="aoc-row"><span>연락처</span><b>${esc(o.phone)}</b></div>
-      ${o.payment_method === 'bank' ? `<div class="aoc-row"><span>결제</span><b>계좌이체 · 입금자 ${esc(o.depositor || o.name)}${o.status === 'awaiting_deposit' ? ' · <span style="color:var(--accent)">입금 확인 필요</span>' : ''}</b></div>` : ''}
-      <div class="aoc-row"><span>주소</span><b>${esc(o.address)}</b></div>
-      ${o.memo ? `<div class="aoc-row"><span>배송 메시지</span><b>${esc(o.memo)}</b></div>` : ''}
-      <div class="aoc-items">${(o.items||[]).map(itemLine).join('<br>')}</div>
-      ${o.discount ? `<div class="aoc-row"><span>쿠폰 할인 ${esc(o.coupon_code||'')}</span><b>-${won(o.discount)}</b></div>` : ''}
-      <div class="aoc-row" style="margin-top:8px; border-top:1px dashed var(--line-soft); padding-top:8px;"><span>총 결제금액</span><b>${won(o.grand_total)}</b></div>
-      <div class="aoc-row"><span>주문 상태</span>
-        <select class="admin-select" data-order="${esc(o.order_id)}">
-          ${Object.entries(ORDER_STATUS).map(([k,v]) => `<option value="${k}" ${o.status===k?'selected':''}>${v}</option>`).join('')}
-        </select>
-      </div>
-    </div>`).join('');
-  listEl.querySelectorAll('select[data-order]').forEach(sel => sel.addEventListener('change', async ()=>{
-    const { error } = await sbClient.from('orders').update({ status: sel.value }).eq('order_id', sel.dataset.order);
-    if(error) alert('상태 변경 실패: ' + error.message);
+  adminOrders = orders || [];
+  renderAdminOrders();
+}
+function renderAdminOrders(){
+  const listEl = document.getElementById('adminOrderList');
+  const orders = adminOrders;
+  if(!orders.length){ listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요.</p>'; return; }
+  const count = k => orders.filter(o => o.status === k).length;
+  const chips = [['all','전체', orders.length], ...Object.entries(ORDER_STATUS).map(([k,v]) => [k, v, count(k)]).filter(([k,,n]) => n > 0)];
+  const shown = orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
+  const waitingMoney = orders.filter(o => o.status === 'awaiting_deposit').reduce((a,o)=>a+Number(o.grand_total||0),0);
+  listEl.innerHTML = `
+    <div class="ao-summary">
+      <div><b>${count('awaiting_deposit')}</b><span>입금 확인 필요</span></div>
+      <div><b>${count('paid') + count('making')}</b><span>준비할 주문</span></div>
+      <div><b>${won(waitingMoney)}</b><span>들어올 입금액</span></div>
+    </div>
+    <div class="ao-chips">${chips.map(([k,v,n]) => `<button type="button" class="ao-chip ${orderFilter===k?'on':''}" data-f="${k}">${v} ${n}</button>`).join('')}</div>
+    ${preorderTally(orders)}
+    ${shown.map(o => {
+      const st = o.status, color = STATUS_COLOR[st] || '#8a7470';
+      const next = NEXT_STEP[st];
+      const items = (o.items||[]).map(i => {
+        const nums = (i.numbers || []).map(n => 'No.' + String(n).padStart(3,'0')).join(', ');
+        return `<div class="ao-item"><div><b>${esc(shortName(i.name))}</b><span>${esc([i.color, i.size].filter(Boolean).join(' · '))}${i.ship ? ' · ' + esc(i.ship) : ''}${nums ? ' · ' + nums : ''}</span></div><em>×${Number(i.qty||1)}</em></div>`;
+      }).join('');
+      const qty = (o.items||[]).reduce((a,i)=>a+Number(i.qty||1),0);
+      return `
+      <div class="ao-card" style="--st:${color}">
+        <div class="ao-top">
+          <span class="ao-badge">${ORDER_STATUS[st] || esc(st)}</span>
+          <span class="ao-meta">${fmtWhen(o.created_at)} · ${esc(o.order_id)}</span>
+        </div>
+        <div class="ao-items">${items}</div>
+        <div class="ao-money">
+          <b>${won(o.grand_total)}</b>
+          <span>${qty}벌 · 상품 ${won(o.item_total)}${o.discount ? ' · 쿠폰 -' + won(o.discount) : ''} · 배송 ${o.shipping ? won(o.shipping) : '무료'}</span>
+          ${o.payment_method === 'bank' ? `<span class="ao-pay">계좌이체 · 입금자 <b>${esc(o.depositor || o.name)}</b></span>` : `<span class="ao-pay">카드·간편결제</span>`}
+        </div>
+        <div class="ao-cust">
+          <div><b>${esc(o.name)}</b> · <a href="tel:${esc(String(o.phone).replace(/[^0-9]/g,''))}">${esc(o.phone)}</a></div>
+          <div>${esc(o.address)}</div>
+          ${o.memo ? `<div class="ao-memo">메모: ${esc(o.memo)}</div>` : ''}
+        </div>
+        <div class="ao-actions">
+          ${next ? `<button type="button" class="ao-btn main" data-set="${next[0]}" data-order="${esc(o.order_id)}">${next[1]}</button>` : ''}
+          <button type="button" class="ao-btn" data-copy="${esc(o.order_id)}">배송정보 복사</button>
+          ${!['canceled','done'].includes(st) ? `<button type="button" class="ao-btn ghost" data-set="canceled" data-order="${esc(o.order_id)}">취소</button>` : ''}
+          <select class="admin-select ao-select" data-order="${esc(o.order_id)}">
+            ${Object.entries(ORDER_STATUS).map(([k,v]) => `<option value="${k}" ${st===k?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+      </div>`;
+    }).join('') || '<p class="admin-empty">이 상태의 주문이 없어요.</p>'}`;
+  listEl.querySelectorAll('.ao-chip').forEach(b => b.addEventListener('click', ()=>{ orderFilter = b.dataset.f; renderAdminOrders(); }));
+  const setStatus = async (id, status) => {
+    const { error } = await sbClient.from('orders').update({ status }).eq('order_id', id);
+    if(error){ alert('상태 변경 실패: ' + error.message); return; }
+    const o = adminOrders.find(x => x.order_id === id); if(o) o.status = status;
+    renderAdminOrders();
+  };
+  listEl.querySelectorAll('[data-set]').forEach(b => b.addEventListener('click', ()=> setStatus(b.dataset.order, b.dataset.set)));
+  listEl.querySelectorAll('select.ao-select').forEach(sel => sel.addEventListener('change', ()=> setStatus(sel.dataset.order, sel.value)));
+  listEl.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async ()=>{
+    const o = adminOrders.find(x => x.order_id === b.dataset.copy); if(!o) return;
+    const txt = `${o.name}\n${o.phone}\n${o.address}${o.memo ? '\n' + o.memo : ''}`;
+    try{ await navigator.clipboard.writeText(txt); b.textContent = '복사됨'; }catch(e){ b.textContent = '복사 실패'; }
+    setTimeout(()=>{ b.textContent = '배송정보 복사'; }, 1500);
   }));
 }
 
