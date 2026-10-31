@@ -1994,9 +1994,9 @@ function renderCheckoutSummary(){
   document.getElementById('coDiscount').textContent = '-' + won(t.discount);
   document.getElementById('coShipping').textContent = t.shipping ? won(t.shipping) : '무료';
   document.getElementById('coGrandTotal').textContent = won(t.grandTotal);
-  document.getElementById('coSubmitBtn').textContent = payMode() === 'bank' ? `${won(t.grandTotal)} 주문하기 (계좌이체)` : `${won(t.grandTotal)} 결제하기`;
+  document.getElementById('coSubmitBtn').textContent = payMode() === 'bank' ? `${won(t.grandTotal)} 주문하고 계좌로 보내기` : `${won(t.grandTotal)} 결제하기`;
   const bn = document.getElementById('coBankNote');
-  if(bn) bn.textContent = `주문 후 ${bankHours()}시간 안에 ${won(t.grandTotal)}을 위 계좌로 보내주세요. 입금이 확인되면 주문이 확정돼요. 기한 안에 입금이 없으면 주문이 취소될 수 있어요.`;
+  if(bn) bn.textContent = `이 사이트에서는 돈이 빠져나가지 않아요. 주문 버튼을 누른 뒤 ${bankHours()}시간 안에 ${won(t.grandTotal)}을 위 계좌로 직접 보내주셔야 주문이 확정돼요. 기한 안에 입금이 없으면 주문이 취소될 수 있어요.`;
   const msg = document.getElementById('couponMsg');
   if(appliedCoupon){
     msg.textContent = `${appliedCoupon.code} 적용됨 · ${appliedCoupon.label}`;
@@ -2114,10 +2114,10 @@ async function submitBankOrder(f){
   fetch('/api/notify-order', { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ orderId: data.order_id }) }).catch(()=>{});
   closeCheckout();
   cart = []; appliedCoupon = null; renderCart();
-  document.getElementById('coDoneTitle').textContent = '주문이 접수되었어요';
+  document.getElementById('coDoneTitle').textContent = '아직 결제 전이에요 · 입금해 주세요';
   document.getElementById('coDoneOrderId').textContent = `주문번호 ${data.order_id} · 입금 대기`;
   document.getElementById('coDoneText').innerHTML =
-    `아래 계좌로 <b style="color:var(--text);">${won(data.grand_total)}</b>을 ${bankHours()}시간 안에 보내주세요.<br>` +
+    `<b style="color:var(--accent);">주문만 접수됐고 돈은 아직 빠져나가지 않았어요.</b><br>은행 앱에서 아래 계좌로 <b style="color:var(--text);">${won(data.grand_total)}</b>을 ${bankHours()}시간 안에 보내주세요.<br><br>` +
     `<b style="color:var(--text);">${esc(setting('bank_info'))}</b><br>입금자명 ${esc(depositor)}<br><br>` +
     '입금이 확인되면 주문이 확정되고, 출시일에 맞춰 주문 순서대로 보내드려요.';
   checkoutDone.style.display = 'flex';
