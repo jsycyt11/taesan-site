@@ -1482,6 +1482,31 @@ function shipSummary(p){
   return parts.length ? parts.join(' · ') : (p.ship_note || '');
 }
 function isAdmin(){ return !!(currentUser && currentUser.email === ADMIN_EMAIL); }
+const DEFAULT_POLICY = `[예약 주문 안내]
+· 지금 판매 중인 상품은 예약 주문이에요. 색상별 출시일에 맞춰 주문 순서대로 보내드려요.
+· 출시일은 상품 페이지에 적혀 있어요. 입고 상황에 따라 바뀌면 미리 연락드려요.
+
+[결제 안내]
+· 주문 후 안내된 계좌로 24시간 안에 입금해 주세요. 입금이 확인되면 주문이 확정돼요.
+· 기한 안에 입금이 없으면 주문이 취소될 수 있어요.
+
+[배송 안내]
+· 배송비 3,500원 (제주·도서산간은 추가 요금이 생기면 따로 안내드려요)
+· 택배사: CJ대한통운 (바뀔 수 있어요)
+· 출고 후 보통 1~2일 안에 받아보실 수 있어요.
+
+[교환·반품 안내]
+· 출고 전에는 언제든 주문을 취소할 수 있고, 입금하신 금액은 전액 환불해 드려요.
+· 상품을 받은 날부터 7일 안에 문의 채널로 교환·반품을 신청해 주세요.
+· 색상 교환은 재고가 있을 때 가능해요.
+· 단순 변심 반품은 왕복 배송비 7,000원을 부담해 주셔야 해요.
+· 상품 불량이나 잘못 배송된 경우에는 태산이 배송비를 부담해요.
+· 착용·세탁·택 제거 등으로 상품 가치가 떨어진 경우에는 반품이 어려워요.
+· 반품 상품이 도착해 확인되면 3영업일 안에 환불해 드려요.`;
+function shippingPolicy(){
+  const v = setting('shipping_policy');
+  return (!v || /빈티지|1점 한정|등급/.test(v)) ? DEFAULT_POLICY : v;
+}
 function setting(key, fallback=''){ const v = settings[key]; return (v === undefined || v === null || v === '') ? fallback : v; }
 function shippingFee(subtotal){
   const fee = parseInt(setting('shipping_fee','3500'),10) || 0;
@@ -1552,7 +1577,7 @@ function applySettings(){
   const aboutEl = document.getElementById('aboutText');
   if(aboutEl && setting('about_text')) aboutEl.textContent = setting('about_text');
   document.querySelectorAll('[data-insta]').forEach(a => { a.href = setting('link_instagram', 'https://www.instagram.com/taesan_vintage/'); });
-  document.getElementById('policyBody').textContent = setting('shipping_policy', '배송/교환 안내를 준비 중이에요.');
+  document.getElementById('policyBody').textContent = shippingPolicy();
   renderCart();
 }
 
@@ -2559,6 +2584,7 @@ const SETTING_FIELDS = ['pay_mode','bank_info','bank_hours','about_text','banner
 function fillSettingsForm(){
   SETTING_FIELDS.forEach(k => { const el = document.getElementById('st_' + k); if(el) el.value = settings[k] ?? ''; });
   document.getElementById('st_banner_on').checked = setting('banner_on','0') === '1';
+  document.getElementById('st_shipping_policy').value = shippingPolicy();
   document.getElementById('st_pay_mode').value = payMode();
   document.getElementById('stMsg').textContent = '';
 }
