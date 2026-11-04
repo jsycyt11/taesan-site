@@ -1294,6 +1294,43 @@
     .c-acc summary{font-size:18px;}
     .c-detail-info .c-body{font-size:18px;}
   }
+
+  /* ===== 테토: 소리 지르지 말고 묵직하게 ===== */
+  .t-big{font-size:clamp(30px, 3.4vw, 46px); letter-spacing:-0.05em;}
+  .c-head{border-bottom:2px solid var(--text); padding-bottom:16px;}
+  .c-meta{font-size:13.5px; font-weight:600; color:var(--text-dim);}
+  .t-hero{min-height:min(84vh, 820px); border-bottom:1px solid var(--line);}
+  .t-hero-copy{padding:0 56px 64px 64px;}
+  .t-kick{font-size:13px; font-weight:700; letter-spacing:.12em; color:var(--text-dim); margin:0 0 22px;}
+  .t-hero h1{font-size:clamp(56px, 6.6vw, 104px); line-height:1.05; letter-spacing:-0.06em; margin:0; white-space:normal;}
+  .t-hero-sub{font-size:17px; font-weight:600; line-height:1.65; color:#c9c6bf; margin-top:26px;}
+  .t-hero-img img{filter:contrast(1.08) saturate(0) brightness(.92);}
+  .t-btn{height:58px; padding:0 40px; font-size:17px; background:var(--text); color:#0b0b0a;}
+  .t-btn:hover{background:var(--red); color:#fff;}
+  .t-link{font-size:15px; font-weight:700; border-bottom-width:2px;}
+  #shop .card:hover .card-visual{outline:2px solid var(--text); outline-offset:-2px;}
+  #shop .item-name{font-size:16px; letter-spacing:-0.03em;}
+  #shop .price-wrap, #shop .card-bottom .price{font-size:16px;}
+  #shop .card-visual .sold-flag{font-size:11px; padding:5px 10px; background:var(--text);}
+  .c-look-row figcaption{font-size:15px;}
+  .c-detail-info .c-body{font-size:18px; font-weight:700;}
+  .c-acc{border-top:1px solid var(--line);}
+  .c-acc:last-of-type{border-bottom:1px solid var(--line);}
+  .c-acc summary{font-size:17px;}
+  .c-acc summary::after{border-width:0 2px 2px 0; width:9px; height:9px;}
+  .t-about{background:#0b0b0a; color:var(--text); border-top:1px solid var(--line) !important; padding:150px 0;}
+  .t-about-big{font-size:clamp(48px, 6.4vw, 100px); letter-spacing:-0.06em; line-height:1.05;}
+  .t-about-txt{font-size:clamp(18px, 1.8vw, 22px); font-weight:600; color:var(--text-dim); margin-top:34px;}
+  .c-btn{background:var(--text); color:#0b0b0a;}
+  @media (max-width:900px){
+    .t-hero-copy{padding:30px 18px 44px;}
+    .t-hero h1{font-size:15vw; margin:0;}
+    .t-hero-sub{font-size:15px;}
+    .t-btn{height:54px; font-size:16px;}
+    .t-about{padding:96px 0;}
+    .t-about-big{font-size:13vw;}
+  }
+  @media (max-width:560px){ .t-big{font-size:8.5vw;} .c-head{border-bottom-width:2px;} }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1323,22 +1360,23 @@
 <section class="t-hero" id="drop">
   <div class="t-hero-img"><img src="img/hero-chest.jpg" alt="泰山 스탠드넥 경량 패딩 가슴 자수" width="1080" height="1350" fetchpriority="high"></div>
   <div class="t-hero-copy">
-    <h1>추우면<br>입어<span>.</span></h1>
-    <p class="t-hero-sub">泰山 경량 패딩. 82,000원. 예약 받는 중.</p>
+    <p class="t-kick">泰山 DROP 01</p>
+    <h1>겨울은<br>버티는 거다.</h1>
+    <p class="t-hero-sub">가볍게 걸치고, 묵직하게 버틴다.<br>泰山 경량 패딩 82,000원. 예약 주문 중.</p>
     <div class="t-hero-cta">
-      <a class="t-btn" id="dropCta" data-insta href="https://www.instagram.com/taesan_vintage/" target="_blank" rel="noopener">지금 산다</a>
+      <a class="t-btn" id="dropCta" data-insta href="https://www.instagram.com/taesan_vintage/" target="_blank" rel="noopener">예약하기</a>
       <a class="t-link" href="#drop-detail">스펙 보기</a>
     </div>
     <span class="c-sr" id="dropPrice"></span><span class="c-sr" id="dropNote"></span>
   </div>
 </section>
-<div class="t-tape" aria-hidden="true"><div><span>泰山</span><span>추우면 입어</span><span>수량 제한 없음</span><span>82,000원</span><span>泰山</span><span>추우면 입어</span><span>수량 제한 없음</span><span>82,000원</span><span>泰山</span><span>추우면 입어</span><span>수량 제한 없음</span><span>82,000원</span></div></div>
+
 
 <section class="c-sec" id="shop">
   <div class="wrap">
     <div class="c-head">
-      <h2 class="c-h2 t-big">골라.</h2>
-      <p class="c-meta">세 개. 전부 82,000원.</p>
+      <h2 class="c-h2 t-big">DROP 01</h2>
+      <p class="c-meta">세 가지. 전부 82,000원.</p>
     </div>
   </div>
   <main class="wrap shop-main">
@@ -1351,8 +1389,8 @@
 <section class="c-sec c-look" id="drop01">
   <div class="wrap">
     <div class="c-head">
-      <h2 class="c-h2 t-big">짧게 입어.</h2>
-      <p class="c-meta">크롭 후드. 아이보리, 그레이, 블랙.</p>
+      <h2 class="c-h2 t-big">크롭 후드</h2>
+      <p class="c-meta">아이보리 · 그레이 · 블랙</p>
     </div>
   </div>
   <div class="c-look-row">
@@ -1370,8 +1408,8 @@
       <figure><img src="img/drop03b-black.jpg" alt="스탠드넥 경량 패딩" width="960" height="1200" loading="lazy"><figcaption>스탠드넥<span>총장 69 · 71cm</span></figcaption></figure>
     </div>
     <div class="c-detail-info">
-      <h2 class="c-h2 t-big">스펙.</h2>
-      <p class="c-body">가볍다. 따뜻하다. 가슴에 泰山. 주머니는 지퍼. 끝.</p>
+      <h2 class="c-h2 t-big">스펙</h2>
+      <p class="c-body">가볍고 따뜻하다. 가슴에 泰山 하나. 그거면 된다.</p>
 
       <details class="c-acc" open>
         <summary>사이즈</summary>
@@ -1432,8 +1470,8 @@
 
 <section class="c-sec t-about" id="brand">
   <div class="wrap">
-    <p class="t-about-big">泰山은<br>크고 높은 산.</p>
-    <p class="t-about-txt">안 흔들리고 안 꺾인다.<br>말은 짧게, 옷은 오래.</p>
+    <p class="t-about-big">泰山.<br>크고 높은 산.</p>
+    <p class="t-about-txt">흔들리지 않는다.<br>말은 줄이고, 오래 입는다.</p>
   </div>
 </section>
 
@@ -1442,7 +1480,7 @@
     <div class="c-foot">
       <div>
         <div class="logo" style="align-items:flex-start;"><span class="logo-ko">泰山</span><span class="logo-en">TAESAN</span></div>
-        <p style="margin-top:18px;">추우면 입어.</p>
+        <p style="margin-top:18px;">크고 높은 산. 흔들리지 않는다.</p>
       </div>
       <div>
         <h4>고객 안내</h4>
@@ -2036,7 +2074,7 @@ function renderDrop(){
     states.forEach(e => e.textContent = `${fmtDate(p.opens_at)} 오픈`);
   } else if(st === 'open'){
     cta.removeAttribute('data-insta'); cta.removeAttribute('target'); cta.href = '#';
-    cta.textContent = '지금 산다';
+    cta.textContent = '예약하기';
     cta.onclick = (e) => { e.preventDefault(); document.getElementById('shop').scrollIntoView({ behavior:'smooth' }); };
     if(left !== null) bits.push(`남은 수량 ${left}장`);
     if(p.closes_at) bits.push(`${fmtDate(p.closes_at)} 마감`);
