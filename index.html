@@ -27,7 +27,8 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ClothingStore","name":"태산 TAESAN","url":"https://www.teasan1.com/","image":"https://www.teasan1.com/og-image.png","email":"taesanmn@gmail.com","sameAs":["https://www.instagram.com/taesan_vintage/","https://www.tiktok.com/@teasan_vintage"]}</script>
 <link rel="icon" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Nanum+Pen+Script&family=Noto+Serif+KR:wght@700;900&family=Noto+Serif+TC:wght@900&family=Noto+Sans+KR:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Nanum+Myeongjo:wght@800&family=Baloo+2:wght@600;700&family=Cafe24+Ssurround&family=Inter:wght@400;500;600;700&family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
     --bg:#0c0708;
@@ -969,6 +970,171 @@
     .b-pair.trio .cap span{display:none;}
     .b-hero-facts li b{font-size:26px;}
   }
+
+  /* =====================================================================
+     泰山 브랜드 사이트 — 정돈된 기본형 (2026-11)
+     ===================================================================== */
+  :root{
+    --bg:#0e0d0d; --surface:#151313; --surface-2:#1c1919; --line:#353131; --line-soft:#252222;
+    --text:#f1efeb; --text-dim:#8e8a85; --accent:#b3262f; --accent-dim:#5a1a1e;
+    --font-display:'Pretendard Variable', Pretendard, 'Noto Sans KR', sans-serif;
+    --font-body:'Pretendard Variable', Pretendard, 'Noto Sans KR', sans-serif;
+    --font-mono:'Pretendard Variable', Pretendard, 'Noto Sans KR', sans-serif;
+  }
+  body{font-family:var(--font-body); letter-spacing:-0.01em; -webkit-font-smoothing:antialiased;}
+  .c-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
+
+  /* 상단 바 · 내비 */
+  #topBanner{background:#1a1818 !important; color:var(--text-dim) !important; font-size:12px; letter-spacing:0;}
+  header{background:rgba(14,13,13,.92); border-bottom:1px solid var(--line-soft);}
+  .nav{height:60px;}
+  .logo .logo-ko{font-size:24px;}
+  .logo .logo-en{font-family:var(--font-body); font-weight:500; font-size:8.5px; letter-spacing:.38em; margin-right:-.38em;}
+  .nav-links{gap:32px; font-size:13px; font-weight:500; letter-spacing:.02em; color:var(--text);}
+  .nav-links a{opacity:.7; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .account-btn, .cart-btn{font-family:var(--font-body); font-size:13px; font-weight:500; border:0; border-radius:0; padding:8px 0; color:var(--text);}
+  .nav-actions{gap:22px;}
+  .account-btn:hover{border:0; opacity:.7;}
+  .account-btn.logged-in{color:var(--text-dim);}
+  .cart-btn:hover{border:0; opacity:.7;}
+  .cart-count{background:transparent; color:var(--text); min-width:0; height:auto; padding:0; font-size:13px; font-weight:500;}
+  .cart-count::before{content:'(';} .cart-count::after{content:')';}
+
+  /* 공통 */
+  .c-sec{padding:112px 0; font-family:var(--font-body);}
+  .c-sec + .c-sec{border-top:1px solid var(--line-soft);}
+  .c-head{display:flex; justify-content:space-between; align-items:baseline; gap:24px; margin-bottom:36px; flex-wrap:wrap;}
+  .c-h2{font-size:22px; font-weight:600; letter-spacing:-0.02em; margin:0;}
+  .c-meta{font-size:13px; color:var(--text-dim); margin:0;}
+  .c-eyebrow{font-size:11.5px; font-weight:500; letter-spacing:.14em; color:var(--text-dim); margin:0 0 16px;}
+  .c-body{font-size:15px; line-height:1.8; color:#c9c5bf; margin:18px 0 0; word-break:keep-all;}
+  .c-body.sm{font-size:14px; margin:0;}
+  .c-btn{display:inline-flex; align-items:center; justify-content:center; height:50px; padding:0 34px; background:var(--text); color:#111; font-size:14px; font-weight:600; letter-spacing:0; border-radius:0; transition:opacity .2s;}
+  .c-btn:hover{opacity:.86;}
+  .c-link{font-size:14px; font-weight:500; color:var(--text); border-bottom:1px solid currentColor; padding-bottom:2px;}
+  .c-link:hover{opacity:.7;}
+
+  /* 첫 화면 */
+  .c-hero{position:relative; font-family:var(--font-body);}
+  .c-hero-media{display:grid; grid-template-columns:1fr 1fr; gap:2px; height:min(84vh, 880px); min-height:520px; background:var(--bg);}
+  .c-hero-media figure{margin:0; overflow:hidden; background:#170f10;}
+  .c-hero-media img{width:100%; height:100%; object-fit:cover;}
+  .c-hero-copy{max-width:1240px; margin:0 auto; padding:44px 28px 0; display:grid; grid-template-columns:1fr auto; grid-template-areas:'e e' 'h c' 's c'; column-gap:40px; align-items:end;}
+  .c-hero-copy .c-eyebrow{grid-area:e;} .c-hero-copy h1{grid-area:h;} .c-hero-sub{grid-area:s;} .c-hero-cta{grid-area:c; margin-top:0 !important; align-self:end;}
+  .c-hero-copy .c-eyebrow{margin-bottom:12px;}
+  .c-hero-copy h1{font-family:var(--font-body); font-size:clamp(34px, 4.2vw, 56px); font-weight:600; letter-spacing:-0.035em; line-height:1.15; margin:0;}
+  .c-hero-sub{font-size:15px; color:var(--text-dim); margin:12px 0 0;}
+  .c-hero-cta{display:flex; align-items:center; gap:28px; margin-top:30px;}
+
+  /* 상품 목록 */
+  #shop .grid{gap:48px 20px; padding-top:0;}
+  #shop .card{background:transparent; border:0; border-radius:0; overflow:visible;}
+  #shop .card:hover{transform:none; border-color:transparent;}
+  #shop .card-visual{border:0; border-radius:0; background:#170f10;}
+  #shop .card-img{transition:opacity .45s;}
+  #shop .card:hover .card-img{transform:none;}
+  #shop .card-tag{padding:16px 0 0; gap:6px;}
+  #shop .brand-name, #shop .item-meta, #shop .card-bottom .add-btn{display:none;}
+  #shop .item-name{font-size:14px; font-weight:500; letter-spacing:-0.01em;}
+  #shop .card-bottom{border:0; padding:0; margin-top:2px;}
+  #shop .price-wrap, #shop .card-bottom .price{font-size:14px; font-weight:500;}
+  #shop .card-po{font-size:12.5px; color:var(--text-dim); margin-top:2px;}
+  #shop .card-po b{color:var(--text-dim); font-weight:500;}
+  #shop .card-visual .sold-flag{top:14px; left:14px; background:rgba(241,239,235,.92); color:#111; border:0; border-radius:0; font-family:var(--font-body); font-size:10px; font-weight:600; letter-spacing:.08em; padding:5px 8px;}
+  .card-sw{display:flex; gap:6px; margin-top:4px;}
+  .card-sw i{width:11px; height:11px; border-radius:50%; border:1px solid rgba(255,255,255,.28);}
+
+  /* 룩북 */
+  .c-look-row{display:grid; grid-template-columns:repeat(3, 1fr); gap:2px;}
+  .c-look-row figure{margin:0;}
+  .c-look-row img{display:block; width:100%; height:auto; aspect-ratio:4/5; object-fit:cover; background:#170f10;}
+  .c-look-row figcaption{display:flex; justify-content:space-between; padding:14px 20px 0; font-size:13px;}
+  .c-look-row figcaption .drop-st{color:var(--text-dim);}
+
+  /* 제품 정보 */
+  .c-detail{display:grid; grid-template-columns:minmax(0, 1.15fr) minmax(0, 1fr); gap:72px; align-items:start;}
+  .c-detail-media{display:grid; grid-template-columns:1fr 1fr; gap:2px;}
+  .c-detail-media figure{margin:0;}
+  .c-detail-media figure:first-child{grid-column:1 / -1;}
+  .c-detail-media img{display:block; width:100%; height:auto; aspect-ratio:4/5; object-fit:cover; background:#170f10;}
+  .c-detail-media figure:first-child img{aspect-ratio:5/4;}
+  .c-detail-media figcaption{display:flex; justify-content:space-between; font-size:12.5px; padding:10px 14px 14px; color:var(--text);}
+  .c-detail-media figcaption span{color:var(--text-dim);}
+  .c-detail-info{position:sticky; top:96px;}
+  .c-detail-info .c-body{margin-bottom:36px;}
+  .c-acc{border-top:1px solid var(--line);}
+  .c-acc:last-of-type{border-bottom:1px solid var(--line);}
+  .c-acc summary{list-style:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; padding:20px 0; font-size:14.5px; font-weight:500;}
+  .c-acc summary::-webkit-details-marker{display:none;}
+  .c-acc summary::after{content:''; width:9px; height:9px; border-right:1.5px solid var(--text-dim); border-bottom:1.5px solid var(--text-dim); transform:rotate(45deg) translateY(-3px); transition:transform .25s;}
+  .c-acc[open] summary::after{transform:rotate(-135deg) translateY(-2px);}
+  .c-acc-body{padding:0 0 26px;}
+  .c-table{width:100%; border-collapse:collapse; font-size:13px;}
+  .c-table th{font-weight:500; color:var(--text-dim); text-align:center; padding:0 6px 10px; border-bottom:1px solid var(--line-soft); white-space:nowrap;}
+  .c-table td{text-align:center; padding:12px 6px; border-bottom:1px solid var(--line-soft); font-variant-numeric:tabular-nums;}
+  .c-table th:first-child, .c-table td:first-child{text-align:left; padding-left:0;}
+  .c-spec td, .c-spec th{text-align:left; vertical-align:top; line-height:1.55;}
+  .c-spec td:first-child{color:var(--text-dim); white-space:nowrap;}
+  .c-note{font-size:12px; color:var(--text-dim); margin:12px 0 0;}
+  .c-dl{margin:22px 0 0; font-size:13.5px; line-height:1.7;}
+  .c-dl dt{font-weight:600; margin-top:14px;}
+  .c-dl dd{margin:4px 0 0; color:#c9c5bf; word-break:keep-all;}
+  .c-steps{list-style:none; counter-reset:s; padding:0; margin:0; font-size:13.5px; line-height:1.7; color:#c9c5bf;}
+  .c-steps li{counter-increment:s; display:grid; grid-template-columns:28px 52px 1fr; padding:8px 0; word-break:keep-all;}
+  .c-steps li::before{content:'0' counter(s); color:var(--text-dim); font-size:12px; padding-top:2px;}
+  .c-steps b{color:var(--text); font-weight:500;}
+
+  /* 브랜드 */
+  .c-about{padding:150px 0;}
+  .c-about-grid{display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 2fr); gap:48px;}
+  .c-statement{font-size:clamp(22px, 2.4vw, 32px); font-weight:500; line-height:1.6; letter-spacing:-0.03em; margin:0; word-break:keep-all;}
+
+  /* 푸터 */
+  footer{border-top:1px solid var(--line-soft); padding:64px 0 40px; font-family:var(--font-body);}
+  .c-foot{display:grid; grid-template-columns:1.4fr 1fr 1.6fr; gap:40px;}
+  .c-foot h4{font-size:12px; font-weight:600; letter-spacing:.06em; margin:0 0 16px; color:var(--text);}
+  .c-foot p, .c-foot a, .c-foot .biz-info{font-size:12.5px; color:var(--text-dim); line-height:1.9; margin:0;}
+  .c-foot a:hover{color:var(--text);}
+  .c-foot-links{display:flex; flex-direction:column; align-items:flex-start;}
+  .c-foot-links .footer-social{display:flex; flex-direction:column; align-items:flex-start;}
+  .c-foot-bottom{display:flex; justify-content:space-between; margin-top:56px; padding-top:20px; border-top:1px solid var(--line-soft); font-size:11.5px; color:var(--text-dim);}
+  .c-foot-bottom a{color:var(--text-dim); opacity:.6;}
+
+  /* 상품 창 · 장바구니도 같은 톤 */
+  .modal, .drawer{font-family:var(--font-body);}
+  .modal .add-btn, .checkout-btn{border-radius:0 !important;}
+
+  @media (max-width:900px){
+    .c-sec{padding:72px 0;}
+    .c-hero-media{grid-template-columns:1fr; height:auto; min-height:0;}
+    .c-hero-media figure{aspect-ratio:4/5;}
+    .c-hide-m{display:none;}
+    .c-hero-copy{padding:28px 18px 0; grid-template-columns:1fr; grid-template-areas:'e' 'h' 's' 'c';}
+    .c-hero-cta{margin-top:24px !important;}
+    .c-hero-cta{gap:22px;}
+    .c-look-row{display:grid; grid-auto-flow:column; grid-auto-columns:80%; grid-template-columns:none; overflow-x:auto; scroll-snap-type:x mandatory; gap:2px; scrollbar-width:none;}
+    .c-look-row::-webkit-scrollbar{display:none;}
+    .c-look-row figure{scroll-snap-align:start;}
+    .c-look-row figcaption{padding:12px 18px 0;}
+    .c-detail{grid-template-columns:1fr; gap:44px;}
+    .c-detail-info{position:static;}
+    .c-detail-media{margin:0 -18px;}
+    .c-about{padding:96px 0;}
+    .c-about-grid{grid-template-columns:1fr; gap:4px;}
+    .c-foot{grid-template-columns:1fr; gap:32px;}
+  }
+  @media (max-width:560px){
+    #shop .grid{grid-template-columns:1fr 1fr; gap:36px 10px;}
+    #shop .card-tag{padding:12px 0 0;}
+    #shop .item-name{font-size:13px; line-height:1.45;}
+    #shop .card-po{font-size:11.5px;}
+    #shop .card-visual .sold-flag{top:8px; left:8px; font-size:9px; padding:4px 6px;}
+    .c-table{font-size:12px;}
+    .c-spec{font-size:11.5px;}
+    .c-steps li{grid-template-columns:24px 44px 1fr;}
+    .c-head{margin-bottom:24px;}
+  }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -983,51 +1149,40 @@
     </a>
     <nav class="nav-links">
       <a href="#shop">SHOP</a>
-      <a href="#drop01">DROP 01</a>
+      <a href="#drop01">LOOKBOOK</a>
       <a href="#brand">ABOUT</a>
     </nav>
     <div class="nav-actions">
       <button class="account-btn" id="accountToggle">로그인</button>
       <button class="cart-btn" id="cartToggle">
-        CART <span class="cart-count" id="cartCount">0</span>
+        장바구니 <span class="cart-count" id="cartCount">0</span>
       </button>
     </div>
   </div>
 </header>
 
-
-<section class="b-hero" id="drop">
-  <div class="wrap b-hero-grid lb">
-    <div class="b-hero-stage" aria-label="DROP 01 패딩 사진">
-      <figure class="f1"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" fetchpriority="high"><figcaption>CROP HOOD · IVORY</figcaption></figure>
-      <figure class="f2"><img src="img/drop02-black.jpg" alt="泰山 경량 패딩 레귤러 기장 블랙" width="960" height="1200"><figcaption>REGULAR HOOD · BLACK</figcaption></figure>
-      <figure class="f3"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩 블랙" width="960" height="1200"><figcaption>STAND-NECK · BLACK</figcaption></figure>
-      <div class="b-stage-bars"><i></i><i></i><i></i></div>
+<section class="c-hero" id="drop">
+  <div class="c-hero-media">
+    <figure><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" fetchpriority="high"></figure>
+    <figure class="c-hide-m"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩 블랙" width="960" height="1200"></figure>
+  </div>
+  <div class="c-hero-copy">
+    <p class="c-eyebrow">DROP 01 — 2026 WINTER</p>
+    <h1>경량 패딩 컬렉션</h1>
+    <p class="c-hero-sub">크롭 후드 · 레귤러 후드 · 스탠드넥</p>
+    <div class="c-hero-cta">
+      <a class="c-btn" id="dropCta" data-insta href="https://www.instagram.com/taesan_vintage/" target="_blank" rel="noopener">예약 주문하기</a>
+      <a class="c-link" href="#drop-detail">제품 정보</a>
     </div>
-    <div class="b-hero-copy">
-      <div class="b-kicker">DROP 01 · PRE-ORDER</div>
-      <h1>泰山</h1>
-      <div class="b-sub">DROP 01<span class="b-sub-item">경량 패딩 세 가지</span></div>
-      <p class="b-lead">크롭 후드, 레귤러 후드, 스탠드넥.<br>가볍게 걸치는 패딩 세 가지를 예약 주문으로 받아요.</p>
-      <div class="b-price"><span class="k">예약가</span><span class="v" id="dropPrice">₩82,000</span></div>
-      <div class="b-ctas">
-        <a class="b-btn red" id="dropCta" data-insta href="https://www.instagram.com/taesan_vintage/" target="_blank" rel="noopener">예약 오픈 알림 받기</a>
-        <a class="b-btn line" href="#drop-detail">사이즈 · 소재 보기</a>
-      </div>
-      <p class="b-note" id="dropNote"></p>
-      <ul class="b-hero-facts"><li><b>3</b>STYLES</li><li><b>4</b>COLORS</li><li><b>∞</b>수량 제한 없음</li></ul>
-    </div>
+    <span class="c-sr" id="dropPrice"></span><span class="c-sr" id="dropNote"></span>
   </div>
 </section>
 
-<section class="b-sec" id="shop">
+<section class="c-sec" id="shop">
   <div class="wrap">
-    <div class="b-head-row">
-      <div>
-        <div class="b-kicker">SHOP</div>
-        <h2 class="b-h2">DROP 01 전체 상품</h2>
-      </div>
-      <p class="b-dim" style="margin:0; font-size:15px;">사진을 누르면 색상 · 사이즈를 고를 수 있어요.</p>
+    <div class="c-head">
+      <h2 class="c-h2">DROP 01</h2>
+      <p class="c-meta">예약 주문 진행 중 · 출시일 순서대로 발송</p>
     </div>
   </div>
   <main class="wrap shop-main">
@@ -1037,126 +1192,132 @@
 </main>
 </section>
 
-<section class="b-sec alt" id="drop01">
+<section class="c-sec c-look" id="drop01">
   <div class="wrap">
-    <div class="b-head-row">
-      <div>
-        <div class="b-kicker">LOOKBOOK · CROP HOOD</div>
-        <h2 class="b-h2">크롭 후드 패딩, 세 가지 색</h2>
-      </div>
-      <p class="b-dim" style="margin:0; font-size:15px;">가슴에 泰山 자수 하나. 아이보리 · 그레이 · 블랙.</p>
+    <div class="c-head">
+      <h2 class="c-h2">크롭 후드 패딩</h2>
+      <p class="c-meta">아이보리 · 그레이 · 블랙</p>
     </div>
-    <div class="b-colors b-snap">
-      <div class="b-color"><div class="pic"><img src="img/drop01-ivory.jpg" alt="泰山 후드 경량 패딩 아이보리" width="960" height="1200" loading="lazy"></div><div class="meta"><div><div class="nm">아이보리</div><div class="en">IVORY</div></div><span class="st drop-st" data-color="아이보리">11월 5일 출시</span></div></div>
-      <div class="b-color"><div class="pic"><img src="img/drop01-gray.jpg" alt="泰山 후드 경량 패딩 그레이" width="960" height="1200" loading="lazy"></div><div class="meta"><div><div class="nm">그레이</div><div class="en">GRAY</div></div><span class="st drop-st" data-color="그레이">11월 5일 출시</span></div></div>
-      <div class="b-color"><div class="pic"><img src="img/drop01-black.jpg" alt="泰山 후드 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><div class="meta"><div><div class="nm">블랙</div><div class="en">BLACK</div></div><span class="st drop-st" data-color="블랙">출시일 곧 공개</span></div></div>
-    </div>
+  </div>
+  <div class="c-look-row">
+    <figure><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" loading="lazy"><figcaption><span>아이보리</span><span class="drop-st" data-color="아이보리">11월 5일 출시</span></figcaption></figure>
+    <figure><img src="img/drop01-gray.jpg" alt="泰山 크롭 후드 경량 패딩 그레이" width="960" height="1200" loading="lazy"><figcaption><span>그레이</span><span class="drop-st" data-color="그레이">11월 5일 출시</span></figcaption></figure>
+    <figure><img src="img/drop01-black.jpg" alt="泰山 크롭 후드 경량 패딩 블랙" width="960" height="1200" loading="lazy"><figcaption><span>블랙</span><span class="drop-st" data-color="블랙">출시일 곧 공개</span></figcaption></figure>
   </div>
 </section>
 
-<section class="b-sec" id="drop-detail">
-  <div class="wrap b-detail">
-    <div>
-      <div class="b-kicker">DROP 01 · DETAIL</div>
-      <h2 class="b-h2">가볍게 걸치는<br>경량 패딩 세 가지</h2>
-      <div class="b-feats">
-        <div class="b-feat"><div class="ic b-serif">泰山</div><h3>가슴 자수</h3><p>왼쪽 가슴에 泰山 한자 로고 하나</p></div>
-        <div class="b-feat"><div class="ic">∩</div><h3>후드 · 스탠드넥</h3><p>후드 두 가지, 목을 감싸는 스탠드 칼라 하나</p></div>
-        <div class="b-feat"><div class="ic">‖</div><h3>지퍼 포켓</h3><p>양쪽 주머니 모두 지퍼로 닫혀요</p></div>
-        <div class="b-feat"><div class="ic">61 · 67 · 71</div><h3>세 가지 기장</h3><p>짧은 크롭부터 엉덩이 위까지 덮는 스탠드넥까지</p></div>
-      </div>
-      <div class="b-pair trio">
-        <a class="b-pair-item" href="#shop"><div class="pic"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" loading="lazy"></div><div class="cap"><b>크롭</b><span>총장 61cm · 아이보리 · 그레이 · 블랙</span></div></a>
-        <a class="b-pair-item" href="#shop"><div class="pic"><img src="img/drop02-black.jpg" alt="泰山 경량 패딩 레귤러 기장 블랙" width="960" height="1200" loading="lazy"></div><div class="cap"><b>레귤러</b><span>총장 67cm · 블랙 · 연그레이</span></div></a>
-        <a class="b-pair-item" href="#shop"><div class="pic"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><div class="cap"><b>스탠드넥</b><span>총장 69 · 71cm · 블랙</span></div></a>
-      </div>
+<section class="c-sec" id="drop-detail">
+  <div class="wrap c-detail">
+    <div class="c-detail-media">
+      <figure><img src="img/drop01-ivory.jpg" alt="크롭 후드 경량 패딩" width="960" height="1200" loading="lazy"><figcaption>크롭 후드<span>총장 61cm</span></figcaption></figure>
+      <figure><img src="img/drop02-black.jpg" alt="레귤러 후드 경량 패딩" width="960" height="1200" loading="lazy"><figcaption>레귤러 후드<span>총장 67cm</span></figcaption></figure>
+      <figure><img src="img/drop03b-black.jpg" alt="스탠드넥 경량 패딩" width="960" height="1200" loading="lazy"><figcaption>스탠드넥<span>총장 69 · 71cm</span></figcaption></figure>
     </div>
-    <div>
-      <div class="b-spec-t">SPEC</div>
-      <div class="b-spec2 three">
-        <div class="h"><span></span><span>크롭</span><span>레귤러</span><span>스탠드넥</span></div>
-        <div><span>컬러</span><span>아이보리 · 그레이 · 블랙</span><span>블랙 · 연그레이</span><span>블랙</span></div>
-        <div><span>사이즈</span><span>M (총장 61cm)</span><span>M (총장 67cm)</span><span>M (69cm) · L (71cm)</span></div>
-        <div><span>핏</span><span>크롭 기장 · 넉넉한 드롭 숄더</span><span>기본 기장 · 어깨선 제자리</span><span>스탠드 칼라 · 남성 정사이즈</span></div>
-        <div><span>소재</span><span>폴리</span><span>나일론 12% · 폴리에스테르 88%</span><span>추후 안내</span></div>
-        <div><span>두께 · 안감</span><span>경량</span><span>보통 · 안감 없음</span><span>경량</span></div>
-        <div><span>세탁</span><span>손세탁 · 물세탁 · 드라이클리닝</span><span>손세탁</span><span>추후 안내</span></div>
-        <div><span>출시</span><span>아이보리·그레이 11월 5일<br>블랙 곧 공개</span><span>11월 5일</span><span>곧 공개</span></div>
-        <div><span>가격</span><span>82,000원</span><span>82,000원</span><span>82,000원</span></div>
-      </div>
-      <p class="b-dim" style="font-size:12.5px; margin-top:10px;">세 상품 모두 예약 주문 · 주문 수량 제한 없음</p>
-      <div class="b-spec-t" style="margin-top:36px;">SIZE</div>
-      <div class="b-size-table">
-        <div class="h"><span>상품 · 사이즈</span><span>어깨너비</span><span>가슴단면</span><span>소매길이</span><span>총장</span></div>
-        <div><span>크롭 · M<em>아이보리 · 그레이 · 블랙</em></span><span>55</span><span>57</span><span>53</span><span>61</span></div>
-        <div><span>레귤러 · M<em>블랙 · 연그레이</em></span><span>44</span><span>–</span><span>60</span><span>67</span></div>
-        <div><span>스탠드넥 · M<em>블랙</em></span><span>47</span><span>55</span><span>64</span><span>69</span></div>
-        <div><span>스탠드넥 · L<em>블랙</em></span><span>49</span><span>58</span><span>66</span><span>71</span></div>
-      </div>
-      <p class="b-dim" style="font-size:12.5px; margin-top:10px;">단위 cm · 실측이라 재는 방법에 따라 1~2cm 차이가 날 수 있어요.</p>
-      <details class="b-guide">
-        <summary class="t">SIZE GUIDE · 어떤 사이즈를 고를까요?</summary>
-        <p><b>크롭 후드 패딩 · M (총장 61cm)</b><br>총장 61cm로 보통 남성 L 패딩(68~70cm)보다 7~9cm 짧은 크롭 기장이에요. 가슴단면 57cm · 어깨너비 55cm 드롭 숄더라 몸통과 어깨는 넉넉해요. 평소 M~L을 입으면 어깨가 내려오는 오버핏, XL을 입으면 몸에 가깝게 맞아요. 와이드 팬츠나 허리가 높은 바지와 입으면 다리가 길어 보여요.</p>
-        <p><b>레귤러 기장 패딩 · M (총장 67cm)</b><br>총장 67cm, 어깨너비 44cm로 남성 M 기준의 기본 기장이에요. 어깨선이 제자리에 오는 핏이라 평소 M은 딱 맞게, S는 살짝 여유 있게 맞아요.</p>
-        <p><b>스탠드넥 경량 패딩 · M (총장 69cm) / L (총장 71cm)</b><br>후드 없이 목을 감싸는 스탠드 칼라예요. 남성 사이즈 그대로 골라주세요. 평소 M을 입으면 M(어깨 47 · 가슴 55), 평소 L을 입으면 L(어깨 49 · 가슴 58)이 딱 맞아요. 사이에 걸치거나 니트 위에 넉넉하게 입고 싶으면 한 치수 크게 골라주세요.</p>
-        <p><b>패딩 고르는 법</b><br>짧고 넉넉한 실루엣은 크롭, 허리 아래로 내려오는 기본 기장은 레귤러, 후드 없이 깔끔하게 입고 싶으면 스탠드넥을 골라주세요.</p>
+    <div class="c-detail-info">
+      <p class="c-eyebrow">PRODUCT INFORMATION</p>
+      <h2 class="c-h2">DROP 01 경량 패딩</h2>
+      <p class="c-body">왼쪽 가슴에 泰山 한자 자수를 넣은 경량 패딩입니다. 실루엣은 크롭 후드, 레귤러 후드, 스탠드넥 세 가지입니다. 양쪽 주머니는 모두 지퍼로 여닫습니다.</p>
+
+      <details class="c-acc" open>
+        <summary>사이즈</summary>
+        <div class="c-acc-body">
+          <table class="c-table">
+            <thead><tr><th>상품 · 사이즈</th><th>어깨</th><th>가슴</th><th>소매</th><th>총장</th></tr></thead>
+            <tbody>
+              <tr><td>크롭 후드 · M</td><td>55</td><td>57</td><td>53</td><td>61</td></tr>
+              <tr><td>레귤러 후드 · M</td><td>44</td><td>–</td><td>60</td><td>67</td></tr>
+              <tr><td>스탠드넥 · M</td><td>47</td><td>55</td><td>64</td><td>69</td></tr>
+              <tr><td>스탠드넥 · L</td><td>49</td><td>58</td><td>66</td><td>71</td></tr>
+            </tbody>
+          </table>
+          <p class="c-note">단위 cm. 단면 실측 기준이며 측정 방법에 따라 1~2cm 오차가 있을 수 있습니다.</p>
+          <dl class="c-dl">
+            <dt>크롭 후드</dt><dd>일반 남성 패딩보다 7~9cm 짧은 기장에 드롭 숄더 핏입니다. 평소 M~L은 오버핏, XL은 몸에 맞게 입을 수 있습니다.</dd>
+            <dt>레귤러 후드</dt><dd>남성 M 기준의 기본 기장입니다. 평소 M은 정핏, S는 여유 있게 맞습니다.</dd>
+            <dt>스탠드넥</dt><dd>남성 정사이즈입니다. 평소 사이즈를 고르시고, 니트 위에 여유 있게 입으려면 한 치수 크게 고르세요.</dd>
+          </dl>
+        </div>
+      </details>
+
+      <details class="c-acc">
+        <summary>소재 · 관리</summary>
+        <div class="c-acc-body">
+          <table class="c-table c-spec">
+            <thead><tr><th></th><th>크롭 후드</th><th>레귤러 후드</th><th>스탠드넥</th></tr></thead>
+            <tbody>
+              <tr><td>소재</td><td>폴리에스테르</td><td>나일론 12%<br>폴리에스테르 88%</td><td>추후 안내</td></tr>
+              <tr><td>두께 · 안감</td><td>경량</td><td>보통 · 안감 없음</td><td>경량</td></tr>
+              <tr><td>세탁</td><td>손세탁 · 물세탁<br>드라이클리닝</td><td>손세탁</td><td>추후 안내</td></tr>
+              <tr><td>컬러</td><td>아이보리 · 그레이 · 블랙</td><td>블랙 · 연그레이</td><td>블랙</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="c-acc">
+        <summary>예약 주문 · 출시</summary>
+        <div class="c-acc-body">
+          <ol class="c-steps">
+            <li><b>주문</b>색상과 사이즈를 고르고 주문합니다. 주문 수량 제한은 없습니다.</li>
+            <li><b>준비</b>가슴에 泰山 자수를 넣고 한 벌씩 검수합니다.</li>
+            <li><b>발송</b>색상별 출시일에 맞춰 주문 순서대로 발송합니다. 출시일은 상품 페이지에서 확인할 수 있습니다.</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="c-acc">
+        <summary>배송 · 교환</summary>
+        <div class="c-acc-body">
+          <p class="c-body sm">배송비 3,500원. 상품 수령 후 7일 이내 교환·반품 신청이 가능합니다. 자세한 내용은 페이지 하단의 배송/교환 안내를 확인해 주세요.</p>
+        </div>
       </details>
     </div>
   </div>
 </section>
 
-<section class="b-sec alt">
-  <div class="wrap">
-    <div style="text-align:center;">
-      <div class="b-kicker">HOW PRE-ORDER WORKS</div>
-      <h2 class="b-h2">주문하신 순서대로 보내드립니다</h2>
-    </div>
-    <div class="b-steps">
-      <div class="b-step"><div class="n">01</div><h3>예약 주문</h3><p>색상·사이즈를 고르고 결제합니다.<br>수량 제한 없이 주문할 수 있어요.</p></div>
-      <div class="b-step"><div class="n">02</div><h3>준비</h3><p>가슴에 泰山 자수를 넣고 한 벌씩 검수합니다.<br>진행 상황은 인스타그램에 공유합니다.</p></div>
-      <div class="b-step"><div class="n">03</div><h3>출시 · 발송</h3><p>색상별 출시일은 상품 창에 적혀 있어요.<br>출시되면 주문 순서대로 보내드려요.</p></div>
-    </div>
-  </div>
-</section>
-
-<section class="b-sec" id="brand">
-  <div class="wrap b-story">
-    <div class="b-seal"><div class="h b-serif">泰山</div><div class="e">— TAESAN —</div></div>
+<section class="c-sec c-about" id="brand">
+  <div class="wrap c-about-grid">
+    <p class="c-eyebrow">ABOUT 泰山</p>
     <div>
-      <div class="b-kicker">ABOUT</div>
-      <h2 class="b-h2">크고 높은 산, 泰山</h2>
-      <p class="txt">泰山은 크고 높은 산을 뜻합니다.<br>산처럼 오래 그 자리에 있는 옷,<br>화려하게 꾸미기보다 오래 입을 수 있는 옷을 내놓습니다.</p>
+      <p class="c-statement">泰山은 크고 높은 산을 뜻합니다.<br>산처럼 오래 그 자리에 있는 옷,<br>유행보다 오래 입을 수 있는 옷을 선보입니다.</p>
     </div>
   </div>
 </section>
-
 
 <footer>
-  <div class="wrap footer-inner">
-    <div>
-      <div class="logo"><span class="logo-ko">泰山</span><span class="logo-en">TAESAN</span></div>
-      <p class="fine">泰山 — 크고 높은 산처럼, 오래 입는 옷.<br>© 2026 태산. All rights reserved.</p>
-      <p class="biz-info" id="bizInfo"></p>
+  <div class="wrap">
+    <div class="c-foot">
+      <div>
+        <div class="logo" style="align-items:flex-start;"><span class="logo-ko">泰山</span><span class="logo-en">TAESAN</span></div>
+        <p style="margin-top:18px;">크고 높은 산처럼, 오래 입는 옷.</p>
+      </div>
+      <div>
+        <h4>고객 안내</h4>
+        <div class="c-foot-links">
+          <a href="#" id="policyLink">배송 · 교환 · 반품</a>
+          <span class="footer-social" id="footerSocial"></span>
+        </div>
+      </div>
+      <div>
+        <h4>사업자 정보</h4>
+        <p class="biz-info" id="bizInfo"></p>
+      </div>
     </div>
-    <div class="footer-links">
-      <a href="#" id="policyLink">배송/교환</a>
-      <span class="footer-social" id="footerSocial"></span>
-      <a href="#" id="adminLink" style="opacity:0.5;">관리자</a>
-    </div>
+    <div class="c-foot-bottom"><span>© 2026 TAESAN. All rights reserved.</span><a href="#" id="adminLink">관리자</a></div>
   </div>
 </footer>
 
 <div class="overlay" id="overlay"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-head">
-    <h3>CART</h3>
+    <h3>장바구니</h3>
     <button class="drawer-close" id="drawerClose">✕</button>
   </div>
   <div class="drawer-items" id="drawerItems"></div>
   <div class="drawer-foot">
-    <div class="drawer-sub"><span>SUBTOTAL</span><span id="subtotal">₩0</span></div>
+    <div class="drawer-sub"><span>합계</span><span id="subtotal">₩0</span></div>
     <button class="checkout-btn" id="checkoutBtn">결제하기</button>
-    <p class="checkout-note" id="drawerNote">모든 상품은 1점 한정이에요.</p>
+    <p class="checkout-note" id="drawerNote"></p>
   </div>
 </aside>
 
@@ -1722,7 +1883,7 @@ function renderDrop(){
     states.forEach(e => e.textContent = `${fmtDate(p.opens_at)} 오픈`);
   } else if(st === 'open'){
     cta.removeAttribute('data-insta'); cta.removeAttribute('target'); cta.href = '#';
-    cta.textContent = '예약 구매하기';
+    cta.textContent = '예약 주문하기';
     cta.onclick = (e) => { e.preventDefault(); document.getElementById('shop').scrollIntoView({ behavior:'smooth' }); };
     if(left !== null) bits.push(`남은 수량 ${left}장`);
     if(p.closes_at) bits.push(`${fmtDate(p.closes_at)} 마감`);
@@ -1775,6 +1936,7 @@ function renderGrid(){
           <div>
             <div class="brand-name">${esc(p.brand)}</div>
             <div class="item-name">${esc(p.name)}</div>
+            ${(p.colors||[]).length ? `<div class="card-sw">${p.colors.map(c => `<i title="${esc(c)}" style="background:${({'아이보리':'#ebe5d6','그레이':'#9d9a96','연그레이':'#c8c6c2','블랙':'#141313','화이트':'#f4f3ef','네이비':'#1d2536','베이지':'#cbb9a0'})[c] || '#666'}"></i>`).join('')}</div>` : ''}
           </div>
         </div>
         <div class="item-meta">${(p.colors||[]).length ? `<span>${p.colors.length} COLOR${p.colors.length > 1 ? 'S' : ''}</span>` : ''}${(p.sizes||[]).length ? `<span>${esc(p.sizes.join(' · '))}</span>` : (p.size ? `<span>SIZE ${esc(p.size)}</span>` : '')}</div>
@@ -2871,7 +3033,7 @@ loadProducts();
 (function(){
   if(!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   document.documentElement.classList.add('js-reveal');
-  const els = document.querySelectorAll('.b-sec .b-head-row, .b-sec .b-h2, .b-color, .b-feat, .b-pair-item, .b-step, .b-spec2, .b-size-table, .b-guide, .b-seal, .b-story > div');
+  const els = document.querySelectorAll('.c-head, .c-look-row figure, .c-detail-media figure, .c-detail-info, .c-statement');
   const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin:'0px 0px -8% 0px' });
   els.forEach((el, i) => { el.classList.add('rv'); el.style.transitionDelay = (i % 4) * 60 + 'ms'; io.observe(el); });
 })();
