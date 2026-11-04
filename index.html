@@ -7,7 +7,7 @@
 <meta name="description" content="泰山(태산)의 첫 번째 드롭, 경량 패딩. 한정 수량 넘버링 예약판매.">
 <meta name="keywords" content="태산, 泰山, TAESAN, 태산 브랜드, 태산 경량패딩, 경량 패딩, 예약판매, 넘버링 한정판">
 <link rel="canonical" href="https://www.teasan1.com/">
-<meta name="theme-color" content="#f3eee4">
+<meta name="theme-color" content="#0c0d10">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="태산 TAESAN">
 <meta property="og:title" content="泰山 TAESAN — DROP 01 경량 패딩">
@@ -1480,6 +1480,86 @@
     .c-acc summary{font-size:19px;}
     .o-hero-cta{gap:22px;}
   }
+
+  /* =====================================================================
+     NIGHT (2026-11): 밤의 광장 · 가로등 금빛 · 석조 크림 · 검정 코트
+     ===================================================================== */
+  :root{
+    --bg:#0c0d10; --surface:#14151a; --surface-2:#101116; --line:#2c2c30; --line-soft:#1d1e23;
+    --text:#ebe4d6; --text-dim:#8f897e; --accent:#d7b676; --accent-dim:#5d4c2c; --tag-navy:#ebe4d6;
+  }
+  ::selection{background:#d7b676; color:#0c0d10;}
+  #topBanner{background:#08090b !important; color:#a39c8f !important; border-bottom:1px solid #1d1e23;}
+  header{background:rgba(12,13,16,.86); border-bottom:1px solid var(--line-soft);}
+  .logo .logo-en{color:#ebe4d6;}
+  .nav-links, .account-btn, .cart-btn, .cart-count{color:#d8d1c3;}
+
+  /* 가로등 빛 */
+  .o-hero{position:relative; overflow:hidden; padding:90px 0 120px;
+    background:
+      radial-gradient(420px 300px at 12% -40px, rgba(231,196,128,.20), transparent 70%),
+      radial-gradient(380px 280px at 46% -60px, rgba(231,196,128,.12), transparent 70%),
+      radial-gradient(520px 360px at 86% -40px, rgba(231,196,128,.18), transparent 70%),
+      linear-gradient(180deg, #111216 0%, #0c0d10 60%);}
+  .o-hero::after{content:''; position:absolute; left:0; right:0; bottom:0; height:120px; pointer-events:none;
+    background:repeating-linear-gradient(90deg, rgba(235,228,214,.035) 0 1px, transparent 1px 92px), linear-gradient(transparent, rgba(0,0,0,.25));}
+  .o-hero h1{color:#f1ebdf; text-shadow:0 0 40px rgba(215,182,118,.08);}
+  .o-hero .o-ko{color:#b9b2a5;}
+
+  .o-ko{color:#b3ac9f;}
+  .o-caps{color:#9c9587;}
+  .o-h2 em, .o-hero h1 em, .o-statement em{color:var(--accent);}
+  .o-sec{border-top:1px solid var(--line-soft);}
+  .o-alt{background:#101116;}
+
+  /* 사진: 액자 대신 얇은 금빛 선 */
+  .o-mat{background:transparent; border:0; padding:0; box-shadow:0 30px 60px -30px rgba(0,0,0,.8);}
+  .o-mat img{outline:1px solid rgba(215,182,118,.22); outline-offset:8px;}
+  .o-plate figcaption{color:#cfc8ba; margin-top:20px;}
+  .o-plate figcaption > span{color:var(--accent);}
+  .o-hero-plate figcaption span, .o-detail-plates figcaption span{color:var(--accent);}
+  .o-plate figcaption small{color:#8f897e;}
+
+  /* 버튼 */
+  .o-btn{background:transparent; color:#ebe4d6; border:1px solid rgba(235,228,214,.7);}
+  .o-btn:hover{background:#ebe4d6; color:#0c0d10;}
+  .o-link{color:#ebe4d6;}
+
+  /* 상품 목록 */
+  #shop .card-visual{background:transparent; border:0; padding:0;}
+  #shop .card-visual > img.card-img{background:#14151a;}
+  #shop .card:hover .card-visual{border:0;}
+  #shop .card:hover .card-img{filter:brightness(1.08);}
+  #shop .card-visual .sold-flag{background:rgba(12,13,16,.7); color:var(--accent); border:1px solid rgba(215,182,118,.45); backdrop-filter:blur(4px);}
+  #shop .item-name{color:#efe8db;}
+  #shop .card-sw i{border-color:rgba(235,228,214,.4);}
+  #shop .card-po b{color:var(--accent);}
+
+  /* 상세 */
+  .c-acc summary{color:#efe8db;}
+  .c-acc summary::after{border-color:#ebe4d6;}
+  .c-table th{color:#8f897e;}
+  .c-table td{color:#d8d1c3;}
+  .c-dl dt{color:#efe8db;}
+  .c-dl dd, .c-steps{color:#aaa395;}
+
+  /* 소개 */
+  .o-about{background:radial-gradient(600px 340px at 50% 0, rgba(231,196,128,.10), transparent 70%), #0c0d10;}
+  .o-sign{color:#8f897e;}
+
+  /* 푸터 */
+  footer{background:#08090b; border-top:1px solid var(--line-soft);}
+  footer .logo .logo-en, .c-foot h4{color:#ebe4d6;}
+  .c-foot p, .c-foot a, .c-foot .biz-info, footer .logo .logo-ko{color:#8f897e;}
+  .c-foot-bottom{border-top-color:#1d1e23;}
+
+  /* 상품 창 · 장바구니 */
+  .modal, .drawer{background:#111216 !important; color:var(--text);}
+
+  @media (max-width:900px){
+    .o-hero{padding:36px 0 84px;}
+    .o-mat img{outline-offset:5px;}
+  }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1510,8 +1590,8 @@
   <div class="wrap o-hero-grid">
     <div class="o-hero-copy">
       <p class="o-caps">Est. 2026 &nbsp;·&nbsp; Drop No. 1</p>
-      <h1>Quiet warmth<br><em>for the long winter.</em></h1>
-      <p class="o-ko">가볍고 따뜻한 경량 패딩.<br>오래 곁에 두고 입는 옷을 선보입니다.</p>
+      <h1>After dark,<br><em>still warm.</em></h1>
+      <p class="o-ko">늦은 밤, 오래된 거리를 걸을 때.<br>코트 안에도, 코트 대신에도 걸치는 경량 패딩.</p>
       <div class="o-hero-cta">
         <a class="o-btn" id="dropCta" data-insta href="https://www.instagram.com/taesan_vintage/" target="_blank" rel="noopener">Shop the Collection</a>
         <a class="o-link" href="#drop-detail">Details</a>
@@ -1519,8 +1599,8 @@
       <span class="c-sr" id="dropPrice"></span><span class="c-sr" id="dropNote"></span>
     </div>
     <figure class="o-plate o-hero-plate">
-      <div class="o-mat"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩 아이보리" width="960" height="1200" fetchpriority="high"></div>
-      <figcaption><span>Plate I.</span> The Crop Hood, Ivory</figcaption>
+      <div class="o-mat"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩 블랙" width="960" height="1200" fetchpriority="high"></div>
+      <figcaption><span>No. 1</span> The Stand Collar, Black</figcaption>
     </figure>
   </div>
 </section>
@@ -1557,12 +1637,12 @@
 <section class="o-sec" id="drop-detail">
   <div class="wrap o-detail">
     <div class="o-detail-plates">
-      <figure class="o-plate"><div class="o-mat"><img src="img/drop02-black.jpg" alt="레귤러 후드 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><figcaption><span>Plate II.</span> The Regular Hood</figcaption></figure>
-      <figure class="o-plate"><div class="o-mat"><img src="img/drop03b-black.jpg" alt="스탠드넥 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><figcaption><span>Plate III.</span> The Stand Collar</figcaption></figure>
+      <figure class="o-plate"><div class="o-mat"><img src="img/drop02-black.jpg" alt="레귤러 후드 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><figcaption><span>No. 2</span> The Regular Hood</figcaption></figure>
+      <figure class="o-plate"><div class="o-mat"><img src="img/drop03b-black.jpg" alt="스탠드넥 경량 패딩 블랙" width="960" height="1200" loading="lazy"></div><figcaption><span>No. 3</span> The Stand Collar</figcaption></figure>
     </div>
     <div class="o-detail-info">
       <p class="o-caps">Details</p>
-      <h2 class="o-h2">Made light,<br><em>kept for years.</em></h2>
+      <h2 class="o-h2">Made light,<br><em>worn late.</em></h2>
       <p class="o-ko">왼쪽 가슴에 泰山 한자 자수 하나. 크롭 후드, 레귤러 후드, 스탠드넥 세 가지 실루엣이며 양쪽 주머니는 지퍼로 여닫습니다.</p>
 
       <details class="c-acc" open>
@@ -1636,7 +1716,7 @@
     <div class="c-foot">
       <div>
         <div class="logo" style="align-items:flex-start;"><span class="logo-ko">泰山</span><span class="logo-en">TAESAN</span></div>
-        <p style="margin-top:18px;">Est. 2026. 크고 높은 산처럼, 오래 입는 옷.</p>
+        <p style="margin-top:18px;">Est. 2026. After dark, still warm.</p>
       </div>
       <div>
         <h4>고객 안내</h4>
