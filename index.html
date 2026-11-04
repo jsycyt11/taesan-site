@@ -987,6 +987,7 @@
         <div class="h"><span>상품 · 사이즈</span><span>어깨너비</span><span>가슴단면</span><span>소매길이</span><span>총장</span></div>
         <div><span>크롭 · M<em>아이보리 · 그레이 · 블랙</em></span><span>55</span><span>57</span><span>53</span><span>61</span></div>
         <div><span>레귤러 · M<em>블랙 · 연그레이</em></span><span>44</span><span>–</span><span>60</span><span>67</span></div>
+        <div><span>스탠드넥 · M<em>블랙</em></span><span>47</span><span>55</span><span>64</span><span>69</span></div>
         <div><span>스탠드넥 · L<em>블랙</em></span><span>49</span><span>58</span><span>66</span><span>71</span></div>
       </div>
       <p class="b-dim" style="font-size:12.5px; margin-top:10px;">단위 cm · 실측이라 재는 방법에 따라 1~2cm 차이가 날 수 있어요.</p>
@@ -994,7 +995,7 @@
         <div class="t">SIZE GUIDE</div>
         <p><b>크롭 후드 패딩 · M (총장 61cm)</b><br>총장 61cm로 보통 남성 L 패딩(68~70cm)보다 7~9cm 짧은 크롭 기장이에요. 가슴단면 57cm · 어깨너비 55cm 드롭 숄더라 몸통과 어깨는 넉넉해요. 평소 M~L을 입으면 어깨가 내려오는 오버핏, XL을 입으면 몸에 가깝게 맞아요. 와이드 팬츠나 허리가 높은 바지와 입으면 다리가 길어 보여요.</p>
         <p><b>레귤러 기장 패딩 · M (총장 67cm)</b><br>총장 67cm, 어깨너비 44cm로 남성 M 기준의 기본 기장이에요. 어깨선이 제자리에 오는 핏이라 평소 M은 딱 맞게, S는 살짝 여유 있게 맞아요.</p>
-        <p><b>스탠드넥 경량 패딩 · L (총장 71cm)</b><br>후드 없이 목을 감싸는 스탠드 칼라예요. 어깨너비 49cm · 가슴단면 58cm · 소매 66cm · 총장 71cm로 남성 L 기준이에요. 평소 L은 딱 맞게, M은 살짝 여유 있게 맞고, 엉덩이 위까지 덮는 기장이라 셔츠·니트 위에 겹쳐 입기 좋아요.</p>
+        <p><b>스탠드넥 경량 패딩 · M (총장 69cm) / L (총장 71cm)</b><br>후드 없이 목을 감싸는 스탠드 칼라예요. 남성 사이즈 그대로 골라주세요. 평소 M을 입으면 M(어깨 47 · 가슴 55), 평소 L을 입으면 L(어깨 49 · 가슴 58)이 딱 맞아요. 사이에 걸치거나 니트 위에 넉넉하게 입고 싶으면 한 치수 크게 골라주세요.</p>
         <p><b>패딩 고르는 법</b><br>짧고 넉넉한 실루엣은 크롭, 허리 아래로 내려오는 기본 기장은 레귤러, 후드 없이 깔끔하게 입고 싶으면 스탠드넥을 골라주세요.</p>
       </div>
     </div>
@@ -1819,7 +1820,15 @@ function openProductModal(id){
   const measureNote = document.getElementById('modalMeasureNote');
   const m = p.measure || {};
   const cells = [['총장', m.total], ['어깨너비', m.shoulder], ['가슴단면', m.chest], ['소매길이', m.sleeve]].filter(([,v]) => v);
-  if(cells.length){
+  const multi = m.sizes && typeof m.sizes === 'object' ? Object.entries(m.sizes) : [];
+  if(multi.length){
+    const cols = [['어깨너비','shoulder'], ['가슴단면','chest'], ['소매길이','sleeve'], ['총장','total']].filter(([,k]) => multi.some(([,v]) => v && v[k]));
+    measureEl.style.gridTemplateColumns = `repeat(${cols.length + 1}, 1fr)`;
+    measureEl.innerHTML = `<div class="measure-cell"><div class="label">사이즈</div></div>` + cols.map(([l]) => `<div class="measure-cell"><div class="label">${l}</div></div>`).join('')
+      + multi.map(([s, v]) => `<div class="measure-cell"><div class="value">${esc(s)}</div></div>` + cols.map(([,k]) => `<div class="measure-cell"><div class="value">${v && v[k] ? esc(v[k]) : '–'}</div></div>`).join('')).join('');
+    measureNote.textContent = '※ 단위 cm · 실측 사이즈이며 측정 방식에 따라 1~2cm 오차가 있을 수 있습니다.';
+    measureEl.style.display = ''; measureNote.style.display = '';
+  } else if(cells.length){
     measureEl.style.gridTemplateColumns = `repeat(${cells.length}, 1fr)`;
     measureEl.innerHTML = cells.map(([l,v]) => `<div class="measure-cell"><div class="label">${l}</div><div class="value">${esc(v)}cm</div></div>`).join('');
     measureNote.textContent = '※ 실측 사이즈이며 측정 방식에 따라 1~2cm 오차가 있을 수 있습니다.';
@@ -2506,7 +2515,9 @@ document.getElementById('pfSubmit').addEventListener('click', async ()=>{
       grade: document.getElementById('pfGrade').value,
       lot: document.getElementById('pfLot').value.trim() || null,
       price, sale_price: sale,
-      measure: Object.values(measure).some(v => v) ? measure : null,
+      measure: (() => { const prev = editingId && allProducts.find(x => x.id === editingId); const ms = prev && prev.measure && prev.measure.sizes;
+        const has = Object.values(measure).some(v => v);
+        return ms ? (has ? { ...measure, sizes: ms } : { sizes: ms }) : (has ? measure : null); })(),
       description: document.getElementById('pfDesc').value.trim() || null,
       images: [...editingImages, ...newUrls],
     };
