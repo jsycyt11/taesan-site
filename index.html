@@ -1065,6 +1065,69 @@
     #shop .item-name{font-size:14px;}
     .b-btn{height:50px; padding:0 22px;}
   }
+
+  /* =====================================================================
+     ROUND (2026-11): 둥글게, 그러나 절제 · 절도
+     규칙: 모서리 반경 3단계만(8 / 18 / 28 · 버튼은 완전 둥글게), 간격 8의 배수
+     ===================================================================== */
+  :root{ --r-s:8px; --r-m:18px; --r-l:28px; --radius-sm:8px; --radius-md:18px; --radius-lg:28px; }
+  .b-h2{font-family:var(--font-body); font-weight:700; letter-spacing:-0.035em;}
+  .b-kicker{font-family:var(--font-body); font-weight:600; font-size:11.5px; letter-spacing:.22em;}
+  .r-hero-line{font-family:var(--font-body); font-weight:700; letter-spacing:-0.04em;}
+
+  /* 버튼 · 칩 */
+  .b-btn{border-radius:999px; height:52px; padding:0 32px; letter-spacing:.02em;}
+  .b-btn.line{border:1px solid rgba(242,238,232,.28);}
+  .cart-btn{border-radius:999px; padding:8px 16px;}
+  .cart-count{border-radius:999px;}
+  #shop .add-btn{border-radius:999px;}
+  #shop .card-visual .sold-flag{border-radius:999px; top:14px; left:14px; padding:5px 11px; letter-spacing:.1em;}
+
+  /* 첫 화면 초상: 둥근 사진, 빨간 선 대신 작은 점 하나 */
+  .r-frame::before{display:none;}
+  .r-frame img, .r-portrait img{border-radius:var(--r-l);}
+  .r-portrait figcaption{align-items:center; padding-left:6px;}
+  .r-portrait figcaption span{width:8px; height:8px; border-radius:50%; background:var(--accent); font-size:0; padding:0;}
+  .r-hero{background:var(--bg);}
+
+  /* 사진 · 카드 */
+  #shop .card-visual{border-radius:var(--r-m); overflow:hidden;}
+  #shop .card-tag{padding:16px 4px 0;}
+  .b-color .pic, .b-pair-item .pic{border-radius:var(--r-m); overflow:hidden;}
+  .b-color .meta, .b-pair-item .cap{padding-left:4px; padding-right:4px;}
+
+  /* 정의 목록 · 표: 둥근 판 위에 */
+  .r-feats{border:0; background:var(--surface); border-radius:var(--r-m); padding:8px 24px; margin-top:32px;}
+  .r-feats > div:last-child{border-bottom:0;}
+  .b-spec2, .b-size-table{background:var(--surface); border-radius:var(--r-m); padding:8px 24px;}
+  .b-spec2 div:last-child, .b-size-table div:last-child{border-bottom:0;}
+  details.b-guide{border:0; background:var(--surface); border-radius:var(--r-m);}
+
+  /* 예약 안내: 둥근 판 + 원 안 숫자 */
+  .b-steps{gap:16px;}
+  .b-step{background:var(--surface); border:0; border-radius:var(--r-m); padding:32px 28px;}
+  .b-step .n{width:40px; height:40px; border-radius:50%; border:1px solid var(--accent); display:flex; align-items:center; justify-content:center; font-family:var(--font-body); font-style:normal; font-weight:600; font-size:14px; letter-spacing:0;}
+
+  /* 소개: 둥근 낙관 */
+  .b-seal{aspect-ratio:1/1; border-radius:50%; border:1px solid var(--accent); max-width:360px; width:100%; justify-self:center;}
+  .b-seal .h{font-size:clamp(72px, 8vw, 112px);}
+
+  /* 상품 창 · 장바구니 · 입력칸 */
+  .modal{border-radius:var(--r-l) !important; overflow:hidden;}
+  .drawer{border-radius:var(--r-l) 0 0 var(--r-l);}
+  .checkout-btn, .co-pay-btn, .bank-submit, .modal .add-btn{border-radius:999px !important;}
+  input, select, textarea{border-radius:var(--r-s);}
+
+  @media (max-width:900px){
+    .r-portrait{margin:0; width:100%; max-width:none;}
+    .r-frame img, .r-portrait img{border-radius:var(--r-m);}
+    .b-seal{max-width:260px;}
+  }
+  @media (max-width:560px){
+    .r-feats, .b-spec2, .b-size-table{padding:4px 16px;}
+    #shop .card-visual{border-radius:14px;}
+    .b-step{padding:24px 20px;}
+  }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
