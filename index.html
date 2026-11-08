@@ -1128,6 +1128,11 @@
     #shop .card-visual{border-radius:14px;}
     .b-step{padding:24px 20px;}
   }
+
+  /* 품절 색상 */
+  .opt-btn.out{opacity:.38; text-decoration:line-through; cursor:not-allowed;}
+  .card-sw i.out{opacity:.3; position:relative;}
+  .card-sw i.out::after{content:''; position:absolute; left:-2px; right:-2px; top:50%; height:1px; background:var(--text); transform:rotate(-45deg);}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1469,6 +1474,7 @@
           <div class="co-field"><label>예약 마감 (비우면 마감 없음)</label><input type="datetime-local" id="pfCloses"></div>
         </div>
         <div class="co-field"><label>발송 안내 (손님에게 보여요)</label><input type="text" id="pfShip" placeholder="주문 순서대로 발송"></div>
+        <div class="co-field"><label>색상별 판매 수량 (한 줄에 하나, 색상=장수 · 비우면 무제한 · 0이면 품절)</label><textarea id="pfColorStock" style="min-height:80px;" placeholder="블랙=8&#10;아이보리=3&#10;그레이=1"></textarea></div>
         <div class="co-field"><label>색상별 출시 안내 (한 줄에 하나, 색상=문구)</label><textarea id="pfColorNotes" style="min-height:80px;" placeholder="아이보리=11월 5일 출시&#10;그레이=11월 5일 출시&#10;블랙=11월 10일 출시"></textarea></div>
         <p class="help">상품 사진을 색상 순서대로 올리면(예: 아이보리, 그레이, 블랙), 손님이 색상을 고를 때 그 색 사진으로 바뀌어요.</p>
         <p class="help">아래 '실측(cm)'을 채우면 상품 창에 사이즈표로 나와요. '사이즈 · 등급 · 랏 번호'는 빈티지용이라 브랜드 상품은 비워두세요.</p>
@@ -1718,6 +1724,19 @@ function effPrice(p){ return (p.sale_price !== null && p.sale_price !== undefine
 function isSold(p){ return p.status === 'sold' || pState(p) === 'sold'; }
 let allProducts = [];
 function isBrand(p){ return p.kind === 'brand'; }
+let colorLeft = {};   // 'id|색상' → 남은 수량 (color_stock 이 있는 상품만)
+async function loadColorLeft(){
+  if(!sbClient) return;
+  try {
+    const { data, error } = await sbClient.rpc('color_left');
+    if(error || !Array.isArray(data)) return;
+    colorLeft = {};
+    data.forEach(r => { colorLeft[r.product_id + '|' + r.color] = Number(r.remaining); });
+  } catch(e) {}
+}
+function leftOf(p, c){ const v = colorLeft[p.id + '|' + c]; return v === undefined ? null : v; }
+function colorSoldOut(p, c){ return leftOf(p, c) === 0; }
+function allColorsOut(p){ return (p.colors || []).length > 0 && p.colors.every(c => colorSoldOut(p, c)); }
 function remaining(p){ return (p.stock_limit === null || p.stock_limit === undefined) ? null : Math.max(0, p.stock_limit - (p.sold_count || 0)); }
 function pState(p){
   if(p.status === 'sold') return 'sold';
@@ -1725,6 +1744,7 @@ function pState(p){
   if(p.opens_at && new Date(p.opens_at).getTime() > now) return 'soon';
   if(p.closes_at && new Date(p.closes_at).getTime() <= now) return 'closed';
   if(remaining(p) === 0) return 'sold';
+  if(allColorsOut(p)) return 'sold';
   return 'open';
 }
 function canBuy(p){ return p.status === 'active' && pState(p) === 'open'; }
@@ -1785,7 +1805,7 @@ function priceHTML(p){
 
 async function loadProducts(){
   if(!sbClient){ products = []; allProducts = []; renderGrid(); renderDrop(); return; }
-  const { data, error } = await sbClient.from('products').select('*').order('created_at', { ascending:false });
+  const [{ data, error }] = await Promise.all([sbClient.from('products').select('*').order('created_at', { ascending:false }), loadColorLeft()]);
   if(error){ console.error('상품 불러오기 실패:', error); products = []; }
   else { allProducts = data || []; products = allProducts.filter(p => isBrand(p) && p.status !== 'hidden'); }
   renderFilterChips();
@@ -1884,7 +1904,7 @@ function renderDrop(){
     if(p.closes_at) bits.push(`${fmtDate(p.closes_at)} 마감`);
     if(shipSummary(p)) bits.push(shipSummary(p));
     noteEl.textContent = '';
-    states.forEach(e => { const n = (p.color_notes || {})[e.dataset.color]; e.textContent = n || '예약 중'; });
+    states.forEach(e => { const n = (p.color_notes || {})[e.dataset.color]; const l = leftOf(p, e.dataset.color); e.textContent = l === 0 ? '품절' : (l !== null && l <= 3 ? `${n ? n + ' · ' : ''}${l}장 남음` : (n || '예약 중')); });
   } else {
     cta.removeAttribute('data-insta'); cta.href = '#';
     cta.textContent = st === 'sold' ? '예약 마감 (전량 소진)' : '예약 마감';
@@ -1931,7 +1951,7 @@ function renderGrid(){
           <div>
             <div class="brand-name">${esc(p.brand)}</div>
             <div class="item-name">${esc(p.name)}</div>
-            ${(p.colors||[]).length ? `<div class="card-sw">${p.colors.map(c => `<i title="${esc(c)}" style="background:${({'아이보리':'#ebe5d6','그레이':'#9d9a96','연그레이':'#c8c6c2','블랙':'#141313','화이트':'#f4f3ef','네이비':'#1d2536','베이지':'#cbb9a0'})[c] || '#666'}"></i>`).join('')}</div>` : ''}
+            ${(p.colors||[]).length ? `<div class="card-sw">${p.colors.map(c => `<i class="${colorSoldOut(p, c) ? 'out' : ''}" title="${esc(c)}${colorSoldOut(p, c) ? ' 품절' : ''}" style="background:${({'아이보리':'#ebe5d6','그레이':'#9d9a96','연그레이':'#c8c6c2','블랙':'#141313','화이트':'#f4f3ef','네이비':'#1d2536','베이지':'#cbb9a0'})[c] || '#666'}"></i>`).join('')}</div>` : ''}
           </div>
         </div>
         <div class="item-meta">${(p.colors||[]).length ? `<span>${p.colors.length} COLOR${p.colors.length > 1 ? 'S' : ''}</span>` : ''}${(p.sizes||[]).length ? `<span>${esc(p.sizes.join(' · '))}</span>` : (p.size ? `<span>SIZE ${esc(p.size)}</span>` : '')}</div>
@@ -1967,6 +1987,8 @@ function cardPoText(p){
   const left = remaining(p);
   if(p.stock_limit && st !== 'sold') bits.push(`한정 ${p.stock_limit} · 남은 ${left}`);
   if(p.preorder && shipSummary(p)) bits.push(esc(shipSummary(p)));
+  const low = (p.colors || []).map(c => [c, leftOf(p, c)]).filter(([, l]) => l !== null && l <= 3);
+  if(low.length && st !== 'sold') bits.push(low.map(([c, l]) => `${esc(c)} ${l === 0 ? '품절' : l + '장 남음'}`).join(' · '));
   return bits.length ? `<div class="card-po">${bits.join('<br>')}</div>` : '';
 }
 
@@ -1976,6 +1998,12 @@ function cartQtyOf(id){ return cart.filter(l => l.id === id).reduce((s,l)=>s+l.q
 function addToCart(id, color=null, size=null, qty=1){
   const product = products.find(p=>p.id===id);
   if(!product || !canBuy(product)) return 'unavailable';
+  if(color && leftOf(product, color) !== null){
+    const inCart = cart.filter(l => l.id === id && l.color === color).reduce((s, l) => s + l.qty, 0);
+    const left = leftOf(product, color) - inCart;
+    if(left <= 0) return inCart ? `${color} 남은 수량은 이미 장바구니에 담았어요.` : `${color} 품절이에요.`;
+    if(qty > left) return `${color} ${left}장 남았어요.`;
+  }
   const limit = maxPer(product);
   const left = remaining(product);
   const want = cartQtyOf(id) + qty;
@@ -2119,7 +2147,15 @@ function openProductModal(id){
   const optMsg = document.getElementById('modalOptMsg');
   optMsg.textContent = '';
   function drawOpts(){
-    const group = (key, label, list) => list && list.length ? `<div class="opt-group"><div class="lab">${label}</div><div class="opt-row">${list.map(v => `<button type="button" class="opt-btn ${sel[key]===v?'on':''}" data-k="${key}" data-v="${esc(v)}">${esc(v)}</button>`).join('')}</div></div>` : '';
+    if(sel.color && colorSoldOut(p, sel.color)) sel.color = null;
+    const capOf = c => { const l = leftOf(p, c); return l === null ? Infinity : Math.max(0, l - cart.filter(x => x.id === p.id && x.color === c).reduce((s, x) => s + x.qty, 0)); };
+    if(sel.color && sel.qty > capOf(sel.color)) sel.qty = Math.max(1, capOf(sel.color));
+    const group = (key, label, list) => list && list.length ? `<div class="opt-group"><div class="lab">${label}</div><div class="opt-row">${list.map(v => {
+      const out = key === 'color' && colorSoldOut(p, v);
+      const l = key === 'color' ? leftOf(p, v) : null;
+      const tag = out ? ' · 품절' : (l !== null && l <= 3 ? ` · ${l}장 남음` : '');
+      return `<button type="button" class="opt-btn ${sel[key]===v?'on':''} ${out?'out':''}" data-k="${key}" data-v="${esc(v)}" ${out?'disabled':''}>${esc(v)}${tag}</button>`;
+    }).join('')}</div></div>` : '';
     optsEl.innerHTML = canBuy(p) ? group('color','색상',p.colors) + group('size','사이즈',p.sizes) +
       (maxPer(p) > 1 ? `<div class="opt-group"><div class="lab">수량</div><div class="qty"><button type="button" data-q="-1">−</button><span>${sel.qty}</span><button type="button" data-q="1">+</button></div></div>` : '') : '';
     if(sel.color && colorNote(p, sel.color)){
@@ -2138,7 +2174,7 @@ function openProductModal(id){
       }
       drawOpts();
     }));
-    optsEl.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', ()=>{ sel.qty = Math.max(1, Math.min(maxPer(p), sel.qty + Number(b.dataset.q))); drawOpts(); }));
+    optsEl.querySelectorAll('[data-q]').forEach(b => b.addEventListener('click', ()=>{ const cap = sel.color ? capOf(sel.color) : Infinity; sel.qty = Math.max(1, Math.min(maxPer(p), cap, sel.qty + Number(b.dataset.q))); if(Number(b.dataset.q) > 0 && sel.qty >= cap) optMsg.textContent = `${sel.color} 최대 ${cap}장까지 주문할 수 있어요.`; drawOpts(); }));
     document.getElementById('modalPrice').innerHTML = sel.qty > 1 ? `<span class="price">${won(effPrice(p) * sel.qty)}</span>` : priceHTML(p);
   }
   drawOpts();
@@ -2626,7 +2662,7 @@ function renderAdminProducts(){
       <div class="ap-thumb">${(p.images && p.images[0]) ? `<img src="${esc(p.images[0])}" alt="">` : esc(p.brand)}</div>
       <div class="ap-info">
         <div class="ap-name">${isBrand(p) ? (p.preorder ? '<span class="ap-badge po">예약판매</span>' : '<span class="ap-badge">브랜드</span>') : '<span class="ap-badge">빈티지 · 안 보임</span>'}${esc(p.brand)} · ${esc(p.name)}</div>
-        <div class="ap-sub">${isBrand(p) ? `판매 ${p.sold_count||0}${p.stock_limit ? ' / ' + p.stock_limit : ''}장` : `${esc(p.lot||'')} ${p.size ? '· ' + esc(p.size) : ''}`} · ${won(effPrice(p))} · <b class="st-${p.status}">${label[p.status]||p.status}</b>${p.opens_at ? ' · 오픈 ' + fmtDate(p.opens_at) : ''}${p.closes_at ? ' · 마감 ' + fmtDate(p.closes_at) : ''}</div>
+        <div class="ap-sub">${isBrand(p) ? (p.color_stock ? Object.keys(p.color_stock).map(c => `${esc(c)} ${leftOf(p, c) ?? p.color_stock[c]}/${p.color_stock[c]}`).join(' · ') + ' 남음' : `판매 ${p.sold_count||0}${p.stock_limit ? ' / ' + p.stock_limit : ''}장`) : `${esc(p.lot||'')} ${p.size ? '· ' + esc(p.size) : ''}`} · ${won(effPrice(p))} · <b class="st-${p.status}">${label[p.status]||p.status}</b>${p.opens_at ? ' · 오픈 ' + fmtDate(p.opens_at) : ''}${p.closes_at ? ' · 마감 ' + fmtDate(p.closes_at) : ''}</div>
         <div class="ap-actions">
           <button data-act="edit" data-id="${p.id}">수정</button>
           ${p.status !== 'sold' ? `<button data-act="sold" data-id="${p.id}">판매완료</button>` : `<button data-act="active" data-id="${p.id}">다시 판매</button>`}
@@ -2668,6 +2704,7 @@ function resetProductForm(){
   document.getElementById('pfPreorder').checked = true;
   document.getElementById('pfNumbered').checked = false;
   document.getElementById('pfColorNotes').value = '';
+  document.getElementById('pfColorStock').value = '';
   document.getElementById('pfGrade').value = 'A';
   document.getElementById('pfLot').value = '';
   document.getElementById('pfImages').value = '';
@@ -2700,6 +2737,7 @@ function startEditProduct(id){
   document.getElementById('pfCloses').value = toLocal(p.closes_at);
   document.getElementById('pfShip').value = p.ship_note || '';
   document.getElementById('pfColorNotes').value = Object.entries(p.color_notes || {}).map(([k,v]) => `${k}=${v}`).join('\n');
+  document.getElementById('pfColorStock').value = Object.entries(p.color_stock || {}).map(([k,v]) => `${k}=${v}`).join('\n');
   editingImages = [...(p.images || [])];
   document.getElementById('pfTitle').textContent = '상품 수정';
   document.getElementById('pfBrand').value = p.brand || '';
@@ -2767,6 +2805,9 @@ document.getElementById('pfSubmit').addEventListener('click', async ()=>{
       numbered: document.getElementById('pfNumbered').checked,
       stock_limit: num('pfLimit'),
       max_per_order: num('pfMaxPer') || 99,
+      ...(allProducts.some(x => 'color_stock' in x) ? { color_stock: (() => {
+        const o = Object.fromEntries(document.getElementById('pfColorStock').value.split('\n').map(l => l.split('=')).filter(a => a.length === 2 && a[0].trim() && /^\s*\d+\s*$/.test(a[1])).map(a => [a[0].trim(), parseInt(a[1], 10)]));
+        return Object.keys(o).length ? o : null; })() } : {}),
       color_notes: Object.fromEntries(document.getElementById('pfColorNotes').value.split('\n').map(l => l.split('=')).filter(a => a.length >= 2 && a[0].trim() && a.slice(1).join('=').trim()).map(a => [a[0].trim(), a.slice(1).join('=').trim()])),
       opens_at: when('pfOpens'),
       closes_at: when('pfCloses'),
