@@ -1901,7 +1901,7 @@ function renderDrop(){
     if(p.closes_at) bits.push(`${fmtDate(p.closes_at)} 마감`);
     if(shipSummary(p)) bits.push(shipSummary(p));
     noteEl.textContent = '';
-    states.forEach(e => { const n = (p.color_notes || {})[e.dataset.color]; const l = leftOf(p, e.dataset.color); e.textContent = l === 0 ? '품절' : (l !== null && l <= 3 ? `${n ? n + ' · ' : ''}${l}장 남음` : (n || '판매 중')); });
+    states.forEach(e => { const n = (p.color_notes || {})[e.dataset.color]; const l = leftOf(p, e.dataset.color); e.textContent = l === 0 ? '품절' : (l !== null ? `${n ? n + ' · ' : ''}${l}장 남음` : (n || '판매 중')); });
   } else {
     cta.removeAttribute('data-insta'); cta.href = '#';
     cta.textContent = st === 'sold' ? '품절' : '판매 종료';
@@ -1984,7 +1984,7 @@ function cardPoText(p){
   const left = remaining(p);
   if(p.stock_limit && st !== 'sold') bits.push(`한정 ${p.stock_limit} · 남은 ${left}`);
   if(p.preorder && shipSummary(p)) bits.push(esc(shipSummary(p)));
-  const low = (p.colors || []).map(c => [c, leftOf(p, c)]).filter(([, l]) => l !== null && l <= 3);
+  const low = (p.colors || []).map(c => [c, leftOf(p, c)]).filter(([, l]) => l !== null);
   if(low.length && st !== 'sold') bits.push(low.map(([c, l]) => `${esc(c)} ${l === 0 ? '품절' : l + '장 남음'}`).join(' · '));
   return bits.length ? `<div class="card-po">${bits.join('<br>')}</div>` : '';
 }
@@ -2150,7 +2150,7 @@ function openProductModal(id){
     const group = (key, label, list) => list && list.length ? `<div class="opt-group"><div class="lab">${label}</div><div class="opt-row">${list.map(v => {
       const out = key === 'color' && colorSoldOut(p, v);
       const l = key === 'color' ? leftOf(p, v) : null;
-      const tag = out ? ' · 품절' : (l !== null && l <= 3 ? ` · ${l}장 남음` : '');
+      const tag = out ? ' · 품절' : (l !== null ? ` · ${l}장 남음` : '');
       return `<button type="button" class="opt-btn ${sel[key]===v?'on':''} ${out?'out':''}" data-k="${key}" data-v="${esc(v)}" ${out?'disabled':''}>${esc(v)}${tag}</button>`;
     }).join('')}</div></div>` : '';
     optsEl.innerHTML = canBuy(p) ? group('color','색상',p.colors) + group('size','사이즈',p.sizes) +
