@@ -2648,7 +2648,8 @@ async function loadAdminOrders(){
 }
 function renderAdminOrders(){
   const listEl = document.getElementById('adminOrderList');
-  const orders = adminOrders;
+  const orders = adminOrders.filter(o => o.status !== 'canceled');
+  if(orderFilter === 'canceled') orderFilter = 'all';
   if(!orders.length){ listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요.</p>'; return; }
   const count = k => orders.filter(o => o.status === k).length;
   const chips = [['all','전체', orders.length], ...Object.entries(ORDER_STATUS).map(([k,v]) => [k, v, count(k)]).filter(([k,,n]) => n > 0)];
