@@ -1165,6 +1165,20 @@
   /* 할인가 굵기 한 단계 얇게 (800 → 600) */
   .price.sale, #shop .card-bottom .price.sale, .b-price .v .price.sale, .modal-bottom .price.sale{ font-weight:600 !important; }
   .price.sale .cur{ font-weight:700; }
+
+  /* 할인가: 고급스럽게 — 클래식 세리프, 넓은 자간, ₩는 작은 위첨자처럼 */
+  .price.sale, #shop .card-bottom .price.sale, .b-price .v .price.sale, .modal-bottom .price.sale{
+    font-family:'Cormorant Garamond', 'Noto Serif KR', Georgia, serif !important;
+    font-weight:600 !important; letter-spacing:0.04em; font-variant-numeric:lining-nums;
+    color:#f2eee8 !important; line-height:1;
+  }
+  .price.sale .cur{
+    font-family:'Cormorant Garamond', 'Noto Serif KR', Georgia, serif !important;
+    font-weight:500; font-size:0.62em; letter-spacing:0; margin-right:0.18em; top:-0.42em; opacity:.8;
+  }
+  #shop .card-bottom .price.sale{font-size:24px;}
+  .modal-bottom .price.sale{font-size:28px;}
+  .b-price .v .price.sale{font-size:34px;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
