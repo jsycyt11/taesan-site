@@ -1837,7 +1837,7 @@ function shippingFee(subtotal){
 }
 function priceHTML(p){
   if(effPrice(p) !== Number(p.price)){
-    return `<span class="price-old">${won(p.price)}</span><span class="price sale"><span class="cur">₩</span>${Number(effPrice(p) || 0).toLocaleString()}</span>`;
+    return `<span class="price sale"><span class="cur">₩</span>${Number(effPrice(p) || 0).toLocaleString()}</span>`;
   }
   return `<span class="price">${won(p.price)}</span>`;
 }
@@ -1983,7 +1983,7 @@ function renderGrid(){
       <div class="card-visual">
         <div class="notch"></div>
         ${img}
-        ${isSold(p) ? '<div class="sold-flag">SOLD OUT</div>' : (p.preorder ? '<div class="sold-flag po-flag">PRE-ORDER</div>' : (effPrice(p) !== Number(p.price) ? '<div class="sold-flag sale-flag">SALE</div>' : ''))}
+        ${isSold(p) ? '<div class="sold-flag">SOLD OUT</div>' : (p.preorder ? '<div class="sold-flag po-flag">PRE-ORDER</div>' : '')}
         ${p.numbered ? '<div class="lot-no">NUMBERED</div>' : (p.lot ? `<div class="lot-no">${esc(p.lot)}</div>` : '')}
       </div>
       <div class="card-tag">
