@@ -1155,6 +1155,9 @@
   #shop .card-bottom .price.sale{font-size:21px;}
   .modal-bottom .price.sale{font-size:25px;}
   .b-price .v .price.sale{font-size:30px;}
+
+  /* 할인가의 ₩ 기호: 둥근 숫자와 어울리게 깔끔한 고딕 굵게, 살짝 작게 */
+  .price.sale .cur{font-family:'Pretendard Variable', Pretendard, 'Noto Sans KR', sans-serif !important; font-weight:800; font-size:0.82em; margin-right:0.06em; position:relative; top:-0.04em;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1834,7 +1837,7 @@ function shippingFee(subtotal){
 }
 function priceHTML(p){
   if(effPrice(p) !== Number(p.price)){
-    return `<span class="price-old">${won(p.price)}</span><span class="price sale">${won(effPrice(p))}</span>`;
+    return `<span class="price-old">${won(p.price)}</span><span class="price sale"><span class="cur">₩</span>${Number(effPrice(p) || 0).toLocaleString()}</span>`;
   }
   return `<span class="price">${won(p.price)}</span>`;
 }
