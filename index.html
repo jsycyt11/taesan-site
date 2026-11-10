@@ -27,7 +27,7 @@
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ClothingStore","name":"태산 TAESAN","url":"https://www.teasan1.com/","image":"https://www.teasan1.com/og-image.png","email":"taesanmn@gmail.com","sameAs":["https://www.instagram.com/taesan_vintage/","https://www.tiktok.com/@teasan_vintage"]}</script>
 <link rel="icon" href="/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Serif+TC:wght@900&family=Noto+Sans+KR:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Comfortaa:wght@700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Serif+TC:wght@900&family=Noto+Sans+KR:wght@400;500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Comfortaa:wght@700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -1161,6 +1161,10 @@
 
   /* 할인가 글씨: 흰색 */
   .price.sale, .price.sale .cur, #shop .card-bottom .price.sale, .b-price .v .price.sale, .modal-bottom .price.sale{ color:var(--text) !important; }
+
+  /* 할인가 굵기 한 단계 얇게 (800 → 600) */
+  .price.sale, #shop .card-bottom .price.sale, .b-price .v .price.sale, .modal-bottom .price.sale{ font-weight:600 !important; }
+  .price.sale .cur{ font-weight:700; }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
