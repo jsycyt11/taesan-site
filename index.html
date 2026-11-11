@@ -1791,7 +1791,7 @@ function isSold(p){ return p.status === 'sold' || pState(p) === 'sold'; }
 let allProducts = [];
 function isBrand(p){ return p.kind === 'brand'; }
 let colorLeft = {};   // 'id|블랙' 또는 'id|블랙/M' → 남은 수량
-const HIDE_LEFT_AT = 5; // 이만큼 이하로 남으면 숫자는 숨겨요 (품절은 표시)
+const SHOW_LEFT_AT = 5; // 5장 이하로 남았을 때만 'N장 남음'을 보여줘요 (품절은 항상 표시)
 async function loadColorLeft(){
   if(!sbClient) return;
   try {
@@ -1810,7 +1810,7 @@ function leftOf(p, c, s){
   return null;
 }
 function optCartQty(p, c, s){ const bySize = s && colorLeft[p.id + '|' + c + '/' + szKey(s)] !== undefined; return cart.filter(x => x.id === p.id && x.color === c && (!bySize || szKey(x.size) === szKey(s))).reduce((a, x) => a + x.qty, 0); }
-const showLeft = l => l !== null && l > HIDE_LEFT_AT;
+const showLeft = l => l !== null && l > 0 && l <= SHOW_LEFT_AT;
 function colorSoldOut(p, c){ return leftOf(p, c) === 0; }
 function allColorsOut(p){ return (p.colors || []).length > 0 && p.colors.every(c => colorSoldOut(p, c)); }
 function stockLines(p){
