@@ -1227,6 +1227,35 @@
 
   /* 泰 자만 옆으로 조금 넓게 */
   .r-hero h1 .h-tae, .b-hero h1 .h-tae{display:inline-block; transform:scaleX(1.14); transform-origin:left center; margin-right:0.14em;}
+
+  /* ===== 송장: 관리자 ===== */
+  .ao-track{margin:12px 0 4px; padding:12px 14px; border:1px solid var(--line-soft); border-radius:14px; background:rgba(255,255,255,.02);}
+  .ao-track.need{border-color:var(--accent); box-shadow:0 0 0 3px rgba(184,32,45,.18);}
+  .ao-track-now{font-size:13px; margin-bottom:10px;}
+  .ao-track-now.muted{color:var(--text-dim);}
+  .ao-track-now a{color:var(--accent); text-decoration:underline;}
+  .ao-track-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .ao-track-row .ao-courier{flex:0 0 auto; min-width:120px;}
+  .ao-track-row .ao-tno{flex:1 1 140px; min-width:0; background:transparent; border:1px solid var(--line); border-radius:10px; color:var(--text); padding:9px 12px; font-size:14px;}
+
+  /* ===== 송장: 손님 '내 주문' ===== */
+  .mo-modal{max-width:520px; width:calc(100% - 32px); max-height:86vh; overflow:auto;}
+  .mo-info{padding:28px 24px 24px !important; display:block !important;}
+  .mo-head{display:flex; justify-content:space-between; align-items:center; padding-right:36px;}
+  .mo-head h3{margin:0; font-size:22px;}
+  .mo-logout{background:none; border:0; color:var(--text-dim); font-size:13px; text-decoration:underline; cursor:pointer;}
+  .mo-sub{margin:6px 0 18px; font-size:12.5px; color:var(--text-dim);}
+  .mo-empty{color:var(--text-dim); font-size:14px; padding:24px 0;}
+  .mo-card{border:1px solid var(--line-soft); border-radius:16px; padding:16px; margin-bottom:12px;}
+  .mo-top{display:flex; justify-content:space-between; gap:10px; align-items:center; font-size:12px; color:var(--text-dim); margin-bottom:10px;}
+  .mo-badge{font-size:12.5px; color:var(--text); background:rgba(255,255,255,.07); padding:4px 10px; border-radius:999px; white-space:nowrap;}
+  .mo-card.st-shipped .mo-badge{background:var(--accent); color:#fff;}
+  .mo-item{font-size:14.5px; padding:2px 0;}
+  .mo-item span{display:block; font-size:12.5px; color:var(--text-dim);}
+  .mo-total{margin-top:8px; font-size:14px;}
+  .mo-note{margin:10px 0 0; font-size:13px; color:var(--text-dim);}
+  .mo-track{margin-top:12px; display:flex; justify-content:space-between; align-items:center; gap:10px; padding-top:12px; border-top:1px dashed var(--line-soft); font-size:13.5px;}
+  .mo-track-btn{flex:0 0 auto; background:var(--text); color:#0b0909; border-radius:999px; padding:8px 16px; font-size:13px; font-weight:600;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1689,6 +1718,15 @@
   </div>
 </div>
 
+<div class="overlay" id="myOrdersOverlay"></div>
+<div class="product-modal mo-modal" id="myOrdersModal" role="dialog" aria-label="내 주문">
+  <button class="modal-close" id="myOrdersClose">✕</button>
+  <div class="modal-info mo-info">
+    <div class="mo-head"><h3>내 주문</h3><button type="button" class="mo-logout" id="myOrdersLogout">로그아웃</button></div>
+    <p class="mo-sub" id="myOrdersWho"></p>
+    <div id="myOrdersList"><p class="mo-empty">불러오는 중…</p></div>
+  </div>
+</div>
 <div class="overlay" id="authOverlay"></div>
 <div class="product-modal" id="authModal">
   <button class="modal-close" id="authClose">✕</button>
@@ -2565,7 +2603,7 @@ async function submitBankOrder(f){
   document.getElementById('coDoneText').innerHTML =
     `<b style="color:var(--accent);">주문만 접수됐고 돈은 아직 빠져나가지 않았어요.</b><br>은행 앱에서 아래 계좌로 <b style="color:var(--text);">${won(data.grand_total)}</b>을 ${bankHours()}시간 안에 보내주세요.<br><br>` +
     `<b style="color:var(--text);">${esc(setting('bank_info'))}</b><br>입금자명 ${esc(depositor)}<br><br>` +
-    '입금이 확인되면 주문이 확정되고, 출시일에 맞춰 주문 순서대로 보내드려요.';
+    '입금이 확인되면 1~3 영업일 안에 보내드려요.<br>배송 상황과 송장번호는 오른쪽 위 <b style="color:var(--text);">내 아이디 → 내 주문</b>에서 볼 수 있어요.';
   checkoutDone.style.display = 'flex';
   requestAnimationFrame(()=> checkoutDone.classList.add('open'));
   loadProducts();
@@ -2608,7 +2646,7 @@ document.getElementById('coDoneClose').addEventListener('click', ()=>{
             const nums = (d.taesanNumbers || []).flatMap(x => x.numbers.map(n => `${x.name}${[x.color, x.size].filter(Boolean).length ? ' (' + [x.color, x.size].filter(Boolean).join(' / ') + ')' : ''} No.${String(n).padStart(3,'0')}`));
             if(nums.length || pending.preorder){
               document.getElementById('coDoneTitle').textContent = '예약이 완료되었어요';
-              document.getElementById('coDoneText').innerHTML = (nums.length ? `넘버링 번호<br><b style="color:var(--text);">${nums.map(esc).join('<br>')}</b><br><br>` : '') + '색상별 출시일에 맞춰 주문 순서대로 보내드릴게요.<br>진행 상황은 인스타그램에서 알려드려요.';
+              document.getElementById('coDoneText').innerHTML = (nums.length ? `넘버링 번호<br><b style="color:var(--text);">${nums.map(esc).join('<br>')}</b><br><br>` : '') + '1~3 영업일 안에 보내드릴게요.<br>배송 상황과 송장번호는 오른쪽 위 내 아이디 → 내 주문에서 볼 수 있어요.';
             }
             try{ sessionStorage.removeItem('taesan_pending_' + orderId); }catch(e){}
             loadProducts();
@@ -2683,7 +2721,15 @@ function switchAdminTab(tab){
 let adminOrders = [];
 let orderFilter = 'all';
 const STATUS_COLOR = { awaiting_deposit:'#e0a33a', pending_payment:'#8a7470', paid:'#4fae6a', making:'#5b8fd6', shipped:'#9b7be0', done:'#8a8a8a', canceled:'#7a1219' };
-const NEXT_STEP = { awaiting_deposit:['paid','입금 확인'], paid:['making','제작 시작'], making:['shipped','발송 처리'], shipped:['done','배송 완료'] };
+const NEXT_STEP = { awaiting_deposit:['paid','입금 확인'], paid:['shipped','발송 처리'], making:['shipped','발송 처리'], shipped:['done','배송 완료'] };
+const COURIERS = ['CJ대한통운', '우체국택배', '한진택배', '롯데택배', '로젠택배', '편의점택배(GS)', '편의점택배(CU)'];
+function trackUrl(courier, no){
+  const n = String(no || '').replace(/[^0-9A-Za-z]/g, '');
+  if(!n) return '';
+  if(courier === 'CJ대한통운') return 'https://trace.cjlogistics.com/next/tracking.html?wblNo=' + n;
+  if(courier === '우체국택배') return 'https://service.epost.go.kr/trace.RetrieveDomRigiTraceList.comm?sid1=' + n;
+  return 'https://search.naver.com/search.naver?query=' + encodeURIComponent((courier || '택배') + ' ' + n);
+}
 function shortName(n){ return String(n || '').replace(/^泰山\s*/, ''); }
 function fmtWhen(iso){ const d = new Date(iso); const z = n => String(n).padStart(2,'0'); return `${d.getMonth()+1}/${d.getDate()} ${z(d.getHours())}:${z(d.getMinutes())}`; }
 async function loadAdminOrders(){
@@ -2731,6 +2777,14 @@ function renderAdminOrders(){
           <span>${qty}벌 · 상품 ${won(o.item_total)}${o.discount ? ' · 쿠폰 -' + won(o.discount) : ''} · 배송 ${o.shipping ? won(o.shipping) : '무료'}</span>
           ${o.payment_method === 'bank' ? `<span class="ao-pay">계좌이체 · 입금자 <b>${esc(o.depositor || o.name)}</b></span>` : `<span class="ao-pay">카드·간편결제</span>`}
         </div>
+        ${['paid','making','shipped','done'].includes(st) ? `<div class="ao-track" data-track="${esc(o.order_id)}">
+          ${o.tracking_no ? `<div class="ao-track-now">송장 <b>${esc(o.courier || '')} ${esc(o.tracking_no)}</b> · <a href="${esc(trackUrl(o.courier, o.tracking_no))}" target="_blank" rel="noopener">조회</a></div>` : `<div class="ao-track-now muted">${st === 'paid' || st === 'making' ? '송장번호를 넣고 저장하면 \'배송 중\'으로 바뀌고, 손님도 바로 볼 수 있어요.' : '송장번호가 아직 없어요.'}</div>`}
+          <div class="ao-track-row">
+            <select class="admin-select ao-courier">${COURIERS.map(c => `<option ${((o.courier || 'CJ대한통운') === c) ? 'selected' : ''}>${c}</option>`).join('')}</select>
+            <input class="ao-tno" inputmode="numeric" placeholder="송장번호" value="${esc(o.tracking_no || '')}">
+            <button type="button" class="ao-btn main ao-tsave">송장 저장</button>
+          </div>
+        </div>` : ''}
         <div class="ao-cust">
           <div><b>${esc(o.name)}</b> · <a href="tel:${esc(String(o.phone).replace(/[^0-9]/g,''))}">${esc(o.phone)}</a></div>
           <div>${esc(o.address)}</div>
@@ -2747,7 +2801,27 @@ function renderAdminOrders(){
       </div>`;
     }).join('') || '<p class="admin-empty">이 상태의 주문이 없어요.</p>'}`;
   listEl.querySelectorAll('.ao-chip').forEach(b => b.addEventListener('click', ()=>{ orderFilter = b.dataset.f; renderAdminOrders(); }));
+  listEl.querySelectorAll('.ao-tsave').forEach(b => b.addEventListener('click', async ()=>{
+    const box = b.closest('[data-track]'); const id = box.dataset.track;
+    const courier = box.querySelector('.ao-courier').value;
+    const tno = box.querySelector('.ao-tno').value.trim();
+    if(!tno){ box.querySelector('.ao-tno').focus(); return; }
+    const o = adminOrders.find(x => x.order_id === id); if(!o) return;
+    const patch = { courier, tracking_no: tno };
+    if(o.status === 'paid' || o.status === 'making'){ patch.status = 'shipped'; patch.shipped_at = new Date().toISOString(); }
+    b.disabled = true; b.textContent = '저장 중…';
+    const { error } = await sbClient.from('orders').update(patch).eq('order_id', id);
+    if(error){ b.disabled = false; b.textContent = '송장 저장'; alert('송장 저장 실패: ' + error.message + '\n(Supabase에 송장 칸을 먼저 추가해야 해요)'); return; }
+    Object.assign(o, patch); renderAdminOrders();
+  }));
   const setStatus = async (id, status) => {
+    if(status === 'shipped'){
+      const o = adminOrders.find(x => x.order_id === id);
+      if(o && !o.tracking_no){
+        const box = listEl.querySelector(`[data-track="${CSS.escape(id)}"]`);
+        if(box){ box.classList.add('need'); box.scrollIntoView({ block:'center', behavior:'smooth' }); box.querySelector('.ao-tno').focus(); return; }
+      }
+    }
     const { error } = await sbClient.from('orders').update({ status }).eq('order_id', id);
     if(error){ alert('상태 변경 실패: ' + error.message); return; }
     const o = adminOrders.find(x => x.order_id === id); if(o) o.status = status;
@@ -3153,16 +3227,38 @@ function updateAccountUI(){
   }
 }
 
+const MO_STATUS = { awaiting_deposit:['입금 대기','입금이 확인되면 준비를 시작해요.'], paid:['상품 준비 중','입금이 확인됐어요. 곧 보내드려요.'], making:['상품 준비 중','입금이 확인됐어요. 곧 보내드려요.'], shipped:['배송 중','택배사에 넘겼어요.'], done:['배송 완료',''], canceled:['취소됨',''] };
+const myOrdersModal = document.getElementById('myOrdersModal');
+const myOrdersOverlay = document.getElementById('myOrdersOverlay');
+function closeMyOrders(){ myOrdersModal.classList.remove('open'); myOrdersOverlay.classList.remove('open'); }
+async function openMyOrders(){
+  myOrdersModal.classList.add('open'); myOrdersOverlay.classList.add('open');
+  document.getElementById('myOrdersWho').textContent = currentUser && currentUser.email ? currentUser.email : '';
+  const list = document.getElementById('myOrdersList');
+  list.innerHTML = '<p class="mo-empty">불러오는 중…</p>';
+  const { data, error } = await sbClient.rpc('my_orders');
+  if(error){ list.innerHTML = '<p class="mo-empty">주문 내역을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.</p>'; return; }
+  if(!data || !data.length){ list.innerHTML = '<p class="mo-empty">아직 주문 내역이 없어요.</p>'; return; }
+  list.innerHTML = data.map(o => {
+    const [label, note] = MO_STATUS[o.status] || [o.status, ''];
+    const items = (o.items || []).map(i => `<div class="mo-item">${esc(String(i.name || '').replace(/^泰山\s*/, ''))}<span>${esc([i.color, i.size].filter(Boolean).join(' · '))} × ${Number(i.qty || 1)}</span></div>`).join('');
+    const url = o.tracking_no ? trackUrl(o.courier, o.tracking_no) : '';
+    return `<div class="mo-card st-${esc(o.status)}">
+      <div class="mo-top"><b class="mo-badge">${esc(label)}</b><span>${fmtWhen(o.created_at)} · ${esc(o.order_id)}</span></div>
+      ${items}
+      <div class="mo-total">${won(o.grand_total)}</div>
+      ${o.tracking_no ? `<div class="mo-track"><span>${esc(o.courier || '택배')} <b>${esc(o.tracking_no)}</b></span><a class="mo-track-btn" href="${esc(url)}" target="_blank" rel="noopener">배송 조회</a></div>` : (note ? `<p class="mo-note">${esc(note)}</p>` : '')}
+    </div>`;
+  }).join('');
+}
+document.getElementById('myOrdersClose').addEventListener('click', closeMyOrders);
+myOrdersOverlay.addEventListener('click', closeMyOrders);
+document.getElementById('myOrdersLogout').addEventListener('click', async ()=>{
+  await sbClient.auth.signOut(); currentUser = null; updateAccountUI(); closeMyOrders();
+});
 accountToggle.addEventListener('click', async ()=>{
-  if(currentUser){
-    if(confirm('로그아웃 하시겠어요?')){
-      await sbClient.auth.signOut();
-      currentUser = null;
-      updateAccountUI();
-    }
-  } else {
-    openAuthModal();
-  }
+  if(currentUser){ openMyOrders(); }
+  else { openAuthModal(); }
 });
 
 if(sbClient){
