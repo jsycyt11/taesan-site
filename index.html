@@ -1200,6 +1200,21 @@
   .modal-bottom .price.sale{font-size:24px;}
   .b-price .v .price.sale{font-size:28px;}
   @media (max-width:560px){ #shop .item-name{font-size:17px;} #shop .card-bottom .price.sale{font-size:17px;} }
+
+  /* 모바일 첫 화면: 패딩 사진 대신 브랜드 글자로 시작 (사진은 바로 아래 상품 목록에서) */
+  @media (max-width:900px){
+    .r-portrait{display:none;}
+    .r-hero{padding:64px 0 72px; min-height:calc(100svh - 150px); display:flex; align-items:center;}
+    .r-hero .wrap{width:100%;}
+    .r-hero-grid{gap:0;}
+    .r-hero-copy{padding-bottom:0;}
+    .r-hero .b-kicker{font-size:11px; letter-spacing:.32em;}
+    .r-hero h1{font-size:30vw; line-height:.95; margin:18px 0 0 -4px;}
+    .r-hero-line{font-size:26px; margin-top:28px;}
+    .r-hero .b-lead{font-size:15px; margin-top:18px;}
+    .r-hero .b-price{margin-top:30px;}
+    .r-hero .b-ctas{margin-top:26px;}
+  }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
