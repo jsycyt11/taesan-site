@@ -1399,6 +1399,11 @@
   .b-spec2 .h span, .b-size-table .h span{letter-spacing:.04em;}
   details.b-guide summary.t{letter-spacing:.04em;}
   #shop .add-btn{letter-spacing:.08em;}
+
+  /* 첫 화면 소나무: 네모 틀 없이 배경에 스며들게 */
+  .r-portrait .r-frame, .r-portrait .r-frame img, .r-portrait img{border-radius:0 !important; background:transparent !important; box-shadow:none !important;}
+  .r-portrait figcaption{margin-top:0;}
+  .r-portrait .r-frame img{-webkit-mask-image:linear-gradient(to bottom, #000 62%, transparent 98%); mask-image:linear-gradient(to bottom, #000 62%, transparent 98%);}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1441,7 +1446,7 @@
       <p class="b-note" id="dropNote"></p>
     </div>
     <figure class="r-portrait">
-      <div class="r-frame"><img src="img/hero-pine-tall.jpg" alt="붉은 달 앞에 높이 선 소나무" width="960" height="1200" fetchpriority="high"></div>
+      <div class="r-frame"><img src="img/hero-pine-tall.webp" alt="붉은 달 앞에 높이 선 소나무" width="960" height="1200" fetchpriority="high"></div>
       <figcaption><span>No. 1</span>Black Pine, Night</figcaption>
     </figure>
   </div>
