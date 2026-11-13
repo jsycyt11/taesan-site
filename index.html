@@ -1636,6 +1636,10 @@
     .dt-table th, .dt-table td{font-size:15px; padding:12px 4px;}
     .dt-info > div{grid-template-columns:52px minmax(0, 1fr); font-size:14px;}
   }
+  /* 상품 창 사진: 양옆 검은 띠 없이 꽉 차게 */
+  .modal-visual.has-img{background:#120c0c !important;}
+  .modal-main-img{width:100% !important; height:min(66vh, 900px) !important; max-height:none !important; object-fit:cover !important; object-position:center 50%; background:#120c0c !important;}
+  @media (max-width:700px){ .modal-main-img{height:auto !important; aspect-ratio:4/5;} }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
