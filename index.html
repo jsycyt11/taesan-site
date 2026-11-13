@@ -1587,6 +1587,55 @@
     .dt-size .b-size-table span em{display:none;}
     .dt-size .b-size-table .h span{font-size:11px !important; letter-spacing:0 !important;}
   }
+
+  /* =====================================================================
+     DETAIL 슬라이드: 왼쪽 옷 사진 · 오른쪽 그 옷 사이즈표 + 정보
+     ===================================================================== */
+  .dt-slider{margin-top:44px;}
+  .dt-nav{display:flex; justify-content:space-between; align-items:center; gap:20px; padding-bottom:18px; border-bottom:1px solid var(--lx-line);}
+  .dt-tabs{display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;}
+  .dt-tabs::-webkit-scrollbar{display:none;}
+  .dt-tab{flex:0 0 auto; background:none; border:1px solid var(--lx-line-2); color:var(--lx-dim); border-radius:999px; padding:9px 18px; font-size:14px; cursor:pointer; font-family:var(--rl-ko), var(--font-body); transition:background .2s, color .2s, border-color .2s;}
+  .dt-tab.on{background:var(--text); color:#0b0909; border-color:var(--text);}
+  .dt-ctrl{display:flex; align-items:center; gap:10px; flex:0 0 auto;}
+  .dt-count{font-family:var(--rl-en), var(--font-body); font-size:13px; letter-spacing:.14em; color:var(--lx-dim); margin-right:8px;}
+  .dt-count b{color:var(--text); font-weight:500;}
+  .dt-arrow{width:44px; height:44px; border-radius:50%; border:1px solid var(--lx-line-2); background:none; color:var(--text); font-size:18px; cursor:pointer;}
+  .dt-arrow:hover{border-color:var(--text);}
+
+  .dt-track{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -webkit-overflow-scrolling:touch; margin-top:32px;}
+  .dt-track::-webkit-scrollbar{display:none;}
+  .dt-slide{flex:0 0 100%; scroll-snap-align:start; display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1.05fr); gap:56px; align-items:start;}
+  .dt-photo{border-radius:var(--r-m); overflow:hidden; background:#120c0c;}
+  .dt-photo img{display:block; width:100%; height:auto; aspect-ratio:4/5; object-fit:cover;}
+  .dt-body{padding-top:8px; min-width:0;}
+  .dt-body .dt-tag{margin:0; font-family:var(--rl-en), var(--font-body); font-size:12px; letter-spacing:.24em; color:var(--lx-dim);}
+  .dt-body h3{margin:10px 0 0; font-family:var(--rl-ko); font-weight:400; font-size:clamp(26px, 2.6vw, 34px); letter-spacing:-0.02em;}
+  .dt-table{width:100%; margin-top:28px; border-collapse:collapse; font-variant-numeric:tabular-nums;}
+  .dt-table th, .dt-table td{padding:15px 6px; text-align:center; border-bottom:1px solid var(--lx-line); font-size:17px;}
+  .dt-table thead th{font-size:12.5px; font-weight:400; color:var(--lx-dim); border-top:1px solid var(--lx-line-2); padding:12px 6px;}
+  .dt-table tbody th{text-align:left; font-family:var(--rl-en), var(--font-body); font-weight:500; padding-left:2px;}
+  .dt-table thead th:first-child{text-align:left; padding-left:2px;}
+  .dt-table td{font-family:var(--rl-en), var(--font-body); color:var(--text);}
+  .dt-unit{margin:10px 0 0; font-size:12.5px; color:var(--lx-dim);}
+  .dt-info{margin:30px 0 0; border-top:1px solid var(--lx-line-2);}
+  .dt-info > div{display:grid; grid-template-columns:64px minmax(0, 1fr); gap:16px; padding:13px 0; border-bottom:1px solid var(--lx-line); font-size:15px; line-height:1.65;}
+  .dt-info dt{color:var(--lx-dim);}
+  .dt-info dd{margin:0; color:var(--text); word-break:keep-all;}
+  .dt-size{margin-top:48px;}
+
+  @media (max-width:900px){
+    .dt-slide{grid-template-columns:1fr; gap:24px;}
+    .dt-photo{max-width:440px;}
+  }
+  @media (max-width:600px){
+    .dt-nav{flex-direction:column; align-items:stretch; gap:14px;}
+    .dt-ctrl{justify-content:space-between;}
+    .dt-tab{padding:8px 14px; font-size:13px;}
+    .dt-photo{max-width:none;}
+    .dt-table th, .dt-table td{font-size:15px; padding:12px 4px;}
+    .dt-info > div{grid-template-columns:52px minmax(0, 1fr); font-size:14px;}
+  }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1686,46 +1735,67 @@
         <div><dt>출고</dt><dd>입금 확인 후 1~3 영업일 · 니트 하이브리드는 예약 판매</dd></div>
       </dl>
     </div>
-    <div class="dt-cards">
-        <article class="dt-card">
-          <a class="dt-pic" href="#shop"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩" width="960" height="1200" loading="lazy"></a>
-          <div class="dt-tag">DROP 01</div>
-          <h3>크롭 후드</h3>
-          <dl><div><dt>컬러</dt><dd>아이보리 · 그레이 · 블랙</dd></div><div><dt>사이즈</dt><dd>M · 총장 61cm</dd></div><div><dt>핏</dt><dd>크롭 기장 · 넉넉한 드롭 숄더</dd></div><div><dt>소재</dt><dd>폴리</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>세탁</dt><dd>손세탁 · 물세탁 · 드라이</dd></div></dl>
+    <div class="dt-slider" id="dtSlider">
+      <div class="dt-nav">
+        <div class="dt-tabs" role="tablist"><button type="button" class="dt-tab on" data-i="0">크롭 후드</button><button type="button" class="dt-tab" data-i="1">레귤러 후드</button><button type="button" class="dt-tab" data-i="2">스탠드넥</button><button type="button" class="dt-tab" data-i="3">니트 하이브리드</button></div>
+        <div class="dt-ctrl"><span class="dt-count"><b id="dtNow">01</b> / 04</span><button type="button" class="dt-arrow" id="dtPrev" aria-label="이전 옷">←</button><button type="button" class="dt-arrow" id="dtNext" aria-label="다음 옷">→</button></div>
+      </div>
+      <div class="dt-track" id="dtTrack">
+        <article class="dt-slide" aria-roledescription="slide" aria-label="1 / 4 · 크롭 후드">
+          <div class="dt-photo"><img src="img/drop01-ivory.jpg" alt="泰山 크롭 후드 경량 패딩" width="960" height="1200" loading="lazy"></div>
+          <div class="dt-body">
+            <div class="dt-tag">DROP 01</div>
+            <h3>크롭 후드</h3>
+            <table class="dt-table">
+              <thead><tr><th>사이즈</th><th>어깨</th><th>가슴단면</th><th>소매</th><th>총장</th></tr></thead>
+              <tbody><tr><th>M</th><td>55</td><td>57</td><td>53</td><td>61</td></tr></tbody>
+            </table>
+            <p class="dt-unit">단위 cm · 실측이라 1~2cm 차이가 날 수 있어요.</p>
+            <dl class="dt-info"><div><dt>컬러</dt><dd>아이보리 · 그레이 · 블랙</dd></div><div><dt>핏</dt><dd>크롭 기장 · 넉넉한 드롭 숄더. 평소 M~L은 오버핏, XL은 몸에 가깝게 맞아요.</dd></div><div><dt>소재</dt><dd>폴리</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>세탁</dt><dd>손세탁 · 물세탁 · 드라이클리닝</dd></div><div><dt>가격</dt><dd>82,000원</dd></div></dl>
+          </div>
         </article>
-        <article class="dt-card">
-          <a class="dt-pic" href="#shop"><img src="img/drop02-black.jpg" alt="泰山 레귤러 후드 경량 패딩" width="960" height="1200" loading="lazy"></a>
-          <div class="dt-tag">DROP 01</div>
-          <h3>레귤러 후드</h3>
-          <dl><div><dt>컬러</dt><dd>블랙 · 연그레이</dd></div><div><dt>사이즈</dt><dd>M · 총장 67cm</dd></div><div><dt>핏</dt><dd>기본 기장 · 어깨선 제자리</dd></div><div><dt>소재</dt><dd>나일론 12% · 폴리 88%</dd></div><div><dt>두께</dt><dd>보통 · 안감 없음</dd></div><div><dt>세탁</dt><dd>손세탁</dd></div></dl>
+        <article class="dt-slide" aria-roledescription="slide" aria-label="2 / 4 · 레귤러 후드">
+          <div class="dt-photo"><img src="img/drop02-black.jpg" alt="泰山 레귤러 후드 경량 패딩" width="960" height="1200" loading="lazy"></div>
+          <div class="dt-body">
+            <div class="dt-tag">DROP 01</div>
+            <h3>레귤러 후드</h3>
+            <table class="dt-table">
+              <thead><tr><th>사이즈</th><th>어깨</th><th>가슴단면</th><th>소매</th><th>총장</th></tr></thead>
+              <tbody><tr><th>M</th><td>44</td><td>–</td><td>60</td><td>67</td></tr></tbody>
+            </table>
+            <p class="dt-unit">단위 cm · 실측이라 1~2cm 차이가 날 수 있어요.</p>
+            <dl class="dt-info"><div><dt>컬러</dt><dd>블랙 · 연그레이</dd></div><div><dt>핏</dt><dd>기본 기장 · 어깨선 제자리. 평소 M은 딱 맞게, S는 살짝 여유 있게 맞아요.</dd></div><div><dt>소재</dt><dd>나일론 12% · 폴리에스테르 88%</dd></div><div><dt>두께</dt><dd>보통 · 안감 없음</dd></div><div><dt>세탁</dt><dd>손세탁</dd></div><div><dt>가격</dt><dd>82,000원</dd></div></dl>
+          </div>
         </article>
-        <article class="dt-card">
-          <a class="dt-pic" href="#shop"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩" width="960" height="1200" loading="lazy"></a>
-          <div class="dt-tag">DROP 02</div>
-          <h3>스탠드넥</h3>
-          <dl><div><dt>컬러</dt><dd>블랙</dd></div><div><dt>사이즈</dt><dd>S 56 · M 69 · L 71cm</dd></div><div><dt>핏</dt><dd>스탠드 칼라 · 남성 정사이즈</dd></div><div><dt>소재</dt><dd>추후 안내</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>세탁</dt><dd>추후 안내</dd></div></dl>
+        <article class="dt-slide" aria-roledescription="slide" aria-label="3 / 4 · 스탠드넥">
+          <div class="dt-photo"><img src="img/drop03b-black.jpg" alt="泰山 스탠드넥 경량 패딩" width="960" height="1200" loading="lazy"></div>
+          <div class="dt-body">
+            <div class="dt-tag">DROP 02</div>
+            <h3>스탠드넥</h3>
+            <table class="dt-table">
+              <thead><tr><th>사이즈</th><th>어깨</th><th>가슴단면</th><th>소매</th><th>총장</th></tr></thead>
+              <tbody><tr><th>S</th><td>47</td><td>50</td><td>–</td><td>56</td></tr><tr><th>M</th><td>47</td><td>55</td><td>64</td><td>69</td></tr><tr><th>L</th><td>49</td><td>58</td><td>66</td><td>71</td></tr></tbody>
+            </table>
+            <p class="dt-unit">단위 cm · 실측이라 1~2cm 차이가 날 수 있어요.</p>
+            <dl class="dt-info"><div><dt>컬러</dt><dd>블랙</dd></div><div><dt>핏</dt><dd>스탠드 칼라 · 남성 정사이즈. S는 짧은 기장이라 여성 M~L, 남성은 S까지 추천해요.</dd></div><div><dt>소재</dt><dd>추후 안내</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>세탁</dt><dd>추후 안내</dd></div><div><dt>가격</dt><dd>82,000원</dd></div></dl>
+          </div>
         </article>
-        <article class="dt-card">
-          <a class="dt-pic" href="#shop"><img src="img/drop04-black.jpg" alt="泰山 니트 하이브리드 패딩" width="960" height="1200" loading="lazy"></a>
-          <div class="dt-tag">DROP 03 · 예약</div>
-          <h3>니트 하이브리드</h3>
-          <dl><div><dt>컬러</dt><dd>블랙 · 그레이</dd></div><div><dt>사이즈</dt><dd>F · 총장 63cm</dd></div><div><dt>핏</dt><dd>스탠드 칼라 · 세미 오버핏</dd></div><div><dt>소재</dt><dd>앞판 패딩 · 소매·옆판 니트</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>세탁</dt><dd>추후 안내</dd></div></dl>
+        <article class="dt-slide" aria-roledescription="slide" aria-label="4 / 4 · 니트 하이브리드">
+          <div class="dt-photo"><img src="img/drop04-black.jpg" alt="泰山 니트 하이브리드 패딩" width="960" height="1200" loading="lazy"></div>
+          <div class="dt-body">
+            <div class="dt-tag">DROP 03 · 예약</div>
+            <h3>니트 하이브리드</h3>
+            <table class="dt-table">
+              <thead><tr><th>사이즈</th><th>어깨</th><th>가슴단면</th><th>소매</th><th>총장</th></tr></thead>
+              <tbody><tr><th>F</th><td>50</td><td>58</td><td>–</td><td>63</td></tr></tbody>
+            </table>
+            <p class="dt-unit">단위 cm · 실측이라 1~2cm 차이가 날 수 있어요.</p>
+            <dl class="dt-info"><div><dt>컬러</dt><dd>블랙 · 그레이</dd></div><div><dt>핏</dt><dd>스탠드 칼라 · 세미 오버핏. 남성 L~XL은 딱 맞고, M은 넉넉하게 맞아요.</dd></div><div><dt>소재</dt><dd>앞판 패딩 · 소매와 옆판 니트</dd></div><div><dt>두께</dt><dd>경량</dd></div><div><dt>출고</dt><dd>예약 판매 · 입고되는 대로 순서대로 보내드려요</dd></div><div><dt>가격</dt><dd>82,000원</dd></div></dl>
+          </div>
         </article>
+      </div>
     </div>
     <div class="dt-size">
-      <div class="dt-size-head">
-        <div class="b-spec-t">SIZE</div>
-        <p class="b-dim">단위 cm · 실측이라 재는 방법에 따라 1~2cm 차이가 날 수 있어요.</p>
-      </div>
-      <div class="b-size-table">
-        <div class="h"><span>상품 · 사이즈</span><span>어깨너비</span><span>가슴단면</span><span>소매길이</span><span>총장</span></div>
-        <div><span>크롭 · M<em>아이보리 · 그레이 · 블랙</em></span><span>55</span><span>57</span><span>53</span><span>61</span></div>
-        <div><span>레귤러 · M<em>블랙 · 연그레이</em></span><span>44</span><span>–</span><span>60</span><span>67</span></div>
-        <div><span>스탠드넥 · S<em>블랙</em></span><span>47</span><span>50</span><span>–</span><span>56</span></div>
-        <div><span>스탠드넥 · M<em>블랙</em></span><span>47</span><span>55</span><span>64</span><span>69</span></div>
-        <div><span>스탠드넥 · L<em>블랙</em></span><span>49</span><span>58</span><span>66</span><span>71</span></div>
-        <div><span>니트 하이브리드 · F<em>블랙 · 그레이 · 예약</em></span><span>50</span><span>58</span><span>–</span><span>63</span></div>
-      </div>
       <details class="b-guide">
         <summary class="t">SIZE GUIDE · 어떤 사이즈를 고를까요?</summary>
         <p><b>크롭 후드 패딩 · M (총장 61cm)</b><br>총장 61cm로 보통 남성 L 패딩(68~70cm)보다 7~9cm 짧은 크롭 기장이에요. 가슴단면 57cm · 어깨너비 55cm 드롭 숄더라 몸통과 어깨는 넉넉해요. 평소 M~L을 입으면 어깨가 내려오는 오버핏, XL을 입으면 몸에 가깝게 맞아요. 와이드 팬츠나 허리가 높은 바지와 입으면 다리가 길어 보여요.</p>
@@ -1736,6 +1806,19 @@
       </details>
     </div>
   </div>
+<script>
+(function(){
+  const track = document.getElementById('dtTrack'); if(!track) return;
+  const slides = [...track.children], tabs = [...document.querySelectorAll('#dtSlider .dt-tab')];
+  const now = document.getElementById('dtNow'); let cur = 0;
+  const go = i => { i = (i + slides.length) % slides.length; track.scrollTo({ left: i * track.clientWidth, behavior:'smooth' }); mark(i); };
+  const mark = i => { cur = i; tabs.forEach((t, k) => t.classList.toggle('on', k === i)); now.textContent = String(i + 1).padStart(2, '0'); };
+  tabs.forEach((t, k) => t.addEventListener('click', () => go(k)));
+  document.getElementById('dtPrev').addEventListener('click', () => go(cur - 1));
+  document.getElementById('dtNext').addEventListener('click', () => go(cur + 1));
+  let tm = 0; track.addEventListener('scroll', () => { clearTimeout(tm); tm = setTimeout(() => { const i = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth))); if(i !== cur) mark(i); }, 140); }, { passive:true });
+})();
+</script>
 </section>
 
 <section class="b-sec alt">
