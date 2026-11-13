@@ -1514,6 +1514,9 @@
   .r-hero h1 .h-ko i:last-child{grid-column:2;}
   /* 첫 화면 문구 '늦은 밤에도 흐트러지지 않게.' 굵게 */
   .r-hero-line{font-weight:600 !important; letter-spacing:-0.035em;}
+  /* 문구를 뺀 자리: 태산 아래로 가격 줄이 너무 붙지 않게 */
+  .r-hero h1 + .b-price{margin-top:56px;}
+  @media (max-width:900px){ .r-hero h1 + .b-price{margin-top:40px;} }
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1549,7 +1552,6 @@
     <div class="r-hero-copy">
       <div class="b-kicker">FW 2026</div>
       <h1><span class="h-tae">泰</span>山<span class="h-ko" aria-hidden="true"><i>태</i><i>산</i></span></h1>
-      <p class="r-hero-line">늦은 밤에도<br>흐트러지지 않게.</p>
       <div class="b-price"><span class="k">판매가</span><span class="v" id="dropPrice">₩82,000</span></div>
       <div class="b-ctas">
         <a class="b-btn red" id="dropCta" href="#shop">구매하기</a>
