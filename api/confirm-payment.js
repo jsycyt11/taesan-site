@@ -147,6 +147,35 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: '결제 금액이 올바르지 않아요. 다시 주문해 주세요.' });
     }
 
+    // ---------- 2-1. 품절 옵션은 '품절 예약'으로 표시 ----------
+    try {
+      const lr = await sb('/rest/v1/rpc/color_left', { method: 'POST', key: serviceKey, body: {} });
+      const rows = lr.ok ? await lr.json() : [];
+      const leftMap = {};
+      (Array.isArray(rows) ? rows : []).forEach((r) => { leftMap[`${r.product_id}|${r.color}${r.size ? '/' + r.size : ''}`] = Number(r.remaining); });
+      const need = {};
+      for (const l of lines) {
+        if (!l.color) continue;
+        const cs = byId[l.id].color_stock || {};
+        const sk = String(l.size || '').trim().split(/\s+/)[0];
+        const key = sk && cs[`${l.color}/${sk}`] !== undefined ? `${l.color}/${sk}` : cs[l.color] !== undefined ? l.color : null;
+        if (!key) continue;
+        const mk = `${l.id}|${key}`;
+        need[mk] = (need[mk] || 0) + l.qty;
+        const left = leftMap[mk];
+        if (left !== undefined && need[mk] > left) {
+          l.preorder = true;
+          l.soldout_preorder = true;
+          l.ship = '품절 예약 · 재입고되면 주문 순서대로 발송';
+        } else if (!byId[l.id].preorder) {
+          l.preorder = false;
+          delete l.soldout_preorder;
+        }
+      }
+    } catch (e) {
+      console.error('품절 예약 확인 실패', e);
+    }
+
     // ---------- 3. 한정 수량 잡기 + 넘버링 ----------
     for (const l of lines) {
       const r = await sb('/rest/v1/rpc/reserve_stock', {

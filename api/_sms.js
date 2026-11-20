@@ -16,7 +16,7 @@ export function orderSmsText(o) {
   const items = (o.items || []).map((i) => {
     const short = String(i.name || '').replace(/^泰山\s*/, '');
     const opt = [i.color, i.size].filter(Boolean).join(' ');
-    return `- ${short}${opt ? ' ' + opt : ''} x${i.qty || 1}`;
+    return `- ${i.soldout_preorder ? '[품절예약] ' : ''}${short}${opt ? ' ' + opt : ''} x${i.qty || 1}`;
   });
   const pay = o.payment_method === 'bank'
     ? `입금대기 / 입금자 ${o.depositor || o.name}`
@@ -60,7 +60,7 @@ const SUPABASE_ANON_KEY =
 export function alertText(b) {
   const items = (b.items || []).map((i) => {
     const short = String(i.name || '').replace(/^泰山\s*/, '');
-    return `${short} · ${[i.color, i.size].filter(Boolean).join(' ')} x${i.qty || 1}`;
+    return `${i.soldout_preorder ? '[품절예약] ' : ''}${short} · ${[i.color, i.size].filter(Boolean).join(' ')} x${i.qty || 1}`;
   });
   const pay = b.payment_method === 'bank' ? `입금 대기 · 입금자 ${b.depositor}` : '카드 결제 완료';
   return [...items, `합계 ${won(b.grand_total)} (${pay})`, `주문번호 ${b.order_id}`].join('\n');
