@@ -3,7 +3,7 @@
 // Vercel 환경변수
 //   SOLAPI_API_KEY     솔라피 API Key
 //   SOLAPI_API_SECRET  솔라피 API Secret
-//   SMS_FROM           솔라피에 등록한 발신번호 (예: 01031477590)
+//   SMS_FROM           솔라피에 등록한 발신번호 (예: 01012345678)
 //   SMS_TO             알림 받을 번호 (비우면 SMS_FROM 으로 보내요)
 //   SUPABASE_SERVICE_ROLE_KEY  주문서 읽기·알림 기록용
 
