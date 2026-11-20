@@ -650,6 +650,26 @@
   .contact-actions{ display:flex; flex-direction:column; gap:10px; margin-top:14px; }
   .contact-alt{ display:block; text-align:center; padding:12px; border:1px solid var(--line-soft); border-radius:999px; font-size:13.5px; color:var(--text-dim); }
   .contact-alt:hover{ color:var(--text); border-color:var(--line); }
+  .cs-list{display:flex; flex-direction:column; gap:12px; margin:16px 0 14px;}
+  .cs-row{display:flex; gap:10px; align-items:flex-start; font-size:13.5px; line-height:1.55; color:var(--text); cursor:pointer;}
+  .cs-row input{margin-top:3px; width:17px; height:17px; flex:none; accent-color:var(--accent);}
+  .cs-row small{display:block; color:var(--text-dim); font-size:12px;}
+  .cs-row .req{color:var(--accent); font-weight:700;}
+  .cs-all{padding-bottom:12px; border-bottom:1px solid var(--line, rgba(127,127,127,.25)); font-weight:700;}
+  .cs-link{background:none; border:0; padding:0; color:var(--text-dim); text-decoration:underline; font:inherit; font-size:12px; cursor:pointer;}
+  .cs-sub{font-size:12.5px; color:var(--text-dim); line-height:1.6;}
+  .cs-out{margin-top:10px; background:none; border:0; color:var(--text-dim); text-decoration:underline; font-size:12px; cursor:pointer;}
+  .mo-mk{margin:14px 0 18px; padding:14px; border:1px solid var(--line, rgba(127,127,127,.25)); border-radius:12px;}
+  .mo-mk h5{font-size:13px; margin:0 0 8px;}
+  .mo-mk .cs-row{margin-top:8px;}
+  .mk-table{width:100%; border-collapse:collapse; font-size:12.5px; margin-top:12px;}
+  .mk-table th, .mk-table td{padding:8px 6px; border-bottom:1px solid var(--line, rgba(127,127,127,.2)); text-align:left; vertical-align:top;}
+  .mk-table .old{color:var(--accent);}
+  .mk-btns{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  .mk-btns button{padding:8px 12px; border-radius:999px; border:1px solid var(--line, rgba(127,127,127,.35)); background:none; color:var(--text); font-size:12.5px; cursor:pointer;}
+  #privacyLink{font-weight:700; color:var(--text);}
+  #consentOverlay.open{z-index:1300;} #consentModal{z-index:1301;}
+  #privacyOverlay.open{z-index:1400;} #privacyModal{z-index:1401;}
   .policy-body{ white-space:pre-line; color:var(--text-dim); font-size:13.5px; line-height:1.75; }
   .coupon-row{ display:flex; gap:8px; }
   .coupon-row input{ flex:1; background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-sm); padding:12px 14px; color:var(--text); font-size:14px; text-transform:uppercase; }
@@ -1862,6 +1882,7 @@
     </div>
     <div class="footer-links">
       <a href="#" id="policyLink">배송/교환</a>
+      <a href="#" id="privacyLink">개인정보처리방침</a>
       <span class="footer-social" id="footerSocial"></span>
       <a href="#" id="adminLink" style="opacity:0.5;">관리자</a>
     </div>
@@ -2001,6 +2022,7 @@
       <button class="admin-tab" data-tab="products">상품</button>
       <button class="admin-tab" data-tab="coupons">쿠폰</button>
       <button class="admin-tab" data-tab="reviews">리뷰</button>
+      <button class="admin-tab" data-tab="marketing">광고 수신</button>
       <button class="admin-tab" data-tab="settings">사이트 설정</button>
     </div>
 
@@ -2093,6 +2115,16 @@
       <div id="adminReviewList"></div>
     </div>
 
+    <div class="admin-panel" data-panel="marketing" style="display:none;">
+      <div class="admin-form">
+        <h4>광고 문자 · 이메일 수신 동의한 회원</h4>
+        <p class="help">광고를 보낼 때 꼭 지켜 주세요.<br>· 문자·이메일 맨 앞에 <b>(광고)</b>, 보내는 사람 <b>泰山</b>을 적어요.<br>· 맨 끝에 무료로 수신 거부하는 방법을 적어요. 예) 수신거부: 사이트 → 내 주문 → 광고 알림 끄기<br>· 밤 9시~아침 8시에는 보내지 않아요.<br>· 빨간 날짜는 동의한 지 2년이 다 된 회원이에요. 계속 받을지 다시 물어봐야 해요.</p>
+        <div class="mk-btns"><button type="button" id="mkCopySms">문자 번호 복사</button><button type="button" id="mkCopyEmail">이메일 복사</button></div>
+        <p class="auth-msg" id="mkMsg"></p>
+        <div id="mkList"><p class="help">불러오는 중…</p></div>
+      </div>
+    </div>
+
     <div class="admin-panel" data-panel="settings" style="display:none;">
       <div class="admin-form">
         <h4 style="display:none;">소개 문구</h4>
@@ -2133,6 +2165,9 @@
         <h4>사업자 정보 (사이트 맨 아래 표시)</h4>
         <p class="help">통신판매업 신고번호가 나오면 여기에 넣어주세요.</p>
         <div class="co-field"><textarea id="st_biz_info" style="min-height:70px;"></textarea></div>
+        <h4>개인정보처리방침</h4>
+        <p class="help">바뀐 내용이 있으면 고치고, 맨 아래 시행일도 오늘 날짜로 바꿔 주세요. 비우고 저장하면 기본 문구로 돌아가요.</p>
+        <div class="co-field"><textarea id="st_privacy_policy" style="min-height:320px;"></textarea></div>
       </div>
       <p class="auth-msg" id="stMsg"></p>
       <button class="checkout-btn" id="stSubmit">설정 저장</button>
@@ -2165,6 +2200,33 @@
   </div>
 </div>
 
+<div class="overlay" id="privacyOverlay"></div>
+<div class="product-modal" id="privacyModal" role="dialog" aria-label="개인정보처리방침">
+  <button class="modal-close" id="privacyClose">✕</button>
+  <div class="modal-info" style="padding:30px 26px;">
+    <h3 style="margin-bottom:16px;">개인정보처리방침</h3>
+    <div class="policy-body" id="privacyBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="consentOverlay"></div>
+<div class="product-modal" id="consentModal" role="dialog" aria-label="가입 확인">
+  <div class="modal-info" style="padding:30px 26px;">
+    <h3 style="margin-bottom:6px;">泰山 가입 확인</h3>
+    <p class="cs-sub">처음 한 번만 확인할게요. 광고 알림은 나중에 오른쪽 위 내 아이디 → 내 주문에서 언제든 끌 수 있어요.</p>
+    <div class="cs-list">
+      <label class="cs-row cs-all"><input type="checkbox" id="csAll"><span>모두 확인하고 동의해요</span></label>
+      <label class="cs-row"><input type="checkbox" id="csAge"><span><span class="req">[필수]</span> 만 14세 이상이에요.</span></label>
+      <label class="cs-row"><input type="checkbox" id="csPrivacy"><span><span class="req">[필수]</span> 개인정보처리방침을 확인했어요. <button type="button" class="cs-link" id="csPrivacyOpen">보기</button><small>회원 관리와 주문·배송에 필요한 정보(이메일, 이름, 연락처, 주소)를 이용해요.</small></span></label>
+      <label class="cs-row"><input type="checkbox" id="csSms"><span>[선택] 새 드롭, 할인 소식을 <b>문자</b>로 받을게요.<small>주문·배송 안내 문자는 동의하지 않아도 보내드려요.</small></span></label>
+      <label class="cs-row"><input type="checkbox" id="csEmail"><span>[선택] 새 드롭, 할인 소식을 <b>이메일</b>로 받을게요.</span></label>
+    </div>
+    <p class="auth-msg" id="csMsg"></p>
+    <button class="checkout-btn" id="csSubmit">확인</button>
+    <button type="button" class="cs-out" id="csLogout">만 14세 미만이에요 · 로그아웃</button>
+  </div>
+</div>
+
 <div class="overlay" id="rvwOverlay"></div>
 <div class="product-modal rvw-modal" id="rvwModal" role="dialog" aria-label="리뷰 쓰기">
   <button class="modal-close" id="rvwClose">✕</button>
@@ -2186,6 +2248,13 @@
     <div class="mo-head"><h3>내 주문</h3><button type="button" class="mo-logout" id="myOrdersLogout">로그아웃</button></div>
     <p class="mo-sub" id="myOrdersWho"></p>
     <div id="myOrdersCoupon"></div>
+    <div class="mo-mk" id="myMarketing" style="display:none;">
+      <h5>광고 알림 받기</h5>
+      <p class="cs-sub">새 드롭, 할인 소식이에요. 주문·배송 안내는 꺼도 받아요.</p>
+      <label class="cs-row"><input type="checkbox" id="moSms"><span>문자로 받기</span></label>
+      <label class="cs-row"><input type="checkbox" id="moEmail"><span>이메일로 받기</span></label>
+      <p class="auth-msg" id="moMkMsg"></p>
+    </div>
     <div id="myOrdersList"><p class="mo-empty">불러오는 중…</p></div>
   </div>
 </div>
@@ -2234,6 +2303,7 @@
         <label>비밀번호 확인</label>
         <input type="password" id="signupPasswordConfirm" placeholder="비밀번호 재입력">
       </div>
+      <p class="cs-sub" style="margin:4px 0 8px;">가입하면 처음 로그인할 때 만 14세 이상인지, 광고 알림을 받을지 확인해요. <button type="button" class="cs-link" onclick="openPrivacy()">개인정보처리방침</button></p>
       <p class="auth-msg" id="signupMsg"></p>
       <button class="checkout-btn" id="signupSubmit" style="margin-top:6px;">회원가입</button>
 
@@ -2466,6 +2536,7 @@ function applySettings(){
   if(aboutEl && setting('about_text')) aboutEl.textContent = setting('about_text');
   document.querySelectorAll('[data-insta]').forEach(a => { a.href = setting('link_instagram', 'https://www.instagram.com/taesan_vintage/'); });
   document.getElementById('policyBody').textContent = shippingPolicy();
+  document.getElementById('privacyBody').textContent = privacyPolicy();
   renderCart();
 }
 
@@ -2800,6 +2871,7 @@ overlay.addEventListener('click', closeDrawer);
 document.getElementById('checkoutBtn').addEventListener('click', ()=>{
   if(cart.length === 0) return;
   closeDrawer();
+  if(needConsent()){ openConsent(); return; }
   openCheckout();
 });
 
@@ -2946,6 +3018,156 @@ function closePolicy(){ policyOverlay.classList.remove('open'); policyModal.clas
 document.getElementById('policyLink').addEventListener('click', (e)=>{ e.preventDefault(); openPolicy(); });
 document.getElementById('policyClose').addEventListener('click', closePolicy);
 policyOverlay.addEventListener('click', closePolicy);
+
+
+/* ================= 개인정보처리방침 · 가입 확인 · 광고 수신 동의 ================= */
+const PRIVACY_DEFAULT = `泰山(태산, 이하 "태산")은 「개인정보 보호법」에 따라 손님의 개인정보를 보호하고, 관련 문의를 빠르게 처리하기 위해 다음과 같이 개인정보처리방침을 공개합니다.
+
+1. 처리하는 개인정보와 목적
+· 회원 관리: 이메일, 소셜 로그인(카카오·구글) 식별값 — 로그인, 본인 확인, 부정 이용 방지
+· 주문·배송: 받는 사람 이름, 연락처, 배송 주소, 배송 메모, 입금자명, 주문·결제 내역 — 상품 발송, 입금 확인, 교환·반품·환불, 주문 안내
+· 리뷰: 리뷰 내용과 별점 (이름은 가운데 글자를 가려서 보여줘요)
+· 광고성 정보 발송(선택): 연락처, 이메일 — 새 드롭·할인 소식 안내. 동의한 분께만 보내요.
+· 회원·주문 정보는 계약 이행에 필요한 범위에서 처리해요. 광고성 정보 수신은 따로 선택 동의를 받아요.
+
+2. 보유 기간
+· 회원 정보: 회원 탈퇴 시까지
+· 계약 또는 청약철회 기록, 대금 결제와 재화 공급 기록: 5년 (전자상거래법)
+· 소비자 불만·분쟁 처리 기록: 3년 (전자상거래법)
+· 광고 수신 동의 기록: 동의 철회 또는 탈퇴 시까지
+· 기간이 끝나면 지체 없이 파기해요.
+
+3. 처리 위탁과 국외 이전
+· Supabase Inc.(미국): 회원·주문 정보 저장과 로그인 처리 / 회원 탈퇴 또는 위탁 계약 종료 시까지
+· Vercel Inc.(미국): 웹사이트 호스팅, 결제 확인 처리 / 위탁 계약 종료 시까지
+· 토스페이먼츠(주): 카드 결제 처리 (카드 결제를 쓸 때)
+· 택배사(CJ대한통운 등): 상품 배송 / 배송 완료 시까지
+· 미국 업체로의 이전: 회원 가입·주문 시 인터넷으로 전송되며, 이전 항목은 위 1번 항목과 같아요. 이전을 원하지 않으면 회원 가입과 주문을 하지 않을 수 있지만, 이 경우 사이트에서 구매할 수 없어요.
+
+4. 제3자 제공
+· 손님 동의가 있거나 법에 근거가 있는 경우 말고는 개인정보를 다른 곳에 주지 않아요.
+
+5. 파기 방법
+· 전자 파일은 복구할 수 없는 방법으로 지우고, 종이 문서는 분쇄하거나 태워요.
+
+6. 손님의 권리
+· 언제든지 내 개인정보의 열람, 정정, 삭제, 처리 정지, 회원 탈퇴, 광고 수신 동의 철회를 요청할 수 있어요.
+· 광고 수신은 오른쪽 위 내 아이디 → 내 주문 → 광고 알림 받기에서 바로 끌 수 있어요.
+· 그 밖의 요청은 아래 문의처로 연락 주시면 지체 없이 처리해요.
+
+7. 만 14세 미만
+· 만 14세 미만은 회원 가입과 주문을 받지 않아요.
+
+8. 안전하게 관리하는 방법
+· 관리자 화면은 대표 1인만 쓸 수 있고, 모든 통신은 암호화(HTTPS)돼요.
+· 비밀번호는 암호화해서 저장해 태산도 볼 수 없어요.
+· 로그인 유지를 위해 브라우저 저장소를 써요. 브라우저 설정에서 지울 수 있어요.
+
+9. 개인정보 보호책임자
+· 책임자: 태산 대표 최유태
+· 문의: {{contact}}
+· 개인정보 침해 신고·상담: 개인정보침해신고센터(privacy.kisa.or.kr, 국번 없이 118), 개인정보분쟁조정위원회(kopico.go.kr, 1833-6972)
+
+10. 시행일
+· 이 방침은 2026년 11월 20일부터 적용돼요. 바뀌면 사이트에 미리 알려드려요.`;
+function contactText(){
+  const c = (setting('link_contact') || '').replace(/^mailto:/i, '').trim();
+  const insta = setting('link_instagram');
+  return [c, insta ? `인스타그램 ${insta.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '@').replace(/\/$/, '')}` : ''].filter(Boolean).join(' · ') || '사이트 맨 아래 문의';
+}
+function privacyPolicy(){ const v = (setting('privacy_policy') || '').trim(); return (v || PRIVACY_DEFAULT).replace(/\{\{contact\}\}/g, contactText()); }
+const privacyOverlay = document.getElementById('privacyOverlay');
+const privacyModal = document.getElementById('privacyModal');
+function openPrivacy(){ document.getElementById('privacyBody').textContent = privacyPolicy(); privacyOverlay.classList.add('open'); privacyModal.classList.add('open'); }
+function closePrivacy(){ privacyOverlay.classList.remove('open'); privacyModal.classList.remove('open'); }
+document.getElementById('privacyLink').addEventListener('click', e => { e.preventDefault(); openPrivacy(); });
+document.getElementById('privacyClose').addEventListener('click', closePrivacy);
+privacyOverlay.addEventListener('click', closePrivacy);
+document.getElementById('csPrivacyOpen').addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); openPrivacy(); });
+
+let myConsent = null;      // { age_over14, marketing_sms, marketing_email, ... }
+let consentFor = null;     // 확인한 user id
+let consentReady = false;  // DB에 동의 표가 있는지 (SQL 실행 전엔 false라 사이트를 막지 않아요)
+async function loadConsent(){
+  if(!sbClient || !currentUser) return;
+  if(consentFor === currentUser.id) return;
+  const uid = currentUser.id;
+  const { data, error } = await sbClient.from('member_consents').select('*').eq('user_id', uid).maybeSingle();
+  if(!currentUser || currentUser.id !== uid) return;
+  if(error){ consentReady = false; return; }
+  consentReady = true; consentFor = uid; myConsent = data || null;
+  if(!myConsent) openConsent();
+}
+function needConsent(){ return !!(currentUser && consentReady && !myConsent); }
+const consentOverlay = document.getElementById('consentOverlay');
+const consentModal = document.getElementById('consentModal');
+const csBoxes = ['csAge','csPrivacy','csSms','csEmail'].map(id => document.getElementById(id));
+function openConsent(){
+  csBoxes.forEach(b => b.checked = false); document.getElementById('csAll').checked = false;
+  document.getElementById('csMsg').textContent = '';
+  consentOverlay.classList.add('open'); consentModal.classList.add('open');
+}
+function closeConsent(){ consentOverlay.classList.remove('open'); consentModal.classList.remove('open'); }
+document.getElementById('csAll').addEventListener('change', e => csBoxes.forEach(b => b.checked = e.target.checked));
+csBoxes.forEach(b => b.addEventListener('change', ()=> { document.getElementById('csAll').checked = csBoxes.every(x => x.checked); }));
+document.getElementById('csSubmit').addEventListener('click', async ()=>{
+  const msg = document.getElementById('csMsg');
+  if(!document.getElementById('csAge').checked){ msg.textContent = '만 14세 이상만 가입할 수 있어요.'; msg.className = 'auth-msg error'; return; }
+  if(!document.getElementById('csPrivacy').checked){ msg.textContent = '개인정보처리방침 확인에 체크해 주세요.'; msg.className = 'auth-msg error'; return; }
+  const btn = document.getElementById('csSubmit'); btn.disabled = true;
+  const { data, error } = await sbClient.rpc('save_consent', { p_age14: true, p_sms: document.getElementById('csSms').checked, p_email: document.getElementById('csEmail').checked });
+  btn.disabled = false;
+  if(error || !data || !data.ok){ msg.textContent = (data && data.message) || '저장하지 못했어요. 잠시 뒤 다시 해주세요.'; msg.className = 'auth-msg error'; return; }
+  myConsent = data.consent; closeConsent();
+  showToast('<b>가입 확인 완료</b><span>광고 알림은 내 주문에서 언제든 바꿀 수 있어요</span>');
+});
+document.getElementById('csLogout').addEventListener('click', async ()=>{
+  await sbClient.auth.signOut(); currentUser = null; myConsent = null; consentFor = null; updateAccountUI(); closeConsent();
+  alert('만 14세 미만은 가입과 주문을 할 수 없어요.');
+});
+function drawMyMarketing(){
+  const box = document.getElementById('myMarketing');
+  if(!myConsent){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  document.getElementById('moSms').checked = !!myConsent.marketing_sms;
+  document.getElementById('moEmail').checked = !!myConsent.marketing_email;
+  document.getElementById('moMkMsg').textContent = '';
+}
+['moSms','moEmail'].forEach(id => document.getElementById(id).addEventListener('change', async ()=>{
+  const m = document.getElementById('moMkMsg');
+  const sms = document.getElementById('moSms').checked, mail = document.getElementById('moEmail').checked;
+  const { data, error } = await sbClient.rpc('save_consent', { p_age14: true, p_sms: sms, p_email: mail });
+  if(error || !data || !data.ok){ m.textContent = '저장하지 못했어요. 다시 해주세요.'; m.className = 'auth-msg error'; drawMyMarketing(); return; }
+  myConsent = data.consent;
+  const d = new Date(); const day = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+  m.textContent = `${day} · 문자 ${sms ? '수신 동의' : '수신 거부'}, 이메일 ${mail ? '수신 동의' : '수신 거부'}로 바꿨어요.`; m.className = 'auth-msg success';
+}));
+
+/* 관리자: 광고 수신 동의 회원 */
+let mkRows = [];
+async function loadMarketingList(){
+  const el = document.getElementById('mkList');
+  el.innerHTML = '<p class="help">불러오는 중…</p>';
+  const { data, error } = await sbClient.rpc('marketing_list');
+  if(error){ el.innerHTML = `<p class="help">불러오지 못했어요. 광고 수신 SQL을 먼저 실행해 주세요. (${esc(error.message)})</p>`; return; }
+  mkRows = data || [];
+  if(!mkRows.length){ el.innerHTML = '<p class="help">아직 광고 수신에 동의한 회원이 없어요.</p>'; return; }
+  const old = iso => iso && (Date.now() - new Date(iso).getTime()) > 1000*60*60*24*700;
+  const day = iso => iso ? fmtDay(iso) : '';
+  el.innerHTML = `<table class="mk-table"><tr><th>이메일</th><th>문자</th><th>이메일 수신</th></tr>${mkRows.map(r => `<tr>
+    <td>${esc(r.email || '')}${r.phone ? `<br><span class="help">${esc(r.phone)}</span>` : ''}</td>
+    <td class="${r.marketing_sms && old(r.sms_at) ? 'old' : ''}">${r.marketing_sms ? (r.phone ? '동의' : '동의 · 번호 없음') + '<br>' + day(r.sms_at) : '—'}</td>
+    <td class="${r.marketing_email && old(r.email_at) ? 'old' : ''}">${r.marketing_email ? '동의<br>' + day(r.email_at) : '—'}</td></tr>`).join('')}</table>
+    <p class="help" style="margin-top:8px;">문자 동의 ${mkRows.filter(r => r.marketing_sms && r.phone).length}명 · 이메일 동의 ${mkRows.filter(r => r.marketing_email).length}명 · 번호는 가장 최근 주문의 연락처예요.</p>`;
+}
+async function mkCopy(list, label){
+  const m = document.getElementById('mkMsg');
+  if(!list.length){ m.textContent = `복사할 ${label}가 없어요.`; m.className = 'auth-msg error'; return; }
+  try{ await navigator.clipboard.writeText(list.join('\n')); m.textContent = `${label} ${list.length}개를 복사했어요.`; m.className = 'auth-msg success'; }
+  catch(e){ m.textContent = list.join(', '); m.className = 'auth-msg'; }
+}
+document.getElementById('mkCopySms').addEventListener('click', ()=> mkCopy([...new Set(mkRows.filter(r => r.marketing_sms && r.phone).map(r => r.phone))], '번호'));
+document.getElementById('mkCopyEmail').addEventListener('click', ()=> mkCopy([...new Set(mkRows.filter(r => r.marketing_email && r.email).map(r => r.email))], '이메일'));
 
 /* ================= 문의 ================= */
 const contactOverlay = document.getElementById('contactOverlay');
@@ -3307,6 +3529,7 @@ function switchAdminTab(tab){
   if(tab === 'coupons') loadAdminCoupons();
   if(tab === 'reviews') loadAdminReviews();
   if(tab === 'settings') fillSettingsForm();
+  if(tab === 'marketing') loadMarketingList();
 }
 
 /* --- 주문 --- */
@@ -3702,11 +3925,12 @@ document.getElementById('cfSubmit').addEventListener('click', async ()=>{
 });
 
 /* --- 사이트 설정 --- */
-const SETTING_FIELDS = ['pay_mode','bank_info','bank_hours','about_text','banner_text','shipping_fee','free_ship_over','link_contact','link_instagram','link_tiktok','link_fruits','link_bunjang','link_daangn','biz_info','shipping_policy'];
+const SETTING_FIELDS = ['pay_mode','bank_info','bank_hours','about_text','banner_text','shipping_fee','free_ship_over','link_contact','link_instagram','link_tiktok','link_fruits','link_bunjang','link_daangn','biz_info','shipping_policy','privacy_policy'];
 function fillSettingsForm(){
   SETTING_FIELDS.forEach(k => { const el = document.getElementById('st_' + k); if(el) el.value = settings[k] ?? ''; });
   document.getElementById('st_banner_on').checked = setting('banner_on','0') === '1';
   document.getElementById('st_shipping_policy').value = shippingPolicy();
+  document.getElementById('st_privacy_policy').value = privacyPolicy();
   document.getElementById('st_pay_mode').value = payMode();
   document.getElementById('stMsg').textContent = '';
 }
@@ -3854,6 +4078,7 @@ async function openMyOrders(){
   myOrdersModal.classList.add('open'); myOrdersOverlay.classList.add('open');
   document.getElementById('myOrdersWho').textContent = currentUser && currentUser.email ? currentUser.email : '';
   document.getElementById('myOrdersCoupon').innerHTML = myWelcomeLine();
+  drawMyMarketing();
   const list = document.getElementById('myOrdersList');
   list.innerHTML = '<p class="mo-empty">불러오는 중…</p>';
   const { data, error } = await sbClient.rpc('my_orders');
@@ -3925,12 +4150,12 @@ if(sbClient){
   sbClient.auth.getSession().then(({ data }) => {
     currentUser = data.session ? data.session.user : null;
     updateAccountUI();
-    if(currentUser) claimWelcome();
+    if(currentUser){ claimWelcome(); loadConsent(); }
   });
   sbClient.auth.onAuthStateChange((event, session) => {
     currentUser = session ? session.user : null;
     updateAccountUI();
-    if(currentUser) setTimeout(claimWelcome, 0); else { myWelcome = null; welcomeFor = null; }
+    if(currentUser){ setTimeout(claimWelcome, 0); setTimeout(loadConsent, 0); } else { myWelcome = null; welcomeFor = null; myConsent = null; consentFor = null; closeConsent(); }
   });
 }
 
