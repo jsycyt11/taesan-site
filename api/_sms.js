@@ -86,9 +86,11 @@ export async function sendPush(topic, title, text) {
 // 주문번호로 한 번만 알림을 보내요 (DB 함수가 중복을 막아요)
 export async function notifyOrder(orderId) {
   if (!orderId) return { ok: false };
+  // 서버 키가 있으면 그걸로 불러요 (알림 주소는 서버 키로 부를 때만 돌려줘요)
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
   const r = await fetch(`${SUPABASE_URL}/rest/v1/rpc/claim_order_alert`, {
     method: 'POST',
-    headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, 'Content-Type': 'application/json' },
+    headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ p_order_id: orderId }),
   });
   const b = r.ok ? await r.json() : null;
