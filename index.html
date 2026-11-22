@@ -1664,6 +1664,11 @@
   @media (max-width:700px){ .modal-main-img{height:auto !important; aspect-ratio:4/5;} }
   .ao-card.ao-canceled{opacity:.62;}
   .ao-card.ao-canceled:hover{opacity:1;}
+  .ship-tools{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;}
+  .ship-bulk{margin-bottom:18px;}
+  .ship-pv{width:100%; border-collapse:collapse; font-size:13px; margin:6px 0 12px;}
+  .ship-pv td, .ship-pv th{padding:7px 6px; border-bottom:1px solid rgba(242,238,232,.1); text-align:left;}
+  .ship-pv .bad td{color:#e08a8a;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -2029,6 +2034,19 @@
     </div>
 
     <div class="admin-panel" data-panel="orders">
+      <div class="ship-tools">
+        <button type="button" class="ao-btn main" id="shipExport">보낼 주문 엑셀 받기</button>
+        <button type="button" class="ao-btn" id="shipBulkOpen">송장 한 번에 넣기</button>
+      </div>
+      <div class="admin-form ship-bulk" id="shipBulk" style="display:none;">
+        <h4>송장 한 번에 넣기</h4>
+        <p class="help">택배사에서 받은 결과를 그대로 붙여넣어 주세요. 한 줄에 한 주문이고, 줄마다 <b>주문번호(TS…) 또는 받는 분 이름</b>과 <b>송장번호</b>만 있으면 돼요. 엑셀에서 칸째로 복사해도 돼요.<br>예) TS1122143055123  687012345678</p>
+        <div class="co-field"><label>택배사</label><select class="admin-select" id="shipBulkCourier"></select></div>
+        <div class="co-field"><textarea id="shipBulkText" style="min-height:140px;" placeholder="TS1122143055123	687012345678&#10;홍길동	687012345679"></textarea></div>
+        <div id="shipBulkPreview"></div>
+        <p class="auth-msg" id="shipBulkMsg"></p>
+        <button type="button" class="checkout-btn" id="shipBulkCheck">확인하기</button>
+      </div>
       <div id="adminOrderList"></div>
     </div>
 
@@ -3657,6 +3675,77 @@ function renderAdminOrders(){
     setTimeout(()=>{ b.textContent = '배송정보 복사'; }, 1500);
   }));
 }
+
+
+/* ================= 배송 한 번에: 엑셀 받기 · 송장 일괄 입력 ================= */
+const shipTargets = () => adminOrders.filter(o => (o.status === 'paid' || o.status === 'making') && !o.tracking_no);
+const shipItemLine = o => (o.items || []).map(i => `${shortName(i.name)} ${[i.color, i.size].filter(Boolean).join(' ')} x${Number(i.qty || 1)}`).join(', ');
+document.getElementById('shipExport').addEventListener('click', ()=>{
+  const list = shipTargets().slice().reverse();
+  if(!list.length){ alert('송장이 아직 없는 결제 완료 주문이 없어요.'); return; }
+  const cell = v => '"' + String(v ?? '').replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
+  const head = ['주문번호', '받는분', '전화번호', '주소', '상품', '수량', '배송메모'];
+  const rows = list.map(o => [o.order_id, o.name, o.phone, o.address, shipItemLine(o), (o.items || []).reduce((a, i) => a + Number(i.qty || 1), 0), o.memo || '']);
+  const csv = '﻿' + [head, ...rows].map(r => r.map(cell).join(',')).join('\r\n');
+  const d = new Date(); const ymd = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type:'text/csv;charset=utf-8' }));
+  a.download = `태산_보낼주문_${ymd}_${list.length}건.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+});
+document.getElementById('shipBulkCourier').innerHTML = COURIERS.map(c => `<option>${c}</option>`).join('');
+document.getElementById('shipBulkOpen').addEventListener('click', ()=>{
+  const box = document.getElementById('shipBulk');
+  box.style.display = box.style.display === 'none' ? '' : 'none';
+  if(box.style.display === ''){ const last = adminOrders.find(o => o.courier); if(last) document.getElementById('shipBulkCourier').value = last.courier; document.getElementById('shipBulkText').focus(); }
+});
+let shipPlan = [];
+document.getElementById('shipBulkCheck').addEventListener('click', async ()=>{
+  const btn = document.getElementById('shipBulkCheck'), msg = document.getElementById('shipBulkMsg'), pv = document.getElementById('shipBulkPreview');
+  if(btn.dataset.ready === '1'){
+    // 저장
+    btn.disabled = true; let ok = 0, fail = 0;
+    const courier = document.getElementById('shipBulkCourier').value;
+    for(const p of shipPlan){
+      btn.textContent = `저장 중… ${ok + fail + 1}/${shipPlan.length}`;
+      const patch = { courier, tracking_no: p.tno, status:'shipped', shipped_at:new Date().toISOString() };
+      const { error } = await sbClient.from('orders').update(patch).eq('order_id', p.o.order_id);
+      if(error) fail++; else { ok++; Object.assign(p.o, patch); }
+    }
+    btn.disabled = false; btn.dataset.ready = ''; btn.textContent = '확인하기';
+    msg.textContent = `${ok}건 저장했어요${fail ? ` · ${fail}건 실패` : ''}. 손님 '내 주문'에서 바로 배송 조회할 수 있어요.`;
+    msg.className = 'auth-msg ' + (fail ? 'error' : 'success');
+    if(!fail){ document.getElementById('shipBulkText').value = ''; pv.innerHTML = ''; }
+    shipPlan = []; renderAdminOrders(); return;
+  }
+  const lines = document.getElementById('shipBulkText').value.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const pool = shipTargets();
+  const used = new Set(); shipPlan = []; const bad = [];
+  for(const line of lines){
+    const toks = line.split(/[\t,;]+|\s{2,}|\s/).map(t => t.trim().replace(/^"|"$/g, '')).filter(Boolean);
+    const oidTok = toks.find(t => /^TS\d{6,}$/i.test(t));
+    const nums = toks.map(t => t.replace(/-/g, '')).filter(t => /^\d{9,15}$/.test(t) && !/^01[016789]\d{7,8}$/.test(t) && !(oidTok && t === oidTok.slice(2)));
+    const tno = nums[nums.length - 1];
+    let o = null, why = '';
+    if(oidTok){ o = adminOrders.find(x => x.order_id.toUpperCase() === oidTok.toUpperCase()); if(!o) why = '없는 주문번호'; }
+    else {
+      const hits = pool.filter(x => toks.includes(String(x.name || '').trim()) && !used.has(x.order_id));
+      if(hits.length === 1) o = hits[0]; else why = hits.length ? '같은 이름이 여러 명 · 주문번호로 넣어주세요' : '이름이 맞는 주문 없음';
+    }
+    if(o && !tno) { why = '송장번호를 못 찾음'; o = null; }
+    if(o && used.has(o.order_id)) { why = '같은 주문이 두 번 있음'; o = null; }
+    if(o){ used.add(o.order_id); shipPlan.push({ o, tno, line }); } else bad.push({ line, why });
+  }
+  if(!lines.length){ msg.textContent = '붙여넣은 내용이 없어요.'; msg.className = 'auth-msg error'; return; }
+  pv.innerHTML = `<table class="ship-pv"><tr><th>받는 분</th><th>주문번호</th><th>송장번호</th></tr>${
+    shipPlan.map(p => `<tr><td>${esc(p.o.name)}${p.o.tracking_no ? ' <em>(송장 덮어씀)</em>' : ''}</td><td>${esc(p.o.order_id)}</td><td>${esc(p.tno)}</td></tr>`).join('')}${
+    bad.map(b => `<tr class="bad"><td colspan="2">${esc(b.line.slice(0, 40))}</td><td>${esc(b.why)}</td></tr>`).join('')}</table>`;
+  if(!shipPlan.length){ msg.textContent = '맞는 주문을 찾지 못했어요.'; msg.className = 'auth-msg error'; return; }
+  msg.textContent = `${shipPlan.length}건을 '배송 중'으로 바꾸고 송장을 넣어요.${bad.length ? ` 빨간 줄 ${bad.length}건은 건너뛰어요.` : ''}`; msg.className = 'auth-msg';
+  btn.dataset.ready = '1'; btn.textContent = `${shipPlan.length}건 저장하기`;
+});
+document.getElementById('shipBulkText').addEventListener('input', ()=>{ const b = document.getElementById('shipBulkCheck'); b.dataset.ready = ''; b.textContent = '확인하기'; });
 
 /* --- 상품 --- */
 let editingId = null;
