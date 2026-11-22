@@ -1662,6 +1662,8 @@
   .modal-visual.has-img{background:#120c0c !important;}
   .modal-main-img{width:100% !important; height:min(66vh, 900px) !important; max-height:none !important; object-fit:cover !important; object-position:center 50%; background:#120c0c !important;}
   @media (max-width:700px){ .modal-main-img{height:auto !important; aspect-ratio:4/5;} }
+  .ao-card.ao-canceled{opacity:.62;}
+  .ao-card.ao-canceled:hover{opacity:1;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -3557,12 +3559,15 @@ async function loadAdminOrders(){
 }
 function renderAdminOrders(){
   const listEl = document.getElementById('adminOrderList');
+  // 취소된 주문은 '전체'와 요약에서 빼고, '취소된 주문' 칸을 누르면 따로 보여요
   const orders = adminOrders.filter(o => o.status !== 'canceled');
-  if(orderFilter === 'canceled') orderFilter = 'all';
-  if(!orders.length){ listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요.</p>'; return; }
+  const canceledOrders = adminOrders.filter(o => o.status === 'canceled');
+  if(orderFilter === 'canceled' && !canceledOrders.length) orderFilter = 'all';
+  if(!adminOrders.length){ listEl.innerHTML = '<p class="admin-empty">아직 접수된 주문이 없어요.</p>'; return; }
   const count = k => orders.filter(o => o.status === k).length;
   const chips = [['all','전체', orders.length], ...Object.entries(ORDER_STATUS).map(([k,v]) => [k, v, count(k)]).filter(([k,,n]) => n > 0)];
-  const shown = orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
+  if(canceledOrders.length) chips.push(['canceled', '취소된 주문', canceledOrders.length]);
+  const shown = orderFilter === 'canceled' ? canceledOrders : orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
   const waitingMoney = orders.filter(o => o.status === 'awaiting_deposit').reduce((a,o)=>a+Number(o.grand_total||0),0);
   listEl.innerHTML = `
     <div class="ao-summary">
@@ -3570,6 +3575,7 @@ function renderAdminOrders(){
       <div><b>${count('paid') + count('making')}</b><span>준비할 주문</span></div>
       <div><b>${won(waitingMoney)}</b><span>들어올 입금액</span></div>
     </div>
+    ${orderFilter === 'canceled' ? '<p class="help" style="margin:6px 0 10px;">취소된 주문이에요. 잘못 취소했으면 오른쪽 아래 상태를 바꿔서 되살릴 수 있어요.</p>' : ''}
     <div class="ao-chips">${chips.map(([k,v,n]) => `<button type="button" class="ao-chip ${orderFilter===k?'on':''}" data-f="${k}">${v} ${n}</button>`).join('')}</div>
     ${preorderTally(orders)}
     ${shown.map(o => {
@@ -3581,7 +3587,7 @@ function renderAdminOrders(){
       }).join('');
       const qty = (o.items||[]).reduce((a,i)=>a+Number(i.qty||1),0);
       return `
-      <div class="ao-card" style="--st:${color}">
+      <div class="ao-card ${st === 'canceled' ? 'ao-canceled' : ''}" style="--st:${color}">
         <div class="ao-top">
           <span class="ao-badge">${ORDER_STATUS[st] || esc(st)}</span>
           <span class="ao-meta">${fmtWhen(o.created_at)} · ${esc(o.order_id)}</span>
