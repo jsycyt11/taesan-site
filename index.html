@@ -1669,6 +1669,12 @@
   .ship-pv{width:100%; border-collapse:collapse; font-size:13px; margin:6px 0 12px;}
   .ship-pv td, .ship-pv th{padding:7px 6px; border-bottom:1px solid rgba(242,238,232,.1); text-align:left;}
   .ship-pv .bad td{color:#e08a8a;}
+  .ao-fields{display:grid; gap:2px; margin-top:12px;}
+  .ao-field{display:grid; grid-template-columns:34px minmax(0,1fr) auto; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid rgba(242,238,232,.07);}
+  .ao-fk{font-size:12px; color:var(--text-dim);}
+  .ao-fv{color:var(--text); font-size:14px; word-break:keep-all; overflow-wrap:anywhere;}
+  .ao-cp{flex:0 0 auto; min-width:52px; height:32px; padding:0 12px; border-radius:999px; border:1px solid rgba(242,238,232,.22); background:none; color:var(--text); font-size:12.5px; cursor:pointer;}
+  .ao-cp.done{background:#4fae6a; border-color:#4fae6a; color:#fff;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -3624,10 +3630,9 @@ function renderAdminOrders(){
             <button type="button" class="ao-btn main ao-tsave">송장 저장</button>
           </div>
         </div>` : ''}
-        <div class="ao-cust">
-          <div><b>${esc(o.name)}</b> · <a href="tel:${esc(String(o.phone).replace(/[^0-9]/g,''))}">${esc(o.phone)}</a></div>
-          <div>${esc(o.address)}</div>
-          ${o.memo ? `<div class="ao-memo">메모: ${esc(o.memo)}</div>` : ''}
+        <div class="ao-cust ao-fields">
+          ${[['name','이름',o.name],['phone','전화',o.phone],['address','주소',o.address],['memo','메모',o.memo]].filter(([,,v]) => v).map(([f,label,v]) => `
+          <div class="ao-field"><span class="ao-fk">${label}</span><span class="ao-fv">${f === 'phone' ? `<a href="tel:${esc(String(v).replace(/[^0-9]/g,''))}">${esc(v)}</a>` : esc(v)}</span><button type="button" class="ao-cp" data-cp="${esc(o.order_id)}" data-f="${f}">복사</button></div>`).join('')}
         </div>
         <div class="ao-actions">
           ${next ? `<button type="button" class="ao-btn main" data-set="${next[0]}" data-order="${esc(o.order_id)}">${next[1]}</button>` : ''}
@@ -3668,6 +3673,12 @@ function renderAdminOrders(){
   };
   listEl.querySelectorAll('[data-set]').forEach(b => b.addEventListener('click', ()=> setStatus(b.dataset.order, b.dataset.set)));
   listEl.querySelectorAll('select.ao-select').forEach(sel => sel.addEventListener('change', ()=> setStatus(sel.dataset.order, sel.value)));
+  listEl.querySelectorAll('.ao-cp').forEach(b => b.addEventListener('click', async ()=>{
+    const o = adminOrders.find(x => x.order_id === b.dataset.cp); if(!o) return;
+    try{ await navigator.clipboard.writeText(String(o[b.dataset.f] || '')); b.textContent = '복사됨'; b.classList.add('done'); }
+    catch(e){ b.textContent = '실패'; }
+    setTimeout(()=>{ b.textContent = '복사'; b.classList.remove('done'); }, 1200);
+  }));
   listEl.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', async ()=>{
     const o = adminOrders.find(x => x.order_id === b.dataset.copy); if(!o) return;
     const txt = `${o.name}\n${o.phone}\n${o.address}${o.memo ? '\n' + o.memo : ''}`;
