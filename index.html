@@ -1977,7 +1977,7 @@
 
     <section class="co-section" id="coBankSection" style="display:none;">
       <h4>결제 수단 · 계좌이체</h4>
-      <div class="bank-box">
+      <div class="bank-box" style="display:none;">
         <div><div class="bank-lab">입금 계좌</div><div class="bank-acc" id="coBankInfo"></div></div>
         <button type="button" class="bank-copy" id="coBankCopy">복사</button>
       </div>
@@ -3333,7 +3333,7 @@ function renderCheckoutSummary(){
   document.getElementById('coGrandTotal').textContent = won(t.grandTotal);
   document.getElementById('coSubmitBtn').textContent = payMode() === 'bank' ? `${won(t.grandTotal)} 주문하고 계좌로 보내기` : `${won(t.grandTotal)} 결제하기`;
   const bn = document.getElementById('coBankNote');
-  if(bn) bn.textContent = `이 사이트에서는 돈이 빠져나가지 않아요. 주문 버튼을 누른 뒤 ${bankHours()}시간 안에 ${won(t.grandTotal)}을 위 계좌로 직접 보내주셔야 주문이 확정돼요. 기한 안에 입금이 없으면 주문이 취소될 수 있어요.`;
+  if(bn) bn.textContent = `이 사이트에서는 돈이 빠져나가지 않아요. 아래 주문 버튼을 먼저 눌러 주세요. 주문이 접수되면 입금 계좌가 나와요. ${bankHours()}시간 안에 ${won(t.grandTotal)}을 그 계좌로 보내주셔야 주문이 확정돼요. 기한 안에 입금이 없으면 주문이 취소될 수 있어요.`;
   const msg = document.getElementById('couponMsg');
   if(appliedCoupon){
     msg.textContent = appliedCoupon.code === 'WELCOME' ? '' : `${appliedCoupon.code} 적용됨 · ${appliedCoupon.label}`;
