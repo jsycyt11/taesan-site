@@ -1675,6 +1675,10 @@
   .ao-fv{color:var(--text); font-size:14px; word-break:keep-all; overflow-wrap:anywhere;}
   .ao-cp{flex:0 0 auto; min-width:52px; height:32px; padding:0 12px; border-radius:999px; border:1px solid rgba(242,238,232,.22); background:none; color:var(--text); font-size:12.5px; cursor:pointer;}
   .ao-cp.done{background:#4fae6a; border-color:#4fae6a; color:#fff;}
+  .guest-box{margin-top:12px; padding-top:12px; border-top:1px dashed rgba(242,238,232,.14);}
+  .guest-box .bank-agree span{line-height:1.6;}
+  .guest-form{margin:6px 0 16px;}
+  .guest-lookup-btn{width:100%;}
 </style>
 </head>
 <script src="https://js.tosspayments.com/v2/standard"></script>
@@ -1980,6 +1984,10 @@
       <p class="bank-note" id="coBankNote"></p>
       <div class="co-field"><label>입금자명 (주문자와 다를 때만)</label><input type="text" id="coDepositor" placeholder="비우면 받는 사람 이름으로 확인해요"></div>
       <label class="bank-agree"><input type="checkbox" id="coBankAgree"> 주문 상품, 출시일, 교환·환불 안내를 확인했어요.</label>
+      <div class="guest-box" id="coGuestBox" style="display:none;">
+        <label class="bank-agree"><input type="checkbox" id="coGuestAgree"> <span>[비회원 주문] 만 14세 이상이며, 주문·배송을 위해 이름·연락처·주소를 모으고 쓰는 데 동의해요. <button type="button" class="cs-link" onclick="openPrivacy()">자세히</button></span></label>
+        <p class="cs-sub">비회원 주문은 <b>주문번호와 연락처</b>로 배송을 조회해요. <button type="button" class="cs-link" id="coGuestLogin">로그인하고 주문하기</button> (첫 구매 쿠폰 · 리뷰 쓰기)</p>
+      </div>
     </section>
 
     <section class="co-section" id="coTossSection">
@@ -2281,6 +2289,12 @@
       <label class="cs-row"><input type="checkbox" id="moEmail"><span>이메일로 받기</span></label>
       <p class="auth-msg" id="moMkMsg"></p>
     </div>
+    <div class="guest-form" id="guestForm" style="display:none;">
+      <div class="co-field"><label>주문번호</label><input type="text" id="gqOrder" placeholder="TS로 시작하는 번호" autocapitalize="characters"></div>
+      <div class="co-field"><label>주문할 때 쓴 연락처</label><input type="tel" id="gqPhone" placeholder="010-0000-0000" inputmode="numeric"></div>
+      <p class="auth-msg" id="gqMsg"></p>
+      <button type="button" class="checkout-btn" id="gqSubmit">조회하기</button>
+    </div>
     <div id="myOrdersList"><p class="mo-empty">불러오는 중…</p></div>
   </div>
 </div>
@@ -2304,6 +2318,7 @@
       </div>
       <p class="auth-msg" id="loginMsg"></p>
       <button class="checkout-btn" id="loginSubmit" style="margin-top:6px;">로그인</button>
+      <button type="button" class="checkout-back guest-lookup-btn" id="guestLookupOpen" style="margin-top:8px;">비회원 주문 조회</button>
 
       <div class="auth-divider"><span>또는</span></div>
       <div class="social-auth-list">
@@ -3282,6 +3297,8 @@ function openCheckout(){
   if(bank){
     document.getElementById('coBankInfo').textContent = setting('bank_info', '입금 계좌를 준비하고 있어요');
     document.getElementById('coBankAgree').checked = false;
+    document.getElementById('coGuestBox').style.display = currentUser ? 'none' : '';
+    document.getElementById('coGuestAgree').checked = false;
   }
   if(bank && welcomeUsable() && !appliedCoupon) appliedCoupon = { code:'WELCOME', discount: myWelcome.amount, label:'첫 구매 쿠폰' };
   renderWelcome();
@@ -3350,8 +3367,9 @@ document.getElementById('couponApply').addEventListener('click', async ()=>{
 
 document.getElementById('checkoutBack').addEventListener('click', closeCheckout);
 
+document.getElementById('coGuestLogin').addEventListener('click', ()=>{ closeCheckout(); openAuthModal(); });
 document.getElementById('coSubmitBtn').addEventListener('click', async ()=>{
-  if(!currentUser){
+  if(!currentUser && payMode() !== 'bank'){
     alert('주문하려면 먼저 로그인해주세요.');
     closeCheckout();
     openAuthModal();
@@ -3418,6 +3436,7 @@ async function submitBankOrder(f){
   if(cart.length === 0){ alert('담긴 상품이 없어요.'); return; }
   if(!setting('bank_info')){ alert('입금 계좌가 아직 준비되지 않았어요. 문의 채널로 연락 주세요.'); return; }
   if(!document.getElementById('coBankAgree').checked){ alert('주문 내용 확인에 체크해 주세요.'); return; }
+  if(!currentUser && !document.getElementById('coGuestAgree').checked){ alert('비회원 주문 동의에 체크해 주세요.'); return; }
   const depositor = document.getElementById('coDepositor').value.trim() || f.name;
   btn.disabled = true;
   btn.textContent = '주문 접수 중...';
@@ -3442,7 +3461,9 @@ async function submitBankOrder(f){
   document.getElementById('coDoneText').innerHTML =
     `<b style="color:var(--accent);">주문만 접수됐고 돈은 아직 빠져나가지 않았어요.</b><br>은행 앱에서 아래 계좌로 <b style="color:var(--text);">${won(data.grand_total)}</b>을 ${bankHours()}시간 안에 보내주세요.<br><br>` +
     `<b style="color:var(--text);">${esc(setting('bank_info'))}</b><br>입금자명 ${esc(depositor)}<br><br>` +
-    (hadSoPo ? '품절 예약 상품은 입금 확인 후 재입고되는 대로 주문 순서대로 보내드려요.' : '입금이 확인되면 1~3 영업일 안에 보내드려요.') + '<br>배송 상황과 송장번호는 오른쪽 위 <b style="color:var(--text);">내 아이디 → 내 주문</b>에서 볼 수 있어요.';
+    (hadSoPo ? '품절 예약 상품은 입금 확인 후 재입고되는 대로 주문 순서대로 보내드려요.' : '입금이 확인되면 1~3 영업일 안에 보내드려요.') + (currentUser
+      ? '<br>배송 상황과 송장번호는 오른쪽 위 <b style="color:var(--text);">내 아이디 → 내 주문</b>에서 볼 수 있어요.'
+      : '<br><b style="color:var(--text);">주문번호를 캡처해 두세요.</b> 오른쪽 위 로그인 → <b style="color:var(--text);">비회원 주문 조회</b>에서 주문번호와 연락처로 배송 상황을 볼 수 있어요.');
   checkoutDone.style.display = 'flex';
   requestAnimationFrame(()=> checkoutDone.classList.add('open'));
   loadProducts();
@@ -4181,6 +4202,7 @@ const myOrdersModal = document.getElementById('myOrdersModal');
 const myOrdersOverlay = document.getElementById('myOrdersOverlay');
 function closeMyOrders(){ myOrdersModal.classList.remove('open'); myOrdersOverlay.classList.remove('open'); }
 async function openMyOrders(){
+  setMyOrdersMode(false);
   myOrdersModal.classList.add('open'); myOrdersOverlay.classList.add('open');
   document.getElementById('myOrdersWho').textContent = currentUser && currentUser.email ? currentUser.email : '';
   document.getElementById('myOrdersCoupon').innerHTML = myWelcomeLine();
@@ -4190,7 +4212,11 @@ async function openMyOrders(){
   const { data, error } = await sbClient.rpc('my_orders');
   if(error){ list.innerHTML = '<p class="mo-empty">주문 내역을 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.</p>'; return; }
   if(!data || !data.length){ list.innerHTML = '<p class="mo-empty">아직 주문 내역이 없어요.</p>'; return; }
-  list.innerHTML = data.map(o => {
+  list.innerHTML = moCards(data);
+  list.querySelectorAll('button.mo-rv').forEach(b => b.addEventListener('click', ()=> openReviewWriter(b.dataset)));
+}
+function moCards(data){
+  return data.map(o => {
     const [label, note] = MO_STATUS[o.status] || [o.status, ''];
     const canRv = ['shipped', 'done'].includes(o.status);
     const items = (o.items || []).map(i => `<div class="mo-item"><div>${esc(String(i.name || '').replace(/^泰山\s*/, ''))}<span>${esc([i.color, i.size].filter(Boolean).join(' · '))} × ${Number(i.qty || 1)}</span></div>${canRv && i.id ? (i.reviewed ? '<em class="mo-rv done">리뷰 완료</em>' : `<button type="button" class="mo-rv" data-oid="${esc(o.order_id)}" data-pid="${Number(i.id)}" data-name="${esc(String(i.name || '').replace(/^泰山\s*/, ''))}" data-opt="${esc([i.color, i.size].filter(Boolean).join(' · '))}">리뷰 쓰기</button>`) : ''}</div>`).join('');
@@ -4202,8 +4228,30 @@ async function openMyOrders(){
       ${o.tracking_no ? `<div class="mo-track"><span>${esc(o.courier || '택배')} <b>${esc(o.tracking_no)}</b></span><a class="mo-track-btn" href="${esc(url)}" target="_blank" rel="noopener">배송 조회</a></div>` : (note ? `<p class="mo-note">${esc(note)}</p>` : '')}
     </div>`;
   }).join('');
-  list.querySelectorAll('button.mo-rv').forEach(b => b.addEventListener('click', ()=> openReviewWriter(b.dataset)));
 }
+function setMyOrdersMode(guest){
+  document.querySelector('#myOrdersModal .mo-head h3').textContent = guest ? '비회원 주문 조회' : '내 주문';
+  document.getElementById('myOrdersLogout').style.display = guest ? 'none' : '';
+  document.getElementById('guestForm').style.display = guest ? '' : 'none';
+  if(guest){ document.getElementById('myOrdersWho').textContent = ''; document.getElementById('myOrdersCoupon').innerHTML = ''; document.getElementById('myMarketing').style.display = 'none'; }
+}
+document.getElementById('guestLookupOpen').addEventListener('click', ()=>{
+  closeAuthModal(); setMyOrdersMode(true);
+  document.getElementById('myOrdersList').innerHTML = '';
+  document.getElementById('gqMsg').textContent = '';
+  myOrdersModal.classList.add('open'); myOrdersOverlay.classList.add('open');
+});
+document.getElementById('gqSubmit').addEventListener('click', async ()=>{
+  const id = document.getElementById('gqOrder').value.trim().toUpperCase();
+  const phone = document.getElementById('gqPhone').value.trim();
+  const msg = document.getElementById('gqMsg'), list = document.getElementById('myOrdersList');
+  if(!/^TS\d{6,}$/.test(id) || phone.replace(/[^0-9]/g, '').length < 9){ msg.textContent = '주문번호와 연락처를 확인해 주세요.'; msg.className = 'auth-msg error'; return; }
+  msg.textContent = '조회 중…'; msg.className = 'auth-msg';
+  const { data, error } = await sbClient.rpc('guest_order', { p_order_id: id, p_phone: phone });
+  if(error){ msg.textContent = '조회하지 못했어요. 잠시 뒤 다시 해주세요.'; msg.className = 'auth-msg error'; return; }
+  if(!data || !data.length){ msg.textContent = '맞는 주문이 없어요. 주문번호와 연락처를 다시 확인해 주세요.'; msg.className = 'auth-msg error'; list.innerHTML = ''; return; }
+  msg.textContent = ''; list.innerHTML = moCards(data);
+});
 function myWelcomeLine(){
   return welcomeUsable() ? `<div class="mo-coupon"><b>첫 구매 쿠폰 ${won(myWelcome.amount)}</b><span>${fmtDay(myWelcome.expires_at)}까지 · 주문할 때 자동으로 적용돼요</span></div>` : '';
 }
