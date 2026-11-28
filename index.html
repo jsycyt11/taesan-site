@@ -3549,6 +3549,36 @@ function itemLine(i){
   return `${i.soldout_preorder ? '[품절 예약] ' : (i.preorder ? '[예약] ' : '')}${esc(i.name)}${opt ? ' · ' + esc(opt) : ''}${i.qty ? ' × ' + Number(i.qty) : ''}${i.lot ? ` (${esc(i.lot)})` : ''}${nums ? ` · <b style="color:var(--accent)">${nums}</b>` : ''}${i.ship ? ` · <span style="opacity:.8">${esc(i.ship)}</span>` : ''}`;
 }
 /* 예약 집계: 결제된 주문에서 상품별 색상 × 사이즈 수량 (제작 발주용) */
+function refundTally(list, kind){
+  if(!list.length) return '';
+  const label = kind === 'exchange' ? '교환' : '환불';
+  const byName = {}, reasons = {};
+  let total = 0, money = 0;
+  list.forEach(o => {
+    const r = o.refund_reason || '이유 없음';
+    reasons[r] = (reasons[r] || 0) + 1;
+    money += Number(o.grand_total || 0);
+    (o.items || []).forEach(i => {
+      const q = Number(i.qty || 1);
+      const t = byName[i.name] = byName[i.name] || { colors:new Set(), sizes:new Set(), n:{}, total:0 };
+      const c = i.color || '-', sz = i.size || '-';
+      t.colors.add(c); t.sizes.add(sz);
+      t.n[c + '|' + sz] = (t.n[c + '|' + sz] || 0) + q;
+      t.total += q; total += q;
+    });
+  });
+  const reasonRows = Object.entries(reasons).sort((a,b) => b[1] - a[1]).map(([r,n]) => `<tr><td>${esc(r)}</td><td>${n}건</td></tr>`).join('');
+  const prodBoxes = Object.entries(byName).map(([name, t]) => {
+    const sizes = [...t.sizes];
+    return `<h5 style="margin-top:14px;">${esc(shortName(name))} · ${t.total}장</h5>
+      <table><tr><th>색상</th>${sizes.map(x => `<th>${esc(x)}</th>`).join('')}<th>합계</th></tr>
+      ${[...t.colors].map(c => `<tr><td>${esc(c)}</td>${sizes.map(x => `<td>${t.n[c + '|' + x] || 0}</td>`).join('')}<td>${sizes.reduce((a,x)=>a+(t.n[c + '|' + x]||0),0)}</td></tr>`).join('')}
+      </table>`;
+  }).join('');
+  return `<div class="po-tally"><h5>${label} 집계 · ${list.length}건 · ${total}장${kind === 'refund' ? ` · 환불 금액 ${won(money)}` : ''}</h5>
+    <table><tr><th>이유</th><th>건수</th></tr>${reasonRows}</table>
+    ${prodBoxes}</div>`;
+}
 function preorderTally(orders){
   const live = orders.filter(o => ['paid','making'].includes(o.status));
   const waiting = {};
@@ -3647,7 +3677,7 @@ function renderAdminOrders(){
     ${orderFilter === 'canceled' ? '<p class="help" style="margin:6px 0 10px;">취소된 주문이에요. 잘못 취소했으면 오른쪽 아래 상태를 바꿔서 되살릴 수 있어요.</p>' : ''}
     ${orderFilter === 'exchange' || orderFilter === 'refund' ? `<p class="help" style="margin:6px 0 10px;">${orderFilter === 'exchange' ? '교환' : '환불'}로 처리한 주문이에요. 새로 처리하려면 주문 카드의 '환불 · 교환' 버튼을 누르세요.</p>` : ''}
     <div class="ao-chips">${chips.map(([k,v,n]) => `<button type="button" class="ao-chip ${orderFilter===k?'on':''}" data-f="${k}">${v} ${n}</button>`).join('')}</div>
-    ${preorderTally(orders)}
+    ${orderFilter === 'exchange' ? refundTally(exchangeOrders, 'exchange') : orderFilter === 'refund' ? refundTally(refundOrders, 'refund') : preorderTally(orders)}
     ${shown.map(o => {
       const st = o.status, color = STATUS_COLOR[st] || '#8a7470';
       const next = NEXT_STEP[st];
