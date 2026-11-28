@@ -898,6 +898,8 @@
   .ao-rf{margin-top:10px; padding:9px 12px; border-radius:10px; border:1px solid var(--line-soft); font-size:12.5px; line-height:1.6; color:var(--text-dim);}
   .ao-rf b{color:var(--text);}
   .ao-rf.ex{border-color:#5b8fd6;}
+  .ao-chip[data-f="exchange"].on{background:#5b8fd6; border-color:#5b8fd6; color:#fff;}
+  .ao-chip[data-f="refund"].on{background:var(--accent); border-color:var(--accent); color:#fff;}
   .rf-ov{position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,.72); display:flex; align-items:flex-end; justify-content:center;}
   .rf-box{width:min(520px,100%); max-height:92vh; overflow:auto; background:#141010; border:1px solid var(--line); border-radius:18px 18px 0 0; padding:22px 20px 26px;}
   .rf-box h3{font-size:17px; margin:0 0 4px;}
@@ -3630,7 +3632,11 @@ function renderAdminOrders(){
   const count = k => orders.filter(o => o.status === k).length;
   const chips = [['all','전체', orders.length], ...Object.entries(ORDER_STATUS).map(([k,v]) => [k, v, count(k)]).filter(([k,,n]) => n > 0)];
   if(canceledOrders.length) chips.push(['canceled', '취소된 주문', canceledOrders.length]);
-  const shown = orderFilter === 'canceled' ? canceledOrders : orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
+  // 교환·환불: 처리 기록이 있는 주문 (환불은 취소된 주문 안에 있어도 여기서 따로 볼 수 있어요)
+  const exchangeOrders = adminOrders.filter(o => o.refund_type === 'exchange');
+  const refundOrders = adminOrders.filter(o => o.refund_type === 'refund');
+  chips.push(['exchange', '교환', exchangeOrders.length], ['refund', '환불', refundOrders.length]);
+  const shown = orderFilter === 'canceled' ? canceledOrders : orderFilter === 'exchange' ? exchangeOrders : orderFilter === 'refund' ? refundOrders : orderFilter === 'all' ? orders : orders.filter(o => o.status === orderFilter);
   const waitingMoney = orders.filter(o => o.status === 'awaiting_deposit').reduce((a,o)=>a+Number(o.grand_total||0),0);
   listEl.innerHTML = `
     <div class="ao-summary">
@@ -3639,6 +3645,7 @@ function renderAdminOrders(){
       <div><b>${won(waitingMoney)}</b><span>들어올 입금액</span></div>
     </div>
     ${orderFilter === 'canceled' ? '<p class="help" style="margin:6px 0 10px;">취소된 주문이에요. 잘못 취소했으면 오른쪽 아래 상태를 바꿔서 되살릴 수 있어요.</p>' : ''}
+    ${orderFilter === 'exchange' || orderFilter === 'refund' ? `<p class="help" style="margin:6px 0 10px;">${orderFilter === 'exchange' ? '교환' : '환불'}로 처리한 주문이에요. 새로 처리하려면 주문 카드의 '환불 · 교환' 버튼을 누르세요.</p>` : ''}
     <div class="ao-chips">${chips.map(([k,v,n]) => `<button type="button" class="ao-chip ${orderFilter===k?'on':''}" data-f="${k}">${v} ${n}</button>`).join('')}</div>
     ${preorderTally(orders)}
     ${shown.map(o => {
